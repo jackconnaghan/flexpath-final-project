@@ -1,0 +1,62 @@
+package org.example.models;
+
+public class Book {
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getPub_year() {
+        return pub_year;
+    }
+
+    public void setPub_year(int pub_year) {
+        this.pub_year = pub_year;
+    }
+
+    public String getIsbn13() {
+        return isbn13;
+    }
+
+    public void setIsbn13(String isbn13) {
+        this.isbn13 = isbn13;
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public void setPages(int pages) {
+        this.pages = pages;
+    }
+
+    private String title;
+    private String author;
+    private int pub_year;
+    private String isbn13;
+    private int pages;
+
+    //* Blank constructor
+    public Book() {}
+
+    public Book(String author, String title, int pub_year, String isbn13, int pages) {
+        this.author = author;
+        this.title = title;
+        this.pub_year = pub_year;
+        this.isbn13 = isbn13;
+        this.pages = pages;
+    }
+
+}
