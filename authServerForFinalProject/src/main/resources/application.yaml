@@ -1,0 +1,6 @@
+spring:
+  security:
+    user:
+      name: "admin"
+      password: "$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq"
+

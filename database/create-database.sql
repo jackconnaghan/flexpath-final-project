@@ -4,8 +4,8 @@ use flexpath_final;
 drop table if exists users, roles, books, reviews, wishlists;
 
 create table users (
-	-- user_id int AUTO_INCREMENT primary key,
-    username varchar(255) primary key,
+	user_id int AUTO_INCREMENT primary key,
+    username varchar(255) unique,
     password varchar(255)
 );
 
@@ -25,7 +25,7 @@ insert into roles (username, role) values ('user', 'USER');
 
 
 create table books (
-    id int AUTO_INCREMENT primary key,
+    id BIGINT AUTO_INCREMENT primary key,
     title varchar(510) not null,
     author varchar(510) not null,
     pub_year int, 
@@ -34,8 +34,8 @@ create table books (
 );
 
 create table reviews (
-    id int AUTO_INCREMENT primary key,
-    book_id int not null,
+    id BIGINT AUTO_INCREMENT primary key,
+    book_id BIGINT not null,
     review_text text,
     star_rating int not null,
     review_date DATE not null,
@@ -43,7 +43,7 @@ create table reviews (
 );
 
 create table wishlists (
-	id int AUTO_INCREMENT primary key,
+	id BIGINT AUTO_INCREMENT primary key,
     username varchar(250) not null,
     -- user_id int not null,
     name varchar(510) not null,

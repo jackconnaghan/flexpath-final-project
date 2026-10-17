@@ -4,7 +4,7 @@ public class Book {
     /**
      * Private variables
      */
-    private int id;
+    private Long id;
     private String title;
     private String author;
     private int pub_year;
@@ -26,7 +26,7 @@ public class Book {
      * @param isbn13 = ISBN-13 number
      * @param pages = number of pages in the book
      */
-    public Book(int id, String author, String title, int pub_year, String isbn13, int pages) {
+    public Book(Long id, String author, String title, int pub_year, String isbn13, int pages) {
         this.id = id;
         this.author = author;
         this.title = title;
@@ -75,11 +75,11 @@ public class Book {
         this.pages = pages;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

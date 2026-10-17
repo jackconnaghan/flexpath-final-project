@@ -29,7 +29,7 @@ public class BookDao {
         return jdbcTemplate.query("SELECT * FROM books;", this::mapToBook);
     }
 
-    public Book getBookById(int bookId) {
+    public Book getBookById(Long bookId) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=?;", this::mapToBook, bookId);
         } catch (EmptyResultDataAccessException e) {
@@ -38,9 +38,18 @@ public class BookDao {
         }
     }
 
-    public Book getBookByName(String bookName) {
+    public Book getBookByTitle(String title) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE LOWER(title) LIKE '%?%';", this::mapToBook, bookName);
+            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE LOWER(title) LIKE '%?%';", this::mapToBook, title);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Book getBookByAuthor(String author) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE author = ?;", this::mapToBook, author);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -97,7 +106,7 @@ public class BookDao {
 
     private Book mapToBook(ResultSet rs, int rowNum) throws SQLException {
         return new Book(
-                rs.getInt("id"),
+                rs.getLong("id"),
                 rs.getString("title"),
                 rs.getString("author"),
                 rs.getInt("pub_year"),
