@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Keeoing the BookController API public, as I do not care if
+ * Keeping the BookController API public, as I do not care if
  * a non-user accesses the books in the database
  */
 @RestController
@@ -24,25 +24,37 @@ public class BookController {
     public List<Book> getAllBooks() { return bookDao.getAllBooks(); }
 
     //Get book by an ID in the path
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/search/{id}")
     public Book getBookById(@PathVariable Long id) { return bookDao.getBookById(id); }
 
-    @GetMapping()
-    public Book getBookByTitle(@RequestBody String title) { return bookDao.getBookByTitle(title); ()}
+    /**
+     *
+     * Not a single Book return item because books might have the same title
+     * @param title = title of book
+     * @return = list of books matching that title
+     *
+     */
+    @GetMapping(path = "/search", params = "title")
+    public List<Book> getBookByTitle(@RequestParam String title) { return bookDao.getBookByTitle(title); }
 
-    @GetMapping()
-    public Book getBookByAuthor(@RequestBody String author) {
+    @GetMapping(path = "/search", params = "author")
+    public List<Book> getBookByAuthor(@RequestParam String author) {
         return bookDao.getBookByAuthor(author);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Book createBook(@RequestBody Book book) { return bookDao.createBook(book); }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Book updateBook(@RequestBody Book book) { return bookDao.updateBook(book); }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public int deleteBookById(@PathVariable Long id) {
+        return bookDao.deleteBookById(id);
+    }
 
 }

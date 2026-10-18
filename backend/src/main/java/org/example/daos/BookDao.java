@@ -4,6 +4,7 @@ import org.example.models.Book;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
@@ -12,9 +13,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BookDao {
-    /** JDBC template for querying database.
-     *
+    /**
+     * JDBC template for querying database.
      */
     private final JdbcTemplate jdbcTemplate;
 
@@ -38,18 +40,18 @@ public class BookDao {
         }
     }
 
-    public Book getBookByTitle(String title) {
+    public List<Book> getBookByTitle(String title) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE LOWER(title) LIKE '%?%';", this::mapToBook, title);
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ?;", this::mapToBook, "%" + title + "%");
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Book getBookByAuthor(String author) {
+    public List<Book> getBookByAuthor(String author) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE author = ?;", this::mapToBook, author);
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(author) LIKE ?;", this::mapToBook, "%" + author + "%");
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -89,16 +91,16 @@ public class BookDao {
                     book.getIsbn13(),
                     book.getPages());
             return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=?", this::mapToBook, book.getId());
-        }  catch (ResponseStatusException e) {
+        }  catch (DataAccessException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public int deleteBook(int id) {
+    public int deleteBookById(Long id) {
         try {
             return jdbcTemplate.update("DELETE FROM books WHERE id=?", id);
-        } catch (ResponseStatusException e) {
+        } catch (DataAccessException e) {
             e.printStackTrace();
             return 0;
         }
