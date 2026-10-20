@@ -1,0 +1,14 @@
+version: '3.8'
+networks:
+  default:
+services:
+  db:
+    image: mysql:8.4
+    container_name: "library"
+    ports:
+      - "3307:3306"
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: flexpath_final
