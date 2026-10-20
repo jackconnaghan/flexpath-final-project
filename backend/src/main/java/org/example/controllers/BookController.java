@@ -34,25 +34,25 @@ public class BookController {
      * @return = list of books matching that title
      *
      */
-    @GetMapping(path = "/search", params = "title")
+    @GetMapping(path = "/search-title", params = "title")
     public List<Book> getBookByTitle(@RequestParam String title) { return bookDao.getBookByTitle(title); }
 
-    @GetMapping(path = "/search", params = "author")
+    @GetMapping(path = "/search-author", params = "author")
     public List<Book> getBookByAuthor(@RequestParam String author) {
         return bookDao.getBookByAuthor(author);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Book createBook(@RequestBody Book book) { return bookDao.createBook(book); }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public Book updateBook(@RequestBody Book book) { return bookDao.updateBook(book); }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public int deleteBookById(@PathVariable Long id) {
         return bookDao.deleteBookById(id);
     }
