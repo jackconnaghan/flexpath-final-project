@@ -23,12 +23,20 @@ public class WishListController {
     @Autowired
     private WishListDao wishListDao;
 
+    //Until I implement the chosen authZ and authN method,
+    //this will act as a "getAllWishLists" method
     @GetMapping(path="/api/wishlists/mine")
-    public List<WishList> getMyWishLists(Authentication a) { return wishListDao.getAllWishLists(a.getName()); }
+//    public List<WishList> getMyWishLists(Authentication a) {return wishListDao.getMyWishLists(a.getName()); }
+    public List<WishList> getMyWishLists() {return wishListDao.getMyWishLists(); }
 
     //Get book by an ID in the path
-    @GetMapping(path = "/api/wishLists/mine/{id}")
-    public WishList getBookById(@PathVariable Long id) { return wishListDao.getWishListById(id); }
+    //Same with getMyWishLists,
+    //Until I implement the chosen authZ and authN method,
+    //this will act as a "getAllWishListsById" method
+    @GetMapping(path = "/api/wishlists/mine/{id}")
+//    public WishList getMyWishListsById(Authentication a, @PathVariable Long id) { return wishListDao.getMyWishListById(a.getName(), id); }
+    public WishList getMyWishListsById(@PathVariable Long id) { return wishListDao.getMyWishListById(id); }
+
 
     /**
      *

@@ -26,10 +26,10 @@ public class Book {
      * @param isbn13 = ISBN-13 number
      * @param pages = number of pages in the book
      */
-    public Book(Long id, String author, String title, int pub_year, String isbn13, int pages) {
+    public Book(Long id, String title, String author, int pub_year, String isbn13, int pages) {
         this.id = id;
-        this.author = author;
         this.title = title;
+        this.author = author;
         this.pub_year = pub_year;
         this.isbn13 = isbn13;
         this.pages = pages;

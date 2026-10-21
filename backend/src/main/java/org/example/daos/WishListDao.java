@@ -29,6 +29,8 @@ public class WishListDao {
      * JDBC template for querying database.
      */
     private final JdbcTemplate jdbcTemplate;
+    private String username;
+
 
     /**
      * Set Default vals for a book
@@ -43,11 +45,31 @@ public class WishListDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<WishList> getMyWishLists(Authentication a) {
+//    public List<WishList> getMyWishLists(String username) {
+//        return jdbcTemplate.query("SELECT * FROM wishlists WHERE username=?;", this::mapToWishList, username);
+//    }
+
+//    public WishList getMyWishListById(String username, Long wishListId) {
+//        this.username = username;
+//        try {
+//            return jdbcTemplate.queryForObject("SELECT * FROM wishlists WHERE username=? AND id=?;", this::mapToWishList, username, wishListId);
+//        } catch (EmptyResultDataAccessException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+    /**
+     * TEMPORARY
+     * Until AuthZ and AuthN is implemented; then, use above
+     * @return
+     */
+    public List<WishList> getMyWishLists() {
         return jdbcTemplate.query("SELECT * FROM wishlists;", this::mapToWishList);
     }
 
-    public WishList getWishListById(Long wishListId) {
+    public WishList getMyWishListById(Long wishListId) {
+        //this.username = username;
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM wishlists WHERE id=?;", this::mapToWishList, wishListId);
         } catch (EmptyResultDataAccessException e) {
@@ -113,7 +135,13 @@ public class WishListDao {
             }, keyHolder);
 
             Number newId = keyHolder.getKey();
-            return (newId == null) ? null : getWishListById(newId.longValue());
+//            return (newId == null) ? null : getMyWishListById(username, newId.longValue());
+            /**
+             * TEMPORARY
+             * Until AuthZ and AuthN
+             * Then, use above
+             */
+            return (newId == null) ? null : getMyWishListById(newId.longValue());
             //2. Create ArrayList of all orders in db that have order.username(?)
 //            List<Book> books = (ArrayList<Book>) jdbcTemplate.query("SELECT * FROM books ORDER BY id;", this::mapToBook);
 
