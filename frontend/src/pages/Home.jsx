@@ -16,9 +16,6 @@ function Home() {
             <div className="row">
                 <div className="col">
                     <h1 className="display-4 p-0">Development Page</h1>
-                    
-                    <a className="d-flex row" href="https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset?resource=download"
-                    >Sourced from this Kaggle Dataset</a>
                     <br></br>
                 </div>
             </div>

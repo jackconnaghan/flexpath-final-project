@@ -3,6 +3,20 @@ spring:
     url: jdbc:mysql://localhost:3308/flexpath_final
     username: root
     password: pass
+  security:
+    oauth2:
+#      client:
+#        registration:
+#          book-review-client:
+#            client-id: book-review-client
+#            client-secret: qp5vzW6Ip7piueG94NIZaJUAXbWGkf7lIe2MgSl66JbJ1ODRzKNT7tc2R8ZLL6kgIBMgSXTprZz8qjs5iXzDGd
+#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#            authorization-grant-type: authorization_code
+#            scope: openid
+#            provider: keycloak
+#        provider:
+#          keycloak:
+#            issuer-uri: "http://localhost:8090/realms/book-review-app"
 
 debug: true
 

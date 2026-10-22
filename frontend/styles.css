@@ -93,3 +93,19 @@ Oh and it looks SO GOOD
     display: flex;
     flex-wrap: wrap;
 }
+
+/* NEW STUFF FOR FINAL  */
+.search-page-parent-div {
+    display:flex; 
+    flex-direction:row;
+}
+
+.search-page-child-div-comp {
+    flex:1;
+    padding:200px;
+}
+
+.search-page-child-div-side {
+    flex:1;
+    padding:200px;
+}

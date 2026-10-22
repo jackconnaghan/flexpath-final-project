@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 // import useFetch from "../hooks/useFetch";
 // import SearchMetricCardsComponent from "./SearchMetricCardsComponent";
 // import SearchTableComponent from "./SearchTableComponent";
-// import FormComponent from "./FormComponent";
+import FormComponent from "./FormComponent";
 // import TextResponseComponent from "./TextResponseComponent";
 // import ErrorBoundary from "./ErrorBoundary";
 
