@@ -18,6 +18,7 @@ export default function NavBar() {
                 <a className="navbar-brand">User Behavior Data</a>
                 <Link to={"/"}>Home</Link>|||
                 <Link to={"/search"}>Search Books</Link>|||
+                <Link to={"/add"}>Add A Book</Link>|||
                 
 
             </nav>

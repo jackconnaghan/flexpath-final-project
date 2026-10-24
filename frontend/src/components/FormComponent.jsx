@@ -1,15 +1,17 @@
 import React from "react";
 
-export default function FormComponent({ input, setInput,
-    filterTypeValue, setNewFilterType, filterTypeOptions, 
-    handleSubmit, handleDrop }) {
+// export default function FormComponent({ input, setInput,
+//     filterTypeValue, setNewFilterType, filterTypeOptions, 
+//     handleSubmit, handleDrop }) {
+export default function FormComponent() {
 
     return (
         <form onSubmit={(e) => {
-                        handleSubmit(e);
+                        // handleSubmit(e);
+
                     }}>
                         <p>Select data point to filter search by</p>
-                        <select className="row-g1 form-select form-select-sm w-50"
+                         <select className="row-g1 form-select form-select-sm w-50"
                             value={filterTypeValue}
                             onChange={(e) => {
                                 setNewFilterType(e);
