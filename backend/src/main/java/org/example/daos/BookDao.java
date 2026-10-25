@@ -1,5 +1,6 @@
 package org.example.daos;
 
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.example.exceptions.NoTitleException;
 import org.example.exceptions.SameBookException;
 import org.example.models.Book;
@@ -154,6 +155,7 @@ public class BookDao {
      * Private method to check if a book
      * with a certain title+author combo
      * is already in the database
+     *
      * @param book
      * @return
      */
@@ -173,15 +175,49 @@ public class BookDao {
     public Book updateBook(Book book) {
         try {
             //OrderItem tempOrderItem = jdbcTemplate.queryForObject("SELECT * FROM order_items WHERE id = ?", this::mapToOrderItem, orderItem.getId());
+            List<Book> booksWithTitle = getBookByTitle(book.getTitle());
+            Long id = 0L;
+            if (booksWithTitle.size() == 1) {
+                id = booksWithTitle.get(0).getId();
+            } else {
+                throw new TooManyResultsException("There are more books with the same title. Try editing a different book," +
+                        "or update a book by id with /api/books/");
+            }
+
+            try {
+
+                jdbcTemplate.update("UPDATE books SET title=?, author=?," +
+                                "pub_year=?, isbn13=?, pages=? WHERE id=?",
+                        book.getTitle(),
+                        book.getAuthor(),
+                        book.getPub_year(),
+                        book.getIsbn13(),
+                        book.getPages(),
+                        id);
+                return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=?", this::mapToBook, book.getId());
+            } catch (DataAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Book updateBookById(Book book, Long id) {
+        try {
+
             jdbcTemplate.update("UPDATE books SET title=?, author=?," +
                             "pub_year=?, isbn13=?, pages=? WHERE id=?",
                     book.getTitle(),
                     book.getAuthor(),
                     book.getPub_year(),
                     book.getIsbn13(),
-                    book.getPages());
+                    book.getPages(),
+                    id);
             return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=?", this::mapToBook, book.getId());
-        }  catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             e.printStackTrace();
             return null;
         }

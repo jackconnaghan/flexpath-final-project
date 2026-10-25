@@ -47,9 +47,15 @@ public class BookController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Book createBook(@RequestBody Book book) { return bookDao.createBook(book); }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public Book updateBook(@RequestBody Book book) { return bookDao.updateBook(book); }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/update-id")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Book updateBookById(@RequestBody Book book, @RequestParam Long id) {return bookDao.updateBookById(book, id);}
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
