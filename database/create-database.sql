@@ -2,29 +2,29 @@ create database if not exists flexpath_final;
 use flexpath_final;
 
 drop table if exists users, roles, books, reviews, wishlists, wishlist_books;
+-- Users and roles moved to keycloak management, check JWTs for username and role matching in Controllers
+-- create table users (
+-- 	user_id BIGINT AUTO_INCREMENT primary key,
+--     username varchar(255) unique,
+--     password varchar(255)
+-- );
 
-create table users (
-	user_id int AUTO_INCREMENT primary key,
-    username varchar(255) unique,
-    password varchar(255)
-);
-
-create table roles (
-    username varchar(255) not null,
-    role varchar(255) not null,
-    primary key (username, role),
-    foreign key (username) references users(username) on delete cascade
-);
+-- create table roles (
+--     username varchar(255) not null,
+--     role varchar(255) not null,
+--     primary key (username, role),
+--     foreign key (username) references users(username) on delete cascade
+-- );
 
 
-insert into users (username, password) values ('admin', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
-insert into roles (username, role) values ('admin', 'ADMIN');
+-- insert into users (username, password) values ('administrator', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
+-- insert into roles (username, role) values ('administrator', 'ADMIN');
 
-insert into users (username, password) values ('user', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
-insert into roles (username, role) values ('user', 'USER');
+-- insert into users (username, password) values ('userperson', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
+-- insert into roles (username, role) values ('userperson', 'USER');
 
-insert into users (username, password) values ('dude', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
-insert into roles (username, role) values ('dude', 'USER');
+-- insert into users (username, password) values ('dude', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
+-- insert into roles (username, role) values ('dude', 'USER');
 
 
 create table books (
@@ -33,10 +33,11 @@ create table books (
     author varchar(255) not null,
     pub_year int, 
     isbn_13 text,
-    pages int
+    pages int,
+    constraint uq_title_author unique (title, author)
 );
 
-alter table books add constraint uq_title_author unique (title, author);
+-- alter table books add constraint uq_title_author unique (title, author);
 
 create table reviews (
     id BIGINT AUTO_INCREMENT primary key,
@@ -46,7 +47,8 @@ create table reviews (
     star_rating int not null,
     review_date DATE not null,
     foreign key (book_id) references books(id) on delete cascade,
-    foreign key (username) references users(username) on delete cascade
+    -- foreign key (user_id) references users(user_id) on delete cascade,
+    constraint uq_username_to_review unique (username, book_id)
 );
 
 create table wishlists (
@@ -54,7 +56,7 @@ create table wishlists (
     username varchar(255) not null,
     name varchar(255) not null,
     is_public boolean not null default FALSE,
-    foreign key (username) references users(username) on delete cascade,
+    -- foreign key (user_id) references users(user_id) on delete cascade,
     UNIQUE (username, name)
 );
 -- you will join the following database with 
@@ -77,13 +79,16 @@ INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
 VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 10);
 
 INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
-VALUES (2, "dude", "That was close!", CURDATE(), 6);
+VALUES (2, "user", "That was close!", CURDATE(), 6);
 
 INSERT INTO wishlists (username, name)
-VALUES ('dude', 'my first wishlist!');
+VALUES ("user", 'my first wishlist!');
 
 INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
 VALUES (1, 2, CURDATE());
 
 INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
 VALUES (1, 1, CURDATE());
+
+INSERT INTO wishlists (username, name)
+VALUES ("admin", "practice wishlist");

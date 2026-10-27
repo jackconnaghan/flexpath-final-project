@@ -57,7 +57,7 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     public Book updateBookById(@RequestBody Book book, @RequestParam Long id) {return bookDao.updateBookById(book, id);}
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public int deleteBookById(@PathVariable Long id) {
         return bookDao.deleteBookById(id);

@@ -186,8 +186,7 @@ public class BookDao {
 
             try {
 
-                jdbcTemplate.update("UPDATE books SET title=?, author=?," +
-                                "pub_year=?, isbn13=?, pages=? WHERE id=?",
+                jdbcTemplate.update("UPDATE books SET title=?, author=?, pub_year=?, isbn_13=?, pages=? WHERE id=?",
                         book.getTitle(),
                         book.getAuthor(),
                         book.getPub_year(),

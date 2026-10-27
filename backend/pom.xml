@@ -71,11 +71,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>eu.fraho.spring</groupId>
-            <artifactId>security-jwt-base-spring-boot-starter</artifactId>
-            <version>5.0.9</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>eu.fraho.spring</groupId>-->
+<!--            <artifactId>security-jwt-base-spring-boot-starter</artifactId>-->
+<!--            <version>5.0.9</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>ch.vorburger.mariaDB4j</groupId>
             <artifactId>mariaDB4j</artifactId>
