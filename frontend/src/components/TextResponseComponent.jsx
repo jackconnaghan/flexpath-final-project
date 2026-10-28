@@ -11,15 +11,12 @@ export default function TextResponseComponent({ response, loading, error }) {
             {(loading && !error) &&
                 <div className="text-centered" style={{ display: "flex" }}>
                     <h2 className="display-5 align-middle">Loading...</h2>
-                    <div className="gif-load align-middle">
-                        <img src={FasterLogo} className="gif-load align-middle"></img>
-                    </div>
                 </div>}
             {(!loading && response?.length > 0) &&
-                <h2 className="display-5">Displaying {response?.length} records:</h2>
+                <h3 className="display-5">We found {response?.length} tomes that smell like that:</h3>
             }
             {(!loading && !error && response.length <= 0) &&
-                <h2 className="display-5">No records to display</h2>
+                <h3 className="display-5">No filthy books to display...</h3>
             }
 
             {(error) &&

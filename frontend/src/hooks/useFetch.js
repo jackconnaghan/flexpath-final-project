@@ -25,11 +25,11 @@ export default function useFetch() {
             //is still running, so the await fetch 
             //request has to wait until resolve
             //runs after 1500 mili
-            let response = await fetch(baseURL, 
+            let response = await fetch(baseURL,
                 {
                     method,
                     body: JSON.stringify(sendingBook),
-                    headers: { "Content-Type":"application/json"}
+                    headers: { "Content-Type": "application/json" }
                 }
             );
             if (!response.ok) {
@@ -38,7 +38,48 @@ export default function useFetch() {
             let responseData = await response.json();
             setResponse(responseData);
             console.log(`response length: ${responseData.length}`);
-            
+
+            setLoading(false);
+        } catch (error) {
+            //even though error is a boolean when it's declared,
+            //setting it to a string works just fine. Who knows 
+            //why. I didn't build react
+            setError(error.message);
+            console.error(`Fetch error: ${error}`);
+            setLoading(false);
+        }
+    }
+
+    async function fetchSearchData(baseURL, method) {
+        //sets error to false in case the last submission attempt
+        //failed
+        setLoading(true);
+        setError(false);
+
+        //const url = `${baseURL}`
+        //setting the setTimeout promise in this way
+        //bypasses having to set the setTimeout around the try/catch
+        // block, which wouldn't work anyway due to rules of hooks
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        try {
+            //the awaited Promise outside the try block
+            //is still running, so the await fetch 
+            //request has to wait until resolve
+            //runs after 1500 mili
+            let response = await fetch(baseURL,
+                {
+                    method,
+                    headers: { "Content-Type": "application/json" }
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+            let responseData = await response.json();
+            setResponse(responseData);
+            console.log(`response length: ${responseData.length}`);
+
             setLoading(false);
         } catch (error) {
             //even though error is a boolean when it's declared,
@@ -56,6 +97,7 @@ export default function useFetch() {
     // "localResponse" variable (confusing and clunky)
     return ({
         fetchData,
+        fetchSearchData,
         setResponse,
         response,
         loading,

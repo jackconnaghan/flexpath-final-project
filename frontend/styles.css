@@ -5,25 +5,26 @@ Another thing stolen from Midterm Project
 .error-text {
     color: "red";
 }
+
 /* THis is SOOOooOO silly */
 .extend-under-navbar {
     padding-top: 60px;
 }
 
 .hehe-funny {
-    background-color:#81ba4c
+    background-color: #81ba4c
 }
 
 .custom-lead {
     margin: 22px 22px 22px 10px;
-    text-align:"right";
+    text-align: "right";
 }
 
 .gif-load {
     margin: 2px;
-    height: 150px;
-    display: "inline-block";
-    position: "absolute";
+    width: auto;
+    max-height: 220px;
+    max-width: auto;
 }
 
 .custom-card-display {
@@ -47,7 +48,7 @@ Another thing stolen from Midterm Project
 
 .custom-footer-text {
     color: "yellow";
-    text-shadow:5px 5px 5px rgb(0, 81, 255);
+    text-shadow: 5px 5px 5px rgb(0, 81, 255);
     font-size: 30px;
 }
 
@@ -78,9 +79,10 @@ Oh and it looks SO GOOD
     height: 100%;
     max-width: 100%;
     min-width: 200px;
-    flex-wrap: wrap; /* this will move your content to new line if there is less space */
+    flex-wrap: wrap;
+    /* this will move your content to new line if there is less space */
     /* Some extra pieces for my own enjoyment */
-    border-color:20px 10px 15px crimson;
+    border-color: 20px 10px 15px crimson;
     border-width: 12;
     margin-bottom: 10px;
 
@@ -97,37 +99,39 @@ Oh and it looks SO GOOD
 /* NEW STUFF FOR FINAL  */
 
 .heading-text {
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
+
 .search-page-parent-div {
-    display:flex; 
-    flex-direction:row;
+    display: flex;
+    flex-direction: row;
 }
 
 .search-page-child-div-comp {
-    flex:1;
-    padding:200px;
+    flex: 1;
+    padding: 200px;
 }
 
 .search-page-child-div-side {
-    flex:1;
-    padding:200px;
+    flex: 1;
+    padding: 200px;
 }
 
 a.active {
-  color: #81ba4c;
-  text-shadow: 0 0 2px #00e9ff, 0 0 20px #0088ff;;
+    color: #81ba4c;
+    text-shadow: 0 0 2px #00e9ff, 0 0 20px #0088ff;
 }
 
 .logo-aliens-sizing-home {
     display: block;
-    height: 220px
+    height: 120px;
+    width: auto;
 }
 
 .little-gif-display {
     display: block;
     height: 30px;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .super-navbackground {
@@ -150,17 +154,17 @@ a.active {
 }
 
 .in-space {
-    background-color:rgb(0, 1, 2);
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
+    background-color: rgb(0, 1, 2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: stretch;
     width: 100vw;
     padding: 0px
 }
 
 .space-children {
-    flex:1;
+    flex: 1;
     padding: 3px;
     justify-self: center;
 }
@@ -179,40 +183,144 @@ a.active {
 
 /* Color changing text  */
 h1 {
+    font-family: monospace;
+    font-size: 3em;
+    animation: color-change 1s infinite;
+}
+
+/* h3 {
   font-family: monospace;
   font-size: 3em;
   animation: color-change 1s infinite;
-}
+} */
 
 @keyframes color-change {
-  0% { color: red; }
-  50% { color: blue; }
-  100% { color: green; }
+    0% {
+        color: red;
+    }
+
+    50% {
+        color: blue;
+    }
+
+    100% {
+        color: green;
+    }
+}
+
+.sexy-btn {
+    animation: btn-color-change 3s infinite;
+}
+
+@keyframes btn-color-change {
+    0% {
+        background-color: green;
+    }
+
+    50% {
+        background-color: blue;
+    }
+
+    100% {
+        background-color: green;
+    }
 }
 
 .home-buttons {
-    width:140px;
-    height:30px;
+    width: 140px;
+    height: 100px;
+    border-radius: 55px;
+    background-color: #81ba4c
+
+}
+
+button.hover-home:hover {
+    animation: freaky-color-change 3s infinite;
+}
+
+@keyframes freaky-color-change {
+    0% {
+        background-color: #81ba4c;
+    }
+    30% {
+        background-color: darkseagreen;
+    }
+    60% {
+        background-color: green;
+    }
+    90% {
+        background-color: lightgreen
+    }
+    100% {
+        background-color: #81ba4c;
+    }
 }
 
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 equal-width columns */
-  gap: 10px; /* Spacing between rows and columns */
-  padding: 16px;
-  align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 equal-width columns */
+    gap: 10px;
+    /* Spacing between rows and columns */
+    padding: 16px;
+    align-items: center;
 }
 
 .grid-item {
-  background-color: black;
-  padding: 0px;
-  text-align: center;
+    background-color: black;
+    padding: 0px;
+    text-align: center;
 
+}
+
+.grid-item-search {
+    padding: 0px;
+    text-align: center;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .grid-container {
-    grid-template-columns: repeat(1, 1fr); /* Drops to 1 column */
+    .grid-container {
+        grid-template-columns: repeat(1, 1fr);
+        /* Drops to 1 column */
+    }
+}
+
+/* .animation-edit {
+    width: 80;
+    height: 80;
+    background-image: url("public/FASTERCompressedLogo");
+    border-radius: 8,
+} */
+
+/* Fixed form width: the inputs stay this size at every viewport */
+.search-form {
+    width: 44rem;
+    max-width: 100%;
+}
+@media (max-width: 768) {
+    .search-form {
+        justify-content: right;
+    }
+}
+
+.search-form input {
+    width: 100%;           /* inputs fill the fixed-width form */
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+/* When the viewport width is 768px or smaller, turn into a column */
+@media (max-width: 768px) {
+  .row-container {
+    flex-direction:column;
+    justify-items: center;
   }
+}
+
+BookSearchPage {
+    justify-content: center;
 }

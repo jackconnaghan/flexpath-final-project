@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from "react";
+import useFetch from "../hooks/useFetch";
 // import kOnzy from "/kOnzy.gif";
 // import scaredyDog from "/scaredyDog.jpeg"
 // import { useCache } from "../contexts/CacheResultsContext";
 // import useFetch from "../hooks/useFetch";
 // import SearchMetricCardsComponent from "./SearchMetricCardsComponent";
-// import SearchTableComponent from "./SearchTableComponent";
-import FormComponent from "./FormComponent";
-// import TextResponseComponent from "./TextResponseComponent";
-// import ErrorBoundary from "./ErrorBoundary";
+import SearchTableComponent from "./SearchTableComponent";
+import SearchFormComponent from "./FormComponent";
+import TextResponseComponent from "./TextResponseComponent";
+import ErrorBoundary from "./ErrorBoundary";
+import FasterLogo from "../../public/FASTERCompressedLogo.gif";
+import NormalSpeedLogo from "../../public/NormalSpeedGif.gif";
+import NoBackgroundLogo from "../../public/NoBackgroundLogo.png"
+import Landed from "../../public/Landed.png";
 
-export default function BookSearchComponent() {
+export default function BookSearchComponent({ method }) {
 
+    //declare states for page updates, keeping this local
     const [titleInput, setTitleInput] = useState("");
     const [authorInput, setAuthorInput] = useState("");
-    // //declare states for page updates, keeping this local
-    // const [input, setInput] = useState("");
-    // const [filterTypeValue, setFilterTypeValue] = useState("unfiltered");
 
-    // //pulling object from useFetch that gives us all vars in that hook
-    // //const { fetchData, setResponse, response, loading, error } = useFetch();
+    // pulling object from useFetch that gives us all vars in that hook
+    const { fetchSearchData, setResponse, response, loading, error } = useFetch();
 
     // //this pulls the exact variables from
     // //CacheResults Context and allows them to
     // //mutate within SearchComponent
-    // const { cache, setCachedResponse } = useCache(null);
+    //const { cache, setCachedResponse } = useCache(null);
 
     // //declare filterType choices
     // const filterTypeOptions =
@@ -31,20 +34,16 @@ export default function BookSearchComponent() {
 
     // //run when Submit is clicked
     // //handles fetch logic with useFetch hook
-    // async function handleSubmit(e) {
-    //     e.preventDefault();
-    //     //grabbing keyword and filter and setting params
-    //     //before sending off to useFetch
-    //     const searchParams = new URLSearchParams({
-    //         filterType: filterTypeValue,
-    //         keyword: input.trim(),
-    //     });
+    async function handleSubmit(e) {
+        e.preventDefault();
+        //grabbing keyword and filter and setting params
+        //before sending off to useFetch
 
-    //     const baseURL = `/api/data/search?`;
+        const baseURL = `/api/books/search?title=${titleInput}&author=${authorInput}`;
 
-    //     fetchData(baseURL, searchParams);
-    //     setInput("");
-    // }
+        console.log(`base: ${baseURL}`);
+        fetchSearchData(baseURL, method);
+    }
     // //responds to change in filterType selector in the form
     // function setNewFilterType(e) {
     //     setFilterTypeValue(e.target.value);
@@ -109,9 +108,22 @@ This avoids a wasted first render with empty data, and there’s no effect that 
     // return component layout
     // console.log(response?.length);
     return (
-        <div className="container m-0">
-            <h3>This is the BookSearchComponent. Say hi!</h3>
+        <div className="container">
+            <div className="row flex-wrap g-5 mb-3">
+                <div className="col-auto">
+                    <div className="search-form">
+                        <SearchFormComponent titleInput={titleInput} authorInput={authorInput} handleSubmit={handleSubmit}
+                            setTitleInput={setTitleInput} setAuthorInput={setAuthorInput}
+                            isLoading={loading} />
+                    </div>
+                </div>
 
+                <img src={loading ? FasterLogo : Landed} className="gif-load" />
+            </div>
+            <ErrorBoundary>
+                <TextResponseComponent response={response} loading={loading} error={error} />
+            </ErrorBoundary>
+            <SearchTableComponent response={response} />
         </div>
 
     );

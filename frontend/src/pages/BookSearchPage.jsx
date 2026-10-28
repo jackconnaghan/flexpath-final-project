@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BookSearchComponent from "../components/BookSearchComponent";
 import "../../styles.css";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 function BookSearchPage() {
 
@@ -9,17 +10,9 @@ function BookSearchPage() {
     //get hairy.
 
     return (
-        <div className="container extend-under-navbar">
-            <div className="flexbox search-page-parent-div">
-                <div className="search-page-child-div-comp">
-                    <BookSearchComponent />
-                </div>
-                <div className="search-page-child-div-side">
-                    <h4>Hai</h4>
-                </div>
-            </div>
-
-
+        <div className="extend-under-navbar search-just">
+            <h1 className="m-5">Search our database of earthling readlings here...</h1>
+            <BookSearchComponent method="GET" />
         </div>
     );
 }

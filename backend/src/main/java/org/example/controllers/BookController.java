@@ -42,6 +42,9 @@ public class BookController {
         return bookDao.getBookByAuthor(author);
     }
 
+    @GetMapping(path = "/search")
+    public List<Book> getBooksWithKeywords(@RequestParam String title, @RequestParam String author) {return bookDao.getBooksWithKeywords(title, author); }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

@@ -78,6 +78,15 @@ public class BookDao {
         }
     }
 
+    public List<Book> getBooksWithKeywords(String title, String author) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ? AND LOWER(author) LIKE ?;", this::mapToBook, "%" + title + "%", "%" + author + "%");
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Book createBook(Book book) {
         String sql = "INSERT INTO books (title, author," +
                 "pub_year, isbn_13, pages) VALUES (?,?,?,?,?);";

@@ -26,7 +26,7 @@ function Home() {
                         <ChangingLetterComponent prefLetter="E" />
                     </div>
 
-                    
+
                     <h3 className="rep-text space-children">A repository for the human-minded alien</h3>
                     <h1 className="heading-text space-children">Help Us Document the Earthlings</h1>
                 </div>
@@ -35,28 +35,31 @@ function Home() {
 
 
             </div>
-            <h2 className="m-2">Our Mission</h2>
-            <p className="m-2">It is our duty to colonize the Earthling races. </p>
-            <div className="row rest-of-Home p-4 m-1">
+            <div className="d-flex justify-content-center align-items-center">
+                <h2 className="m-3">Our Mission</h2>
+                <p className="m-3">It is our duty to colonize the Earthling races. </p>
+                <p className="m-3">Just two freaky aliens trying to make a difference.</p>
+                {/* <div className="row rest-of-Home p-4 m-1"> */}
+                <div className="row">
+                    <div className="col ">
+                        <Link to="/search">
+                            <button className="home-buttons m-3">Find a Book</button>
+                        </Link>
+                        <Link to="/add">
+                            <button className="home-buttons m-3">Add a Book</button>
+                        </Link>
 
+                        <Link to="/mission">
+                            <button className="home-buttons hover-home m-3">About Us</button></Link>
+                        <button className="home-buttons m-3">Donate</button>
+                    </div>
+                    <div className="col">
+                        <img src={AliensTogether} alt="Two aliens standing together and waving to the camera" />
+                    </div>
 
-                <div className="col-0 flexbox container">
-                    <Link to="/search">
-                        <button className="home-buttons m-3">Find a Book</button>
-                    </Link>
-                    <Link to="/add">
-                        <button className="home-buttons m-3">Add a Book</button>
-                    </Link>
-                    <p className="m-3">Just two freaky aliens trying to make a difference.</p>
-                    <Link to="/mission">
-                        <button className="home-buttons m-3">About Us</button></Link>
                 </div>
-                <div className="col-1 flexbox container">
-
-
-                </div>
-                <img src={AliensTogether} alt="Two aliens standing together and waving to the camera" />
             </div>
+
         </div>
     );
 }

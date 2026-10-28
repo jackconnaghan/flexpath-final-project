@@ -55,7 +55,7 @@ public class SecurityConfig {
                 //So, the below code applies a CSRF filter to the end of the filter stack.
                 /*
                 .csrf takes a lambda function with a csrf object as a param.
-                
+
                  */
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
