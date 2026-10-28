@@ -1,5 +1,7 @@
 import React from "react";
 import kOnzy from "/kOnzy.gif";
+import FasterLogo from "../../public/FASTERCompressedLogo.gif"
+
 
 export default function TextResponseComponent({ response, loading, error }) {
     // {/* BE CAREFUL WITH && as it can return a 0 that just gets rendered for free
@@ -10,7 +12,7 @@ export default function TextResponseComponent({ response, loading, error }) {
                 <div className="text-centered" style={{ display: "flex" }}>
                     <h2 className="display-5 align-middle">Loading...</h2>
                     <div className="gif-load align-middle">
-                        <img src={kOnzy} className="gif-load align-middle"></img>
+                        <img src={FasterLogo} className="gif-load align-middle"></img>
                     </div>
                 </div>}
             {(!loading && response?.length > 0) &&

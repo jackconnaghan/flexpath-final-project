@@ -21,7 +21,7 @@ Another thing stolen from Midterm Project
 
 .gif-load {
     margin: 2px;
-    height: 30px;
+    height: 150px;
     display: "inline-block";
     position: "absolute";
 }
@@ -95,6 +95,10 @@ Oh and it looks SO GOOD
 }
 
 /* NEW STUFF FOR FINAL  */
+
+.heading-text {
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
 .search-page-parent-div {
     display:flex; 
     flex-direction:row;
@@ -108,4 +112,107 @@ Oh and it looks SO GOOD
 .search-page-child-div-side {
     flex:1;
     padding:200px;
+}
+
+a.active {
+  color: #81ba4c;
+  text-shadow: 0 0 2px #00e9ff, 0 0 20px #0088ff;;
+}
+
+.logo-aliens-sizing-home {
+    display: block;
+    height: 220px
+}
+
+.little-gif-display {
+    display: block;
+    height: 30px;
+    background: rgba(0,0,0,0.4);
+}
+
+.super-navbackground {
+    background-color: white
+}
+
+.background-color-basic {
+    background-color: #81ba4c
+}
+
+/* silliness for a funny button */
+.silly-button:hover {
+    background: #3c36b2;
+    transform: translate(2px, -1px) skewX(3deg) skewY(-4deg);
+}
+
+.silly-button:active {
+    background: red;
+    transform: translate(-2px, 4px) skewX(3deg);
+}
+
+.in-space {
+    background-color:rgb(0, 1, 2);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items: stretch;
+    width: 100vw;
+    padding: 0px
+}
+
+.space-children {
+    flex:1;
+    padding: 3px;
+    justify-self: center;
+}
+
+.rep-text {
+    color: white;
+}
+
+.changing-letters {
+    height: 60px
+}
+
+.changing-letters-div {
+    justify-content: space-between;
+}
+
+/* Color changing text  */
+h1 {
+  font-family: monospace;
+  font-size: 3em;
+  animation: color-change 1s infinite;
+}
+
+@keyframes color-change {
+  0% { color: red; }
+  50% { color: blue; }
+  100% { color: green; }
+}
+
+.home-buttons {
+    width:140px;
+    height:30px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal-width columns */
+  gap: 10px; /* Spacing between rows and columns */
+  padding: 16px;
+  align-items: center;
+}
+
+.grid-item {
+  background-color: black;
+  padding: 0px;
+  text-align: center;
+
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(1, 1fr); /* Drops to 1 column */
+  }
 }

@@ -17,6 +17,7 @@ import NavBar from "./components/NavBar";
 import BookSearchPage from "./pages/BookSearchPage"
 import PageNotFound from "./pages/PageNotFound"
 import AddBookComponent from "./components/AddBookComponent";
+import MissionStatementPage from "./pages/MissionStatementPage";
 
 function App() {
 
@@ -24,7 +25,7 @@ function App() {
 
   return (
     // <CacheProvider value={cache}>
-      <div>
+      <div className="">
           <NavBar />
 
           <br></br>
@@ -38,6 +39,7 @@ function App() {
               <Route class="Page Not Found" path="/*?" element={<PageNotFound />} />
               <Route class="Search" path="/search" element={<BookSearchPage />} />
               <Route class="Add Book" path="/add" element={<AddBookComponent />} />
+              <Route class="Our Mission" path="/mission" element={<MissionStatementPage />} />
             </Routes>
           </div>
       </div>

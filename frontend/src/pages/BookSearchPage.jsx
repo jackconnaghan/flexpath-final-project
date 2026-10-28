@@ -10,8 +10,7 @@ function BookSearchPage() {
 
     return (
         <div className="container extend-under-navbar">
-            <h1 className="display-4 p-0">Search our database of books...</h1>
-            <div className="search-page-parent-div">
+            <div className="flexbox search-page-parent-div">
                 <div className="search-page-child-div-comp">
                     <BookSearchComponent />
                 </div>

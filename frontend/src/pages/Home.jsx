@@ -1,5 +1,9 @@
 import React, { useState } from "react";
+import LogoGif from "../../public/NormalSpeedGif.gif";
+import { Link } from 'react-router-dom';
 import "../../styles.css";
+import ChangingLetterComponent from "../components/ChangingLetterComponent";
+import AliensTogether from "../../public/aliens-together.webp";
 
 function Home() {
 
@@ -8,16 +12,50 @@ function Home() {
     //get hairy.
 
     return (
-        <div className="container extend-under-navbar">
-            <h1 className="display-4 p-0">FlexPath Final Project
-                <small className="display-6 text-muted" > (But Different...)</small>
-            </h1>
-            <p>Hello Ladies! :-)</p>
-            <div className="row">
-                <div className="col">
-                    <h1 className="display-4 p-0">Development Page</h1>
-                    <br></br>
+        <div className="extend-under-navbar">
+            <div className="in-space grid-container">
+                <img className="grid-item logo-aliens-sizing-home flex-center space-children" src={LogoGif}></img>
+                <div className="flexbox grid-item">
+                    <div className="flexbox space-children">
+                        <ChangingLetterComponent prefLetter="W" />
+                        <ChangingLetterComponent prefLetter="E" />
+                        <ChangingLetterComponent prefLetter="L" />
+                        <ChangingLetterComponent prefLetter="C" />
+                        <ChangingLetterComponent prefLetter="O" />
+                        <ChangingLetterComponent prefLetter="M" />
+                        <ChangingLetterComponent prefLetter="E" />
+                    </div>
+
+                    
+                    <h3 className="rep-text space-children">A repository for the human-minded alien</h3>
+                    <h1 className="heading-text space-children">Help Us Document the Earthlings</h1>
                 </div>
+                <img className="grid-item logo-aliens-sizing-home flex-center space-children" src={LogoGif}></img>
+
+
+
+            </div>
+            <h2 className="m-2">Our Mission</h2>
+            <p className="m-2">It is our duty to colonize the Earthling races. </p>
+            <div className="row rest-of-Home p-4 m-1">
+
+
+                <div className="col-0 flexbox container">
+                    <Link to="/search">
+                        <button className="home-buttons m-3">Find a Book</button>
+                    </Link>
+                    <Link to="/add">
+                        <button className="home-buttons m-3">Add a Book</button>
+                    </Link>
+                    <p className="m-3">Just two freaky aliens trying to make a difference.</p>
+                    <Link to="/mission">
+                        <button className="home-buttons m-3">About Us</button></Link>
+                </div>
+                <div className="col-1 flexbox container">
+
+
+                </div>
+                <img src={AliensTogether} alt="Two aliens standing together and waving to the camera" />
             </div>
         </div>
     );

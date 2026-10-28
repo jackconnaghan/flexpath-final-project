@@ -8,25 +8,30 @@ export default function useFetch() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
-    async function fetchData(baseURL, searchParams) {
+    async function fetchData(baseURL, sendingBook, method) {
         //sets error to false in case the last submission attempt
         //failed
         setLoading(true);
         setError(false);
 
-        const url = `${baseURL}${searchParams.toString()}`
+        //const url = `${baseURL}`
         //setting the setTimeout promise in this way
         //bypasses having to set the setTimeout around the try/catch
         // block, which wouldn't work anyway due to rules of hooks
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         try {
-            console.log(url);
             //the awaited Promise outside the try block
             //is still running, so the await fetch 
             //request has to wait until resolve
             //runs after 1500 mili
-            let response = await fetch(url);
+            let response = await fetch(baseURL, 
+                {
+                    method,
+                    body: JSON.stringify(sendingBook),
+                    headers: { "Content-Type":"application/json"}
+                }
+            );
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
             }

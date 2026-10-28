@@ -10,6 +10,9 @@ import FormComponent from "./FormComponent";
 // import ErrorBoundary from "./ErrorBoundary";
 
 export default function BookSearchComponent() {
+
+    const [titleInput, setTitleInput] = useState("");
+    const [authorInput, setAuthorInput] = useState("");
     // //declare states for page updates, keeping this local
     // const [input, setInput] = useState("");
     // const [filterTypeValue, setFilterTypeValue] = useState("unfiltered");

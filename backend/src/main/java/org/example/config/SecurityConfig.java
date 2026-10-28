@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 import java.util.*;
 
@@ -23,14 +25,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+        csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response
         //the .requestMatchers(Http.GET) + permitAll() methods allows the call included in
         //parentheses to be accessed by anyone, even non-users; basically
         //window shopping the authZ server
         http.authorizeHttpRequests(authZ -> authZ
-                .requestMatchers(HttpMethod.GET, "/api/books/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/books/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 //getting in through keycloak via the browster
                 .oauth2Login(Customizer.withDefaults())
                 //does some bs to allow postman tokens. Remember, refer to
@@ -41,16 +45,24 @@ public class SecurityConfig {
                                 jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 //this next part was a suggestion straight from Claude. I've read the docs on
                 // cross-site request forgery, but
-        //I have also included Claude's explanation verbatim, as I don't think I can describe it better.
-        /* CLAUDE:
-        // CSRF protects cookie-based requests. Requests carrying a bearer token
-            // can't be forged by another site (browsers never add that header on
-            // their own), so CSRF is skipped for them. That lets Postman POST/PUT/DELETE.
-         */ //END CLAUDE
-        //worst comments ever
-                //The ignoreRequestMatchers skips the forge check if there is an Authorization header
+                //I have also included Claude's explanation verbatim, as I don't think I can describe it better.
+                /* CLAUDE:
+                // CSRF protects cookie-based requests. Requests carrying a bearer token
+                    // can't be forged by another site (browsers never add that header on
+                    // their own), so CSRF is skipped for them. That lets Postman POST/PUT/DELETE.
+                 */ //END CLAUDE
+                //worst comments ever
+                //So, the below code applies a CSRF filter to the end of the filter stack.
+                /*
+                .csrf takes a lambda function with a csrf object as a param.
+                
+                 */
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null));
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(csrfHandler)
+                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null));  // Postman bearer tokens still skip it
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null));
         return http.build();
     }
 
@@ -95,7 +107,7 @@ public class SecurityConfig {
             //Loop through authorities and find the one that is an instance of OAuth2UserAuthority
             //and instance it to a new variable "oauth2UserAuth"
             for (GrantedAuthority grantedAuthority : authorities) {
-                if(grantedAuthority instanceof OAuth2UserAuthority oauth2UserAuth) {
+                if (grantedAuthority instanceof OAuth2UserAuthority oauth2UserAuth) {
                     //map all attributes of this OAuth2UserAuthority to the HashSet created
                     //and pointed to by the variable authoritiesMappedSet
                     //see additional private methods for toAuthorities and rolesFrom
