@@ -25,7 +25,7 @@ function App() {
 
   return (
     // <CacheProvider value={cache}>
-      <div className="">
+      <div className="app-background">
           <NavBar />
 
           <br></br>

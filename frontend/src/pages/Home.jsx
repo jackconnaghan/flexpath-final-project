@@ -28,7 +28,7 @@ function Home() {
 
 
                     <h3 className="rep-text space-children">A repository for the human-minded alien</h3>
-                    <h1 className="heading-text space-children">Help Us Document the Earthlings</h1>
+                    <h1 className="heading-text space-children row">Help Us Document the Earthlings</h1>
                 </div>
                 <img className="grid-item logo-aliens-sizing-home flex-center space-children" src={LogoGif}></img>
 
@@ -36,14 +36,17 @@ function Home() {
 
             </div>
             <div className="d-flex justify-content-center align-items-center">
-                <h2 className="m-3">Our Mission</h2>
-                <p className="m-3">It is our duty to colonize the Earthling races. </p>
-                <p className="m-3">Just two freaky aliens trying to make a difference.</p>
+                <div className="col-auto">
+                    <h2 className="row-auto m-3">Our Mission</h2>
+                    <p className="row-auto m-3">It is our duty to colonize the Earthling races. </p>
+                    <p className="row-autom-3">Just two freaky aliens trying to make a difference.</p>
+                </div>
+
                 {/* <div className="row rest-of-Home p-4 m-1"> */}
-                <div className="row">
-                    <div className="col ">
+                <div className="row a-center">
+                    <div className="">
                         <Link to="/search">
-                            <button className="home-buttons m-3">Find a Book</button>
+                            <button className="home-buttons col m-3">Find a Book</button>
                         </Link>
                         <Link to="/add">
                             <button className="home-buttons m-3">Add a Book</button>
@@ -53,7 +56,7 @@ function Home() {
                             <button className="home-buttons hover-home m-3">About Us</button></Link>
                         <button className="home-buttons m-3">Donate</button>
                     </div>
-                    <div className="col">
+                    <div className="col-auto aliens-together">
                         <img src={AliensTogether} alt="Two aliens standing together and waving to the camera" />
                     </div>
 

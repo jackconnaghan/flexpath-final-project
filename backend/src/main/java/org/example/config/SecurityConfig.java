@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,9 +26,18 @@ import java.util.*;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository crr) throws Exception {
         CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
-        csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response
+        csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response.
+        //opts out of deferral by Spring and makes the token load on every request, so the token is rewritten on each response.
+
+        /*
+        Logout Handler that handles logouts for all clients in the crr.
+        Spring Security function that allows outside apps (React) to log a user out of a keycloak-cloaked account
+         */
+        OidcClientInitiatedLogoutSuccessHandler logoutHandler =
+                new OidcClientInitiatedLogoutSuccessHandler(crr);
+        logoutHandler.setPostLogoutRedirectUri("{baseURL}/");
         //the .requestMatchers(Http.GET) + permitAll() methods allows the call included in
         //parentheses to be accessed by anyone, even non-users; basically
         //window shopping the authZ server
@@ -57,12 +68,40 @@ public class SecurityConfig {
                 .csrf takes a lambda function with a csrf object as a param.
 
                  */
+                // 1. set CSRF function up for custom config
                 .csrf(csrf -> csrf
+                        /* 2.csrfTokenRepository rewrites where Spring Security looks for the csrf token.
+                         The default repo is HttpSessionCsrfTokenRepository, which keeps the csrf token in the server-side connection.
+                         React would not be able to access something on the backend, so the token would be unavailable.
+                         csrfTokenRepository(x) changes the repo to x.
+                         CookieCsrfTokenRepository is pretty self-explanatory: The csrf token gets stored in the cookie
+                         sent to the frontend, which is called a XSRF-TOKEN. The XSRF-TOKEN gets placed in a header
+                         on the cookie called X-XSRF-TOKEN. .withHttpOnlyFalse() sets the cookie's httpOnly flag off.
+                         When the flag is ON, the cookie can't be accessed by the frontend, but when it's OFF,
+                         the cookie can be accessed with document.cookie. withHttpOnlyFalse only sets the XSRF TOKEN to off,
+                         it keeps the JSESSION cookie hidden from the frontend.
+                         */
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        /*
+                        sets the csrfTokenRequestAttributeHandler to handle the csrf token.
+                        I know that sounds cyclical but I promise it matters.
+                        .csrfTokenRequestHandler SETS which handler is going to handle csrfs in the .csrf chain,
+                        and making csrfHandler makes sure that this is a new cookie on every login.
+                         */
                         .csrfTokenRequestHandler(csrfHandler)
-                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null));  // Postman bearer tokens still skip it
-//                .csrf(csrf -> csrf
-//                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null));
+                        /*
+                        finally, .ignoringRequestMatchers bypasses csrf checks on a request that features an Authentication header.
+                        This allows Postman to send requests, as each Postman request will include an Authorization: Bearer token,
+                        which the browser will not do automatically on its own. So, if a request has an authorization header at all,
+                         */
+                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null))  // Postman bearer tokens still skip it
+                /*
+                FINALLY finally, logout sets a logoutHandler to...handle logouts that derive from the http request.
+                We gave the logoutHandler the ClientRegistrationRepository and set the redirect link to the baseURL of
+                the frontend (localhost:5173). This allows React to log users out and send them right back to the
+                frontend home page.
+                 */
+                .logout(logout -> logout.logoutSuccessHandler(logoutHandler));
         return http.build();
     }
 
@@ -152,10 +191,14 @@ public class SecurityConfig {
         return List.of();
     }
 
+//    private static Collection<GrantedAuthority> rolesFrom(Map <String, Object> claims) {
+//
+//    }
+
     //prefixes those claims with "ROLE_"
     private static List<GrantedAuthority> toAuthorities(Collection<String> roles) {
         return roles.stream()
-                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role))
+                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
                 .toList();
     }
 

@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+/*
+----------NOTICE----------
+This ProfileController class has been changed from the seed project.
+It now makes a basic login request so users can log in to their account and
+have their creds checked before adding a book to the database.
+ */
 @RestController
 @RequestMapping("/api")
 public class ProfileController {

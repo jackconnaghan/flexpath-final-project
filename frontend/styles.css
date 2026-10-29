@@ -124,8 +124,14 @@ a.active {
 
 .logo-aliens-sizing-home {
     display: block;
-    height: 120px;
+    height: 220px;
     width: auto;
+}
+@media screen and (max-width: 768px) {
+    .logo-aliens-sizing-home {
+        display:none;
+        /* Drops to 1 column */
+    }
 }
 
 .little-gif-display {
@@ -159,7 +165,8 @@ a.active {
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
-    width: 100vw;
+    
+    width: 100%;
     padding: 0px
 }
 
@@ -323,4 +330,11 @@ button.hover-home:hover {
 
 BookSearchPage {
     justify-content: center;
+}
+
+.app-background {
+    background-color: lightgreen;
+}
+
+.aliens-together {
 }
