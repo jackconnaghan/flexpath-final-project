@@ -8,12 +8,8 @@ export default function GlobalLayoutComponent({ children }) {
         <div className="layout-wrapper">
             <div className="cow-gutter left-cow-gutter">
                 <div className="inner-cow-gutter row">
-                    <img src={Book} className="the-cow-left" />
-                    <img src={Cow} className="the-cow-left" />
-                    <img src={Cow} className="the-cow-left" />
                     <img src={Cow} className="the-cow-left" />
                 </div>
-
             </div>
 
             <main className="">
@@ -22,11 +18,7 @@ export default function GlobalLayoutComponent({ children }) {
 
             <div className="cow-gutter right-cow-gutter">
                 <div className="inner-cow-gutter row">
-                    <img src={Cow} className="the-cow-right" />
-                    <img src={Cow} className="the-cow-right" />
-                    <img src={Book} className="the-cow-right" />
-                    <img src={Cow} className="the-cow-right" />
-
+                    <img src={Cow} className="first-cow-right" />
                 </div>
 
             </div>

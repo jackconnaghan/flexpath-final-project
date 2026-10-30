@@ -1,4 +1,6 @@
 import { useState } from "react";
+//import { getCookie } from "../logic/getCookie";
+import keycloak from "../keycloak";
 
 //for my next trick, I will create a custom hook
 //to take care of fetching data from the server
@@ -25,17 +27,35 @@ export default function useFetch() {
             //is still running, so the await fetch 
             //request has to wait until resolve
             //runs after 1500 mili
+            const headers = {};
+
+            if (sendingBook) {
+                headers["Content-Type"] = "application/json";
+            }
+
+            if (keycloak.authenticated) {
+                try {
+                    await keycloak.updateToken(30); //keeps token updated, doesn't log user out so quickly
+                } catch {
+                    // The refresh token is also expired: the Keycloak session is over
+                    keycloak.login({ redirectUri: window.location.href });
+                    return;
+                }
+                headers.Authorization = `Bearer ${keycloak.token}`;
+            }
+
             let response = await fetch(baseURL,
                 {
                     method,
-                    body: JSON.stringify(sendingBook),
+                    body: sendingBook ? JSON.stringify(sendingBook) : undefined,
                     headers: { "Content-Type": "application/json" }
                 }
             );
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
-            let responseData = await response.json();
+            //check for empty response data via successful response code
+            let responseData = response.status === 204 ? null : await response.json();
             setResponse(responseData);
             console.log(`response length: ${responseData.length}`);
 

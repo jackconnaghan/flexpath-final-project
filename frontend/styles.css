@@ -401,13 +401,19 @@ BookSearchPage {
     animation-timing-function: linear;
 }
 
-.the-cow-right {
+.first-cow-right {
     height: 70px;
     width: auto;
     animation: cow-movement-right 16s infinite;
     animation-timing-function: linear;
 }
-
+ 
+.second-cow-right {
+    height:70px;
+    width: auto;
+    animation: cow-movement-right 19s infinite;
+    animation-timing-function: linear;
+}
 
 @keyframes cow-movement-left {
     0% {
@@ -422,7 +428,7 @@ BookSearchPage {
     0% {
         transform: translateY(100vh)
     }
-    10% {
+    30% {
         transform: translateY(100vh);
     }
     100% {
@@ -430,8 +436,18 @@ BookSearchPage {
     }
 }
 
+.home-button-layout {
+    align-items: center;
+    text-align: center;
+    flex-direction:row;
+}
 
-
+@media (max-width: 768px) {
+    .home-button-layout {
+        flex-direction: column;
+        justify-items: center;
+    }
+}
 
 #root,
 .app,

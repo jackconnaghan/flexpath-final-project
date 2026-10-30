@@ -14,8 +14,8 @@ function Home() {
     return (
         <div className="extend-under-navbar container">
             <div className="in-space">
-                <div className="row">
-                    <img className="col-2 home-logo-no-stretch" src={LogoGif}></img>
+                <div className="row justify-content-center align-items-center">
+                    <img className="col-1 home-logo-no-stretch" src={LogoGif}></img>
                     <div className="row col">
                         <div className="col text-center">
                             <ChangingLetterComponent prefLetter="W" />
@@ -32,13 +32,25 @@ function Home() {
                             <h1 className="text-center">Help Us Document the Earthlings</h1>
                         </div>
                     </div>
-                    <img className="col-2 home-logo-no-stretch" src={LogoGif}></img>
+                    <img className="col-1 home-logo-no-stretch" src={LogoGif}></img>
 
 
                 </div>
             </div>
 
-            <div></div>
+            <div>
+                <div className="col home-button-layout">
+                        <Link to="/search">
+                            <button className="col home-buttons hover-home m-3">Find a Book</button>
+                        </Link>
+                        <Link to="/add">
+                            <button className="col home-buttons hover-home m-3">Add a Book</button>
+                        </Link>
+                        <Link to="/mission">
+                            <button className="col home-buttons hover-home m-3">About Us</button></Link>
+                        <button className="col home-buttons hover-home m-3">Donate</button>
+                </div>
+            </div>
             <div></div>
         </div>
     )

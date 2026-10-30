@@ -48,12 +48,12 @@ public class BookDao {
     }
 
     public List<Book> getAllBooks() {
-        return jdbcTemplate.query("SELECT * FROM books;", this::mapToBook);
+        return jdbcTemplate.query("SELECT * FROM books ORDER BY title ASC;", this::mapToBook);
     }
 
     public Book getBookById(Long bookId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=?;", this::mapToBook, bookId);
+            return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=? ORDER BY title ASC;", this::mapToBook, bookId);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -62,7 +62,7 @@ public class BookDao {
 
     public List<Book> getBookByTitle(String title) {
         try {
-            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ?;", this::mapToBook, "%" + title + "%");
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ? ORDER BY title ASC;", this::mapToBook, "%" + title + "%");
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -71,7 +71,7 @@ public class BookDao {
 
     public List<Book> getBookByAuthor(String author) {
         try {
-            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(author) LIKE ?;", this::mapToBook, "%" + author + "%");
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(author) LIKE ? ORDER BY title ASC;", this::mapToBook, "%" + author + "%");
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -80,7 +80,7 @@ public class BookDao {
 
     public List<Book> getBooksWithKeywords(String title, String author) {
         try {
-            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ? AND LOWER(author) LIKE ?;", this::mapToBook, "%" + title + "%", "%" + author + "%");
+            return jdbcTemplate.query("SELECT * FROM books WHERE LOWER(title) LIKE ? AND LOWER(author) LIKE ? ORDER BY title ASC;", this::mapToBook, "%" + title + "%", "%" + author + "%");
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;

@@ -3,7 +3,8 @@ import { useState, useDeferredValue } from "react";
 import FormComponent from "../components/FormComponent";
 import useFetch from "../hooks/useFetch";
 import TextResponseComponent from "./TextResponseComponent";
-import FasterLogo from "../../public/FasterLoadingGif.gif"
+import FasterLogo from "../../public/FasterLoadingGif.gif";
+import { getCookie } from "../logic/getCookie";
 
 export default function AddBookComponent () {
 
@@ -23,6 +24,7 @@ export default function AddBookComponent () {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        // const xsrf = getCookie("XSRF-TOKEN");
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
         const sendingBook = {

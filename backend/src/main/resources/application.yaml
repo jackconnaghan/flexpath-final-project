@@ -8,10 +8,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "http://localhost:8090/realms/book-review-app"
-          jwk-set-uri: "http://localhost:8090/realms/book-review-app/protocol/openid-connect/certs"
-          authorities-claim-name: roles
-          authority-prefix: ROLE_
-          principal-claim-name: preferred_username
+#          jwk-set-uri: "http://localhost:8090/realms/book-review-app/protocol/openid-connect/certs"
+#          authorities-claim-name: roles
+#          authority-prefix: ROLE_
+#          principal-claim-name: preferred_username
 #      client:
 #        registration:
 #          book-review-client:
@@ -24,19 +24,23 @@ spring:
 #        provider:
 #          keycloak:
 #            issuer-uri: "http://localhost:8090/realms/book-review-app"
-      client:
-        registration:
-          book-review-client:
-            client-id: book-review-client
-            client-secret: qp5vzW6Ip7piueG94NIZaJUAXbWGkf7lIe2MgSl66JbJ1ODRzKNT7tc2R8ZLL6kgIBMgSXTprZz8qjs5iXzDGd
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            authorization-grant-type: authorization_code
-            scope: openid, profile
-            provider: keycloak
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8090/realms/book-review-app
-            user-name-attribute: preferred_username
+
+      #use the below if you're using Spring to hold the token (see my writeup)
+#      client:
+#        registration:
+#          book-review-client:
+#            client-id: book-review-client
+#            client-secret: qp5vzW6Ip7piueG94NIZaJUAXbWGkf7lIe2MgSl66JbJ1ODRzKNT7tc2R8ZLL6kgIBMgSXTprZz8qjs5iXzDGd
+#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#            authorization-grant-type: authorization_code
+#            scope: openid, profile
+#            provider: keycloak
+#        provider:
+#          keycloak:
+#            issuer-uri: http://localhost:8090/realms/book-review-app
+#            user-name-attribute: preferred_username
+
+
 #        resourceserver:
 #          jwt:
 #          issuer-uri: http://localhost:8090/realms/book-review-app

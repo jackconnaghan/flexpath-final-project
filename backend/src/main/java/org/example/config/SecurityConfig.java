@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -25,8 +26,11 @@ import java.util.*;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository crr) throws Exception {
+
+    //10/29/2026 REMOVED BEAN TAG so this doens't get called
+    //see the one we're gonna use for keycloak-js below
+    //@Bean
+    public SecurityFilterChain unusedSecurityFilterChain(HttpSecurity http, ClientRegistrationRepository crr) throws Exception {
         CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
         csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response.
         //opts out of deferral by Spring and makes the token load on every request, so the token is rewritten on each response.
@@ -105,6 +109,27 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .anyRequest().authenticated())
+
+                // Verify bearer tokens from Keycloak, using the converter below
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+
+                // Never create or use a server-side session
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // No cookies carry identity, so there's nothing for CSRF to protect
+                .csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
+
     /*
     Lots going on here. This was another concept introduced to me by Claude. I have included my notes
     on this subject here, for ease of reference.
@@ -136,7 +161,9 @@ public class SecurityConfig {
 
     The two beans below
      */
-    @Bean
+
+    //REMOVED BEAN 10/30 because it's not needed unless using Spring as the token repo
+    //@Bean
     public GrantedAuthoritiesMapper rolesMapper() {
         //receive original authorities and make a new set which now includes roles
         return authorities -> {
@@ -171,6 +198,10 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> toAuthorities(rolesFrom(jwt.getClaims())));
         return jwtAuthenticationConverter;
     }
+
+
+    //THE BELOW METHODS ARE GERMAINE TO THE SPRING TOKEN HANDLER VERSION OF THIS PROJECT. DO NOT USE WITH
+    //THE KEYCLOAK-JS VERSION
 
     //private method that fetches roles from a given Map of claims
     private static Collection<String> rolesFrom(Map<String, Object> claims) {
