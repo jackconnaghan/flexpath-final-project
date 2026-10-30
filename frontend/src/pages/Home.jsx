@@ -12,6 +12,37 @@ function Home() {
     //get hairy.
 
     return (
+        <div className="extend-under-navbar container">
+            <div className="in-space">
+                <div className="row">
+                    <img className="col-2 home-logo-no-stretch" src={LogoGif}></img>
+                    <div className="row col">
+                        <div className="col text-center">
+                            <ChangingLetterComponent prefLetter="W" />
+                            <ChangingLetterComponent prefLetter="E" />
+                            <ChangingLetterComponent prefLetter="L" />
+                            <ChangingLetterComponent prefLetter="C" />
+                            <ChangingLetterComponent prefLetter="O" />
+                            <ChangingLetterComponent prefLetter="M" />
+                            <ChangingLetterComponent prefLetter="E" />
+
+                        </div>
+                        <div className="row">
+                            <h3 className="text-center">A repository for the human-minded alien</h3>
+                            <h1 className="text-center">Help Us Document the Earthlings</h1>
+                        </div>
+                    </div>
+                    <img className="col-2 home-logo-no-stretch" src={LogoGif}></img>
+
+
+                </div>
+            </div>
+
+            <div></div>
+            <div></div>
+        </div>
+    )
+    return (
         <div className="extend-under-navbar">
             <div className="in-space grid-container">
                 <img className="grid-item logo-aliens-sizing-home flex-center space-children" src={LogoGif}></img>
@@ -43,7 +74,7 @@ function Home() {
                 </div>
 
                 {/* <div className="row rest-of-Home p-4 m-1"> */}
-                <div className="row a-center">
+                <div className="row">
                     <div className="">
                         <Link to="/search">
                             <button className="home-buttons col m-3">Find a Book</button>

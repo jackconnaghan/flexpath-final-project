@@ -3,7 +3,7 @@ Another thing stolen from Midterm Project
 */
 
 .error-text {
-    color: "red";
+    color: red;
 }
 
 /* THis is SOOOooOO silly */
@@ -17,7 +17,7 @@ Another thing stolen from Midterm Project
 
 .custom-lead {
     margin: 22px 22px 22px 10px;
-    text-align: "right";
+    text-align: right;
 }
 
 .gif-load {
@@ -29,17 +29,17 @@ Another thing stolen from Midterm Project
 
 .custom-card-display {
     padding: 3px 3px 3px 3px;
-    text-align: "center";
+    text-align: center;
 }
 
 .custom-text {
-    text-align: "center";
+    text-align: center;
 }
 
 .custom-footer {
     background-color: #81ba4c;
-    border-style: "solid";
-    border-color: "coral";
+    border-style: solid;
+    border-color: coral;
     border-width: 10px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 100;
@@ -47,13 +47,13 @@ Another thing stolen from Midterm Project
 }
 
 .custom-footer-text {
-    color: "yellow";
+    color: yellow;
     text-shadow: 5px 5px 5px rgb(0, 81, 255);
     font-size: 30px;
 }
 
 .freaky-bug {
-    display: "flex";
+    display: flex;
     height: 50px;
     box-shadow: 20px 10px 15px rgb(255, 17, 17);
 }
@@ -127,9 +127,10 @@ a.active {
     height: 220px;
     width: auto;
 }
+
 @media screen and (max-width: 768px) {
     .logo-aliens-sizing-home {
-        display:none;
+        display: none;
         /* Drops to 1 column */
     }
 }
@@ -164,10 +165,9 @@ a.active {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: stretch;
-    
+    align-items: center;
     width: 100%;
-    padding: 0px
+    height: 100%
 }
 
 .space-children {
@@ -238,7 +238,6 @@ h1 {
     height: 100px;
     border-radius: 55px;
     background-color: #81ba4c
-
 }
 
 button.hover-home:hover {
@@ -249,15 +248,19 @@ button.hover-home:hover {
     0% {
         background-color: #81ba4c;
     }
+
     30% {
         background-color: darkseagreen;
     }
+
     60% {
         background-color: green;
     }
+
     90% {
         background-color: lightgreen
     }
+
     100% {
         background-color: #81ba4c;
     }
@@ -305,6 +308,7 @@ button.hover-home:hover {
     width: 44rem;
     max-width: 100%;
 }
+
 @media (max-width: 768) {
     .search-form {
         justify-content: right;
@@ -312,7 +316,8 @@ button.hover-home:hover {
 }
 
 .search-form input {
-    width: 100%;           /* inputs fill the fixed-width form */
+    width: 100%;
+    /* inputs fill the fixed-width form */
 }
 
 .row-container {
@@ -320,12 +325,13 @@ button.hover-home:hover {
     flex-direction: row;
     align-items: center;
 }
+
 /* When the viewport width is 768px or smaller, turn into a column */
 @media (max-width: 768px) {
-  .row-container {
-    flex-direction:column;
-    justify-items: center;
-  }
+    .row-container {
+        flex-direction: column;
+        justify-items: center;
+    }
 }
 
 BookSearchPage {
@@ -336,5 +342,106 @@ BookSearchPage {
     background-color: lightgreen;
 }
 
-.aliens-together {
+.aliens-together {}
+
+.home-logo-no-stretch {
+    height: 220px;
+    width: auto;
+
+}
+
+/* layout for the floating cow gutters */
+.layout-wrapper {
+    display: grid;
+    grid-template-columns: minmax(2rem, 1fr) minmax(auto, 1200px) minmax(2rem, 1fr);
+    min-height: 100vh;
+    background-color: lightgreen;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.middle-page-layout {
+    grid-column: 2;
+}
+
+.cow-gutter {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #53248a;
+    grid-template-columns: minmax(2rem, 1fr) minmax(auto, 120px) minmax(2rem, 1fr);
+    position:sticky;
+}
+
+.inner-cow-gutter {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: lightgoldenrodyellow;
+    max-width: 60%;
+    height: 100%;
+    align-content: center;
+}
+
+.cow-data {}
+
+.left-cow-gutter {
+    grid-column: 1;
+}
+
+.right-cow-gutter {
+    grid-column: 3
+}
+
+.the-cow-left {
+    height: 70px;
+    width: auto;
+    animation: cow-movement-left 16s infinite;
+    animation-timing-function: linear;
+}
+
+.the-cow-right {
+    height: 70px;
+    width: auto;
+    animation: cow-movement-right 16s infinite;
+    animation-timing-function: linear;
+}
+
+
+@keyframes cow-movement-left {
+    0% {
+        transform: translateY(100vh)
+    }
+    100% {
+        transform: translateY(0vh);
+    }
+}
+
+@keyframes cow-movement-right {
+    0% {
+        transform: translateY(100vh)
+    }
+    10% {
+        transform: translateY(100vh);
+    }
+    100% {
+        transform: translateY(0vh);
+    }
+}
+
+
+
+
+#root,
+.app,
+app-root {
+    width: 100vw;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: lightgreen;
+}
+
+.bg-sky-purple {
+    background-color: #53248a;
 }

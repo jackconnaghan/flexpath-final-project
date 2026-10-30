@@ -15,7 +15,7 @@ export default function NavBar() {
     return (
         <div className="">
             {/* <h1>Hidden Search Page to Simulate Padding</h1> */}
-            <nav className="navbar navbar-dark bg-black fixed-top flex-gap super-navbackground gap-3"
+            <nav className="navbar navbar-dark bg-sky-purple fixed-top flex-gap super-navbackground gap-3"
                 style={{ alignItems: "center", padding:"16px 16px", justifyContent: "left"}}>
                 <Link to={"/"}><img src={Logo} className="little-gif-display"></img></Link>
                 <NavLink to={"/"}>Home</NavLink>
