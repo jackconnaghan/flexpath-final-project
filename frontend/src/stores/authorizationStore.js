@@ -42,6 +42,7 @@ export function syncAuthFromKeycloak() {
 }
 
 //these set events so they point back to the syncAuth function above
+keycloak.onAuthSuccess = syncAuthFromKeycloak;
 keycloak.onAuthLogout = syncAuthFromKeycloak;
 keycloak.onAuthRefreshError = syncAuthFromKeycloak;
 

@@ -18,6 +18,7 @@ import BookSearchPage from "./pages/BookSearchPage"
 import PageNotFound from "./pages/PageNotFound"
 import AddBookComponent from "./components/AddBookComponent";
 import MissionStatementPage from "./pages/MissionStatementPage";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
 
@@ -38,7 +39,12 @@ function App() {
               {/* <Route class="Search Page" path="/search" element={<SearchResults />} /> */}
               <Route class="Page Not Found" path="/*?" element={<PageNotFound />} />
               <Route class="Search" path="/search" element={<BookSearchPage />} />
-              <Route class="Add Book" path="/add" element={<AddBookComponent />} />
+              <Route class="Add Book" path="/add" element={
+                <RequireAuth role="ROLE_USER">
+                  <AddBookComponent />
+                </RequireAuth>
+                
+                } />
               <Route class="Our Mission" path="/mission" element={<MissionStatementPage />} />
             </Routes>
           </div>

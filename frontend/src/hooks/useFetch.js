@@ -41,14 +41,14 @@ export default function useFetch() {
                     keycloak.login({ redirectUri: window.location.href });
                     return;
                 }
-                headers.Authorization = `Bearer ${keycloak.token}`;
+                headers.authorization = `Bearer ${keycloak.token}`;
             }
 
             let response = await fetch(baseURL,
                 {
                     method,
                     body: sendingBook ? JSON.stringify(sendingBook) : undefined,
-                    headers: { "Content-Type": "application/json" }
+                    headers,
                 }
             );
             if (!response.ok) {

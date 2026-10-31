@@ -47,21 +47,21 @@ public class BookController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public Book createBook(@RequestBody Book book) { return bookDao.createBook(book); }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Book updateBook(@RequestBody Book book) { return bookDao.updateBook(book); }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update-id")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Book updateBookById(@RequestBody Book book, @RequestParam Long id) {return bookDao.updateBookById(book, id);}
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public int deleteBookById(@PathVariable Long id) {
         return bookDao.deleteBookById(id);
     }
