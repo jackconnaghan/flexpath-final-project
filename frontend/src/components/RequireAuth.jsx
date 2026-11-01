@@ -15,11 +15,11 @@ export default function RequireAuth({ children, role }) {
             <div className="text-center my-5">
                 <p>You need an account to add a book.</p>
                 <button type="button" className="btn btn-success me-2"
-                        onClick={() => keycloak.login({ redirectUri: here })}>
+                    onClick={() => keycloak.login({ redirectUri: here })}>
                     Log in
                 </button>
                 <button type="button" className="btn btn-outline-success"
-                        onClick={() => keycloak.register({ redirectUri: here })}>
+                    onClick={() => keycloak.register({ redirectUri: here })}>
                     Create an account
                 </button>
             </div>

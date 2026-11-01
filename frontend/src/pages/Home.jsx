@@ -12,7 +12,7 @@ function Home() {
     //get hairy.
 
     return (
-        <div className="extend-under-navbar container">
+        <div className="extend-under-navbar">
             <div className="in-space">
                 <div className="row justify-content-center align-items-center">
                     <img className="col-1 home-logo-no-stretch" src={LogoGif}></img>

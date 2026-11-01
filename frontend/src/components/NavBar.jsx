@@ -9,20 +9,29 @@ import LittleBabyGif from "../../public/LittleBabyGif.gif";
 import Logo from "../../public/LogoNoBackground.png";
 import "../../styles.css"
 //import SearchComponent from "./SearchComponent";
+import ShowAuth from "./ShowAuth";
 
 export default function NavBar() {
 
     return (
         <div className="">
             {/* <h1>Hidden Search Page to Simulate Padding</h1> */}
-            <nav className="navbar navbar-dark bg-sky-purple fixed-top flex-gap super-navbackground gap-3"
-                style={{ alignItems: "center", padding:"16px 16px", justifyContent: "left"}}>
-                <Link to={"/"}><img src={Logo} className="little-gif-display thumbnail"></img></Link>
-                <NavLink to={"/"}>Home</NavLink>
-                <NavLink to={"/search"}>Search Books</NavLink>
-                <NavLink to={"/add"}>Add A Book</NavLink>
-                <NavLink to={'/mission'}>Mission Statement</NavLink>
-                
+            <nav className="navbar navbar-dark bg-sky-purple fixed-top flex-gap super-navbackground gap-3 log-buttons-holder"
+                style={{ alignItems: "center", padding: "16px 16px", justifyContent: "left" }}>
+                <div className="">
+                    <Link to={"/"}><img src={Logo} className="little-gif-display thumbnail"></img></Link>
+                    <NavLink to={"/"}>Home</NavLink>
+                    <NavLink to={"/search"}>Search Books</NavLink>
+                    <NavLink to={"/add"}>Add A Book</NavLink>
+                    <NavLink to={'/mission'}>Mission Statement</NavLink>
+                </div>
+                <div className="col-5">
+                     <ShowAuth role="ROLE_USER">
+                    <NavLink to={'/myaccount'}>My Account</NavLink>
+                </ShowAuth>
+                </div>
+
+
 
             </nav>
             {/* Regarding these breaks: The internet's solution

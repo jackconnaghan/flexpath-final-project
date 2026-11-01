@@ -8,7 +8,7 @@ Another thing stolen from Midterm Project
 
 /* THis is SOOOooOO silly */
 .extend-under-navbar {
-    padding-top: 60px;
+    padding-top: 38px;
 }
 
 .hehe-funny {
@@ -167,7 +167,7 @@ a.active {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
 .space-children {
@@ -470,4 +470,23 @@ app-root {
 
 .bg-sky-purple {
     background-color: #53248a;
+}
+
+.log-buttons {
+    max-height: 40px;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.log-buttons-holder {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.navbar-left-side {
+    justify-content:left;
+    align-items: center;
+    padding:16px 16px;
 }
