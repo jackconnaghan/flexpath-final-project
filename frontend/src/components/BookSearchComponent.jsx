@@ -6,8 +6,8 @@ import useFetch from "../hooks/useFetch";
 // import useFetch from "../hooks/useFetch";
 // import SearchMetricCardsComponent from "./SearchMetricCardsComponent";
 import SearchTableComponent from "./SearchTableComponent";
-import SearchFormComponent from "./FormComponent";
-import TextResponseComponent from "./TextResponseComponent";
+import SearchFormComponent from "./SearchFormComponent";
+import SearchTextResponseComponent from "./SearchTextResponseComponent";
 import ErrorBoundary from "./ErrorBoundary";
 import FasterLogo from "../../public/FASTERCompressedLogo.gif";
 import NormalSpeedLogo from "../../public/NormalSpeedGif.gif";
@@ -21,7 +21,7 @@ export default function BookSearchComponent({ method }) {
     const [authorInput, setAuthorInput] = useState("");
 
     // pulling object from useFetch that gives us all vars in that hook
-    const { fetchSearchData, setResponse, response, loading, error } = useFetch();
+    const { fetchSearchData, setResponse, response, loading, error, statusCode } = useFetch();
 
     // //this pulls the exact variables from
     // //CacheResults Context and allows them to
@@ -121,7 +121,7 @@ This avoids a wasted first render with empty data, and there’s no effect that 
                 <img src={loading ? FasterLogo : Landed} className="gif-load" />
             </div>
             <ErrorBoundary>
-                <TextResponseComponent response={response} loading={loading} error={error} />
+                <SearchTextResponseComponent response={response} loading={loading} error={error} status={statusCode}/>
             </ErrorBoundary>
             <SearchTableComponent response={response} />
         </div>

@@ -9,18 +9,9 @@ function AddBookPage() {
     //get hairy.
 
     return (
-        <div className="container extend-under-navbar">
-            <h1 className="display-4 p-0">Search our database of books...</h1>
-            <div className="search-page-parent-div">
-                <div className="search-page-child-div-comp">
-                    <AddBookComponent />
-                </div>
-                <div className="search-page-child-div-side">
-                    <h4>Hai</h4>
-                </div>
-            </div>
-
-
+        <div className="extend-under-navbar search-just">
+            <h1 className="m-5">Add to our collection of Earthling "knowledge"...</h1>
+                    <AddBookComponent className="col-auto"/>
         </div>
     );
 }

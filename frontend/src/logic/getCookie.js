@@ -1,3 +1,9 @@
+/*
+NOT NEEDED FOR KEYCLOAK-JS FRAMEWORK
+*/
+
+
+
 import React from "react";
 
 export function getCookie(name) {

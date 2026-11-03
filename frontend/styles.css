@@ -219,6 +219,10 @@ h1 {
     animation: btn-color-change 3s infinite;
 }
 
+button.sexy-button:hover {
+    animation: btn-color-change 1s infinite;
+}
+
 @keyframes btn-color-change {
     0% {
         background-color: green;
@@ -345,6 +349,9 @@ BookSearchPage {
 .aliens-together {
     width: 300px;
     height: auto;
+    padding-bottom: 30px;
+    padding-top: 10px;
+
 
 }
 
@@ -375,7 +382,7 @@ BookSearchPage {
     align-items: center;
     background-color: #53248a;
     grid-template-columns: minmax(2rem, 1fr) minmax(auto, 120px) minmax(2rem, 1fr);
-    position:sticky;
+    position: sticky;
 }
 
 .inner-cow-gutter {
@@ -411,9 +418,9 @@ BookSearchPage {
     animation: cow-movement-right 16s infinite;
     animation-timing-function: linear;
 }
- 
+
 .second-cow-right {
-    height:70px;
+    height: 70px;
     width: auto;
     animation: cow-movement-right 19s infinite;
     animation-timing-function: linear;
@@ -423,6 +430,7 @@ BookSearchPage {
     0% {
         transform: translateY(100vh)
     }
+
     100% {
         transform: translateY(0vh);
     }
@@ -432,9 +440,11 @@ BookSearchPage {
     0% {
         transform: translateY(100vh)
     }
+
     30% {
         transform: translateY(100vh);
     }
+
     100% {
         transform: translateY(0vh);
     }
@@ -443,7 +453,7 @@ BookSearchPage {
 .home-button-layout {
     align-items: center;
     text-align: center;
-    flex-direction:row;
+    flex-direction: row;
 }
 
 @media (max-width: 768px) {
@@ -486,7 +496,45 @@ app-root {
 }
 
 .navbar-left-side {
-    justify-content:left;
+    justify-content: left;
     align-items: center;
-    padding:16px 16px;
+    padding: 16px 16px;
+}
+
+.custom-input {
+    max-width: 280px;
+}
+
+.button.sexy-button:disabled {
+    background-color: gray;
+}
+
+.form-content-layout {
+    justify-content: center;
+    align-items: center;
+}
+
+.rainbow-text {
+    color: white;
+}
+
+.small-adjustment {
+    transform:translateX(-10px)
+}
+
+.text-warn {
+    color: red;
+}
+
+sexy-btn[type=button]:disabled {
+  color: red;
+  opacity: 0.5;
+}
+
+.align-add-book-content {
+    align-items: center;
+}
+
+.search-page-inputs {
+    padding-left: 50px;
 }

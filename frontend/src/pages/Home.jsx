@@ -17,7 +17,7 @@ function Home() {
                 <div className="row justify-content-center align-items-center">
                     <img className="col-1 home-logo-no-stretch" src={LogoGif}></img>
                     <div className="row col">
-                        <div className="col text-center">
+                        <div className="col text-center small-adjustment">
                             <ChangingLetterComponent prefLetter="W" />
                             <ChangingLetterComponent prefLetter="E" />
                             <ChangingLetterComponent prefLetter="L" />
@@ -28,8 +28,8 @@ function Home() {
 
                         </div>
                         <div className="row">
-                            <h3 className="text-center">A repository for the human-minded alien</h3>
                             <h1 className="text-center">Alien Book Club</h1>
+                            <h3 className="text-center rainbow-text">A repository for the human-minded alien</h3>
                         </div>
                     </div>
                     <img className="col-1 home-logo-no-stretch" src={LogoGif}></img>
@@ -46,6 +46,9 @@ function Home() {
                     <Link to="/add">
                         <button className="col home-buttons hover-home m-3">Add a Book</button>
                     </Link>
+                    <Link to="/wishlists">
+                        <button className="col home-buttons hover-home m-3">Wishlists</button>
+                    </Link>
                     <Link to="/mission">
                         <button className="col home-buttons hover-home m-3">About Us</button></Link>
                     <button className="col home-buttons hover-home m-3">Donate</button>
@@ -57,8 +60,8 @@ function Home() {
                     alt="Two aliens standing together and waving to the camera" />
             </div>
             <div className="home-button-layout">
-                <p className="funny-home-text">We're just two freaky alien dudes trying to make a difference.</p>
-                <p className="funny-home-text">We're trying to take over planet Earth, one book at a time.</p>
+                <p className="funny-home-text">We're just two freaky alien dudes with one crazy idea.</p>
+                <p className="funny-home-text">We're taking over planet Earth, one book at a time.</p>
                 <p className="funny-home-text">But we can't do it alone.</p>
                 <p className="funny-home-text">Help us document the human race's literary "achievements".</p>
             </div>

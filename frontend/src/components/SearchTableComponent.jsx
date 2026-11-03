@@ -1,8 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useState } from "react";
 
 export default function SearchTableComponent({ response }) {
 
+    const [modal, setModal] = useState(false);
     const dataAreas = [
         "Title",
         "Author",
@@ -11,8 +13,22 @@ export default function SearchTableComponent({ response }) {
         "Pages"
     ];
 
+    function handleSendToReview(e, item) {
+
+        fetchData("")
+        
+    }
+
+    function openModal(e) {
+        setModal(false);
+
+    }
+
     return (
         <table className="table container-fluid px-0 table-striped w-100%">
+            <a href="#terms" onClick={openModal()} >
+                Practice Modal
+            </a>
             <thead>
                 <tr>
                     {dataAreas.map((item, key) => (
@@ -23,7 +39,8 @@ export default function SearchTableComponent({ response }) {
             <tbody>
                 {(response?.length > 0) && (
                     response.map(item => (
-                        <tr className="" key={item["title"]}>
+                        //pass the iterator at the top level
+                        <tr className="col" key={item["title"]}>
 
                             <td>{item["title"]}</td>
                             <td>{item["author"]}</td>
@@ -31,9 +48,13 @@ export default function SearchTableComponent({ response }) {
                             <td>{item["isbn13"]}</td>
                             <td>{item["pages"]}</td>
 
-                            <button type="link">Add to Reading List</button>
 
+                            <button type="link" className="col" onClick={(e) => {
+                                handleSendToReview(e, item);
+                            }}>Add to Reading List</button>
                         </tr>
+
+
                     ))
                 )}
             </tbody>

@@ -12,14 +12,14 @@ export default function ShowAuth({ children, role }) {
     if (status === "anonymous") {
         const here = window.location.href;   // come back to this page afterward
         return (
-            <div className="text-center">
-                <button type="button" className="btn btn-success me-2"
+            <div className="text-center row log-buttons">
+                <button type="button" className="col-auto btn btn-success log-buttons"
                     onClick={() => keycloak.login({ redirectUri: here })}>
-                    Log in
+                    Sign in
                 </button>
-                <button type="button" className="btn btn-outline-success"
+                <button type="button" className="col-auto btn btn-success log-buttons"
                     onClick={() => keycloak.register({ redirectUri: here })}>
-                    Create an account
+                    Sign Up
                 </button>
             </div>
         );
@@ -38,7 +38,7 @@ export default function ShowAuth({ children, role }) {
                 </button> */}
                 <button type="button" className="col btn btn-success log-buttons" 
                 onClick={() => keycloak.logout({ redirectUri: here })}>
-                    Logout
+                    Sign Out
                 </button>
             </div>
         );

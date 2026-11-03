@@ -19,6 +19,9 @@ import PageNotFound from "./pages/PageNotFound"
 import AddBookComponent from "./components/AddBookComponent";
 import MissionStatementPage from "./pages/MissionStatementPage";
 import RequireAuth from "./components/RequireAuth";
+import AddBookPage from "./pages/AddBookPage";
+//import WishlistsPage from "./pages/WishlistsPage";
+import ReviewsPage from "./pages/ReviewsPage";
 
 function App() {
 
@@ -26,29 +29,36 @@ function App() {
 
   return (
     // <CacheProvider value={cache}>
-      <div className="app-background">
-          <NavBar />
+    <div className="app-background">
+      <NavBar />
 
-          <br></br>
-          <div>
-            <Routes>
-              {/* Even though some links live exclusively in the NavBar
+      <br></br>
+      <div>
+        <Routes>
+          {/* Even though some links live exclusively in the NavBar
         component, all <Routes> are instantiated in the 
           App.jsx file to ensure high-level compatibility. */}
-              <Route class="FlexPath Final Project" path="/" element={<Home />} />
-              {/* <Route class="Search Page" path="/search" element={<SearchResults />} /> */}
-              <Route class="Page Not Found" path="/*?" element={<PageNotFound />} />
-              <Route class="Search" path="/search" element={<BookSearchPage />} />
-              <Route class="Add Book" path="/add" element={
-                <RequireAuth role="ROLE_USER">
-                  <AddBookComponent />
-                </RequireAuth>
+          <Route class="FlexPath Final Project" path="/" element={<Home />} />
+          {/* <Route class="Search Page" path="/search" element={<SearchResults />} /> */}
+          <Route class="Page Not Found" path="/*?" element={<PageNotFound />} />
+          <Route class="Search" path="/search" element={<BookSearchPage />} />
+          <Route class="Add Book" path="/add" element={
+            <RequireAuth role="ROLE_USER">
+              <AddBookPage />
+            </RequireAuth>
+          } />
+          <Route class="MyReviews" path="/reviews" element={
+            <RequireAuth role="ROLE_USER">
+              <ReviewsPage />
+            </RequireAuth>
+          } />
                 
-                } />
+                
+                
               <Route class="Our Mission" path="/mission" element={<MissionStatementPage />} />
-            </Routes>
-          </div>
+        </Routes>
       </div>
+    </div>
     // </CacheProvider>
   );
 }

@@ -1,26 +1,34 @@
 import React from "react";
 import { useState, useDeferredValue } from "react";
-import FormComponent from "../components/FormComponent";
+import SearchFormComponent from "./SearchFormComponent";
 import useFetch from "../hooks/useFetch";
-import TextResponseComponent from "./TextResponseComponent";
+import TextResponseComponent from "./SearchTextResponseComponent";
 import FasterLogo from "../../public/FasterLoadingGif.gif";
 import { getCookie } from "../logic/getCookie";
+//import AddBookFormComponent from "./AddBookFormComponent";
+import ErrorBoundary from "./ErrorBoundary";
+import { animated } from "@react-spring/web";
 
-export default function AddBookComponent () {
+export default function AddBookComponent() {
 
-    const { fetchData, setResponse, response, loading, error } = useFetch();
-    const [newBook, setNewBook] = useState("");
+    const { fetchData: fetchDataCreateBook, setResponse, response, loading, error, statusCode } = useFetch();
+    const [newBook, setNewBook] = useState(null);
+
+    const [titleInput, setTitleInput] = useState("");
+    const [authorInput, setAuthorInput] = useState("");
+    const [isbnInput, setIsbnInput] = useState();
+    const [pubYearInput, setPubYearInput] = useState();
+    const [pagesInput, setPagesInput] = useState();
 
     const method = "POST";
 
-
-    const gothamKnights = {
-        title: "Gotham Knights",
-        author: "Dude McKnight",
-        pub_year: "1998",
-        isbn_13: "910209139019024129490104",
-        pages: 91
-    }
+    // const gothamKnights = {
+    //     title: "Gotham Knights",
+    //     author: "Dude McKnight",
+    //     pub_year: "1998",
+    //     isbn_13: "910209139019024129490104",
+    //     pages: 91
+    // }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -28,34 +36,139 @@ export default function AddBookComponent () {
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
         const sendingBook = {
-            title: gothamKnights.title,
-            author: gothamKnights.author,
-            pub_year: gothamKnights.pub_year,
-            isbn_13: gothamKnights.isbn_13,
-            pages: gothamKnights.pages
+            title: titleInput,
+            author: authorInput,
+            pub_year: pubYearInput,
+            isbn_13: isbnInput,
+            pages: pagesInput
         }
 
         const baseURL = `/api/books/create`;
 
         console.log(`base: ${baseURL}`);
-        fetchData(baseURL, sendingBook, method);
+        setNewBook(fetchDataCreateBook(baseURL, sendingBook, method));
         //setInput("");
     }
-    function addGothamKnights () {
-            // useFetch("http://localhost:8090/api/", ...gothamKnights);
-        
+
+    function determineStatusCodeError(status) {
+
+        switch (status) {
+            case 201: return "Good to go!";
+            case 409: return "Book already exists in the database, schlorpgling."
+            default: return "Not good!";
+        }
     }
+    //     if (status === 200) {
+    //         return "Book added successfully!";
+    //     } else if (status === 409) {
+    //         return "That book already exists in our database.";
+    //     } else if (status === 403) {
+    //         return "You do not have permission to add a book. How did you get here?";
+    //     } else if (status === null) {
+    //         return "Use the form above to add a book."
+    //     } else {
+    //         return "Could not add book. Try again later."
+    //     }
+    // }
 
     return (
-        <div className="top">
-            <p>Use the form below to add a book to the database.</p>
-            {/* <FormComponent /> */}
-            
-            <form onSubmit={(e) => {handleSubmit(e)}}>
-                <button type="submit" className="btn silly-button btn-primary">Click me to add a book!</button>
-            </form>
-            <TextResponseComponent response={response} loading={loading} error={error}/>
-            <p value={newBook}>{newBook ? newBook : "No Book here!"}</p>
+        <div className="top row align-add-book-items">
+
+            <div className="col search-page-inputs container">
+                <form className="col" onSubmit={(e) => {
+                    handleSubmit(e);
+
+                }}>
+                    <div className="row">
+                        <p className="col"><strong>Title</strong>{!titleInput &&
+                            <small className="text-warn" > (every book needs a title, zorpling)</small>}</p>
+
+                    </div>
+                    <input className="form-control w-50 custom-input" type="text" placeholder="title..."
+                        value={titleInput}
+                        //this does not work without the brackets, 
+                        //as React will not prioritize the onChange event
+                        //and will cache it for async
+                        onChange={(e) => {
+                            setTitleInput(e.target.value)
+                        }
+
+                        }></input>
+                    <br></br>
+                    <p><strong>Author</strong></p>
+                    <input className="form-control w-50 custom-input" type="text" placeholder="author..."
+                        value={authorInput}
+                        onChange={(e) => {
+                            setAuthorInput(e.target.value)
+                        }}>
+
+                    </input>
+                    <br></br>
+                    <p><strong>Publication Year</strong></p>
+                    <input className="form-control w-50 custom-input" type="text" placeholder="year published..."
+                        value={pubYearInput}
+                        onChange={(e) => {
+                            setPubYearInput(e.target.value)
+                        }}>
+                    </input>
+                    <br></br>
+                    <p><strong>ISBN-13</strong></p>
+                    <input className="form-control w-50 custom-input" type="text" placeholder="isbn..."
+                        value={isbnInput}
+                        onChange={(e) => {
+                            setIsbnInput(e.target.value)
+                        }}>
+                    </input>
+                    <br></br>
+                    <p><strong>Number of Pages</strong></p>
+                    <input className="form-control w-50 custom-input" type="text" placeholder="pages..."
+                        value={pagesInput}
+                        onChange={(e) => {
+                            setPagesInput(e.target.value)
+                        }}>
+                    </input>
+
+                    <button type="submit" disabled={!titleInput} className="btn btn-primary sexy-btn">Submit</button>
+
+                </form>
+                <animated.div className="animation-edit" />
+
+            </div>
+            {/* <ErrorBoundary error={error}>
+                <TextResponseComponent response={response} loading={loading} error={error} status={statusCode} />
+            </ErrorBoundary> */}
+
+            <div className="col">
+                {loading && <h3>Adding yo book cuh...</h3>}
+                {!loading && statusCode && statusCode !== 201 && (
+                    <div>
+                        <h3>Error with status code {statusCode}: {determineStatusCodeError(statusCode)}</h3>
+                        {/* <h3>{error}</h3> */}
+                    </div>
+
+                )}
+                {!loading && statusCode === 201 && response && (
+                    <div className="text-left align-center">
+                        <h3>Good to go!</h3>
+                        <table>
+                            <tbody>
+                                <tr><th>Title:</th><td>{response.title}</td></tr>
+                                <tr><th>Author:</th><td>{response.author}</td></tr>
+                                <tr><th>Year Published:</th><td>{response.pub_year}</td></tr>
+                                <tr><th>ISBN-13:</th><td>{response.isbn13}</td></tr>
+                                <tr><th>Pages:</th><td>{response.pages}</td></tr>
+                            </tbody>
+                        </table>
+
+                        <button type="button">Write a review</button>
+                    </div>
+                )}
+            </div>
+            {!loading && !response && <h3 className="text-center">Enter a book in the inputs above</h3>}
+
         </div>
+
+
+
     )
 }

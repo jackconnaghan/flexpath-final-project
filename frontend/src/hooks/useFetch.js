@@ -9,12 +9,14 @@ export default function useFetch() {
     const [response, setResponse] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+    const [statusCode, setStatusCode] = useState(null);
 
-    async function fetchData(baseURL, sendingBook, method) {
+    async function fetchDataCreateBook(baseURL, sendingBook, method) {
         //sets error to false in case the last submission attempt
         //failed
         setLoading(true);
         setError(false);
+        setStatusCode(null);
 
         //const url = `${baseURL}`
         //setting the setTimeout promise in this way
@@ -51,6 +53,8 @@ export default function useFetch() {
                     headers,
                 }
             );
+            //Status code gets thrown away if we throw an error, so catch it before
+            setStatusCode(response.status);
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
@@ -60,6 +64,7 @@ export default function useFetch() {
             console.log(`response length: ${responseData.length}`);
 
             setLoading(false);
+            //setStatusCode(response.status);
         } catch (error) {
             //even though error is a boolean when it's declared,
             //setting it to a string works just fine. Who knows 
@@ -67,7 +72,10 @@ export default function useFetch() {
             setError(error.message);
             console.error(`Fetch error: ${error}`);
             setLoading(false);
+            //setStatusCode(response.status);
         }
+
+        // return !error ? JSON.stringify(response) : null;
     }
 
     async function fetchSearchData(baseURL, method) {
@@ -93,6 +101,7 @@ export default function useFetch() {
                     headers: { "Content-Type": "application/json" }
                 }
             );
+            setStatusCode(response.status);
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
@@ -101,6 +110,7 @@ export default function useFetch() {
             console.log(`response length: ${responseData.length}`);
 
             setLoading(false);
+            //setStatusCode(response.status);
         } catch (error) {
             //even though error is a boolean when it's declared,
             //setting it to a string works just fine. Who knows 
@@ -108,6 +118,7 @@ export default function useFetch() {
             setError(error.message);
             console.error(`Fetch error: ${error}`);
             setLoading(false);
+            //setStatusCode(response.status);
         }
     }
 
@@ -116,11 +127,12 @@ export default function useFetch() {
     // to whatever was set in "cache" without holding a 
     // "localResponse" variable (confusing and clunky)
     return ({
-        fetchData,
+        fetchData: fetchDataCreateBook,
         fetchSearchData,
         setResponse,
         response,
         loading,
         error,
+        statusCode
     });
 }

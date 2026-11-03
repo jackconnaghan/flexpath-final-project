@@ -13,7 +13,7 @@ export default function RequireAuth({ children, role }) {
         const here = window.location.href;   // come back to this page afterward
         return (
             <div className="text-center my-5">
-                <p>You need an account to add a book.</p>
+                <p>You need an account to view this page.</p>
                 <button type="button" className="btn btn-success me-2"
                     onClick={() => keycloak.login({ redirectUri: here })}>
                     Log in
