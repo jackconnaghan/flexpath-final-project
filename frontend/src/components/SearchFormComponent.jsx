@@ -17,18 +17,11 @@ export default function SearchFormComponent({onSearch, loading }) {
         },
         onSubmit: async ({value}) => {
             onSearch(value);
-            // const baseURL = `/api/books/search?title=${titleInput}&author=${authorInput}`;
-            // console.log(`base: ${baseURL}`);
-            // fetchSearchData(baseURL, "GET");
         },
         // validators: {
         //     onSubmit
         // }
-
-
     }
-
-
     );
 
     return (
@@ -63,40 +56,6 @@ export default function SearchFormComponent({onSearch, loading }) {
                 )}
             </form.Field>
             <button type="submit" disabled={loading}>{loading ? "Searching…" : "SEARCH"}</button>
-
         </form>
-    )
-
-    return (
-        <div>
-            <div className="container">
-                <form className="col m-4" onSubmit={(e) => {
-                    handleSubmit(e);
-
-                }}>
-                    <input className="form-control w-50" type="text" placeholder="title..."
-                        value={titleInput}
-                        //this does not work without the brackets, 
-                        //as React will not prioritize the onChange event
-                        //and will cache it for async
-                        onChange={(e) => {
-                            setTitleInput(e.target.value)
-                        }
-
-                        }></input>
-                    <br></br>
-                    <input className="form-control w-50" type="text" placeholder="author..."
-
-                        onChange={(e) => {
-                            setAuthorInput(e.target.value)
-                        }}></input>
-
-                    <button type="submit" className="btn btn-primary sexy-btn">Submit</button>
-
-                </form>
-                <animated.div className="animation-edit" />
-
-            </div>
-        </div>
     )
 }

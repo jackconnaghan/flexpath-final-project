@@ -114,9 +114,7 @@ This avoids a wasted first render with empty data, and there’s no effect that 
             <div className="row flex-wrap g-5 mb-3">
                 <div className="col-auto">
                     <div className="search-form">
-                        <SearchFormComponent titleInput={titleInput} authorInput={authorInput}
-                            onSearch={onSearch} setTitleInput={setTitleInput} setAuthorInput={setAuthorInput}
-                            isLoading={loading} />
+                        <SearchFormComponent onSearch={onSearch} loading={loading} />
                     </div>
                 </div>
 
