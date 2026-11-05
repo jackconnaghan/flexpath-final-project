@@ -10,7 +10,7 @@ function AddBookPage() {
 
     return (
         <div className="extend-under-navbar search-just">
-            <h1 className="m-5">Add to our collection of Earthling "knowledge"...</h1>
+            <h1 className="m-5">Add to our collection of Earthling &quot;knowledge&quot;...</h1>
                     <AddBookComponent className="col-auto"/>
         </div>
     );

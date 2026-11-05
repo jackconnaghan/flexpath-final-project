@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import ErrorBoundary from "./ErrorBoundary";
 
 export default function SearchTableComponent({ response }) {
 
@@ -16,49 +17,67 @@ export default function SearchTableComponent({ response }) {
     function handleSendToReview(e, item) {
 
         fetchData("")
-        
+
     }
 
     function openModal(e) {
         setModal(false);
-
     }
 
+    /*
+    Need a function to pass a book's information to the BookInfoModalComponent
+    */
+
     return (
-        <table className="table container-fluid px-0 table-striped w-100%">
-            <a href="#terms" onClick={openModal()} >
-                Practice Modal
-            </a>
-            <thead>
-                <tr>
-                    {dataAreas.map((item, key) => (
-                        <th scope="col" key={key}>{item}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {(response?.length > 0) && (
-                    response.map(item => (
-                        //pass the iterator at the top level
-                        <tr className="col" key={item["title"]}>
+        <div>
+            {/* <ErrorBoundary>
+                <a href="#terms" onClick={(e) => openModal(e)} >
+                    Practice Modal
+                </a>
+                {modal && <h4>hello</h4>}
+            </ErrorBoundary> */}
 
-                            <td>{item["title"]}</td>
-                            <td>{item["author"]}</td>
-                            <td>{item["pub_year"]}</td>
-                            <td>{item["isbn13"]}</td>
-                            <td>{item["pages"]}</td>
+            <table className="table container-fluid px-0 table-striped w-100%">
+
+                <thead>
+                    <tr>
+                        {dataAreas.map((item, key) => (
+                            <th scope="col" key={key}>{item}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {(response?.length > 0) && (
+                        response.map(item => (
+                            //pass the iterator at the top level
+                            <tr className="col" key={item["title"]}>
+
+                                <td>{item["title"]}</td>
+                                <td>{item["author"]}</td>
+                                <td>{item["pub_year"]}</td>
+                                <td>{item["isbn13"]}</td>
+                                <td>{item["pages"]}</td>
+
+                                {/* <td>
+                                    <button type="link" className="col" onClick={(e) => {
+                                        handleSendToReview(e, item);
+                                    }}>Write a Review</button>
+                                </td> */}
+                                <td>
+                                    <button type="link" className="col" onClick={(e) => {
+                                        handleAddToWishlist(e, item);}}>
+                                            Add to List
+                                        </button>
+                                </td>
+
+                            </tr>
 
 
-                            <button type="link" className="col" onClick={(e) => {
-                                handleSendToReview(e, item);
-                            }}>Add to Reading List</button>
-                        </tr>
-
-
-                    ))
-                )}
-            </tbody>
-        </table>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
     );
 }
 

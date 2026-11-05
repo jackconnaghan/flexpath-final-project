@@ -24,11 +24,12 @@ export default function NavBar() {
                 <NavLink to={"/search"}>Search Books</NavLink>
                 <NavLink to={"/add"}>Add A Book</NavLink>
                 <NavLink to={'/reviews'}>Write A Review</NavLink>
+                <NavLink to={'/my-lists'}>My Lists</NavLink>
                 <NavLink to={'/mission'}>Mission Statement</NavLink>
 
 
                 <ShowAuth role="ROLE_USER" className="col-auto row">
-                    <NavLink to={'/myaccount'}>My Account</NavLink>
+                    <NavLink to={'/my-account'}>My Account</NavLink>
                 </ShowAuth>
 
 

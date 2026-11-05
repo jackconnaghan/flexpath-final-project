@@ -20,7 +20,7 @@ import AddBookComponent from "./components/AddBookComponent";
 import MissionStatementPage from "./pages/MissionStatementPage";
 import RequireAuth from "./components/RequireAuth";
 import AddBookPage from "./pages/AddBookPage";
-//import WishlistsPage from "./pages/WishlistsPage";
+import WishListsPage from "./pages/WishListsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 
 function App() {
@@ -50,6 +50,11 @@ function App() {
           <Route class="MyReviews" path="/reviews" element={
             <RequireAuth role="ROLE_USER">
               <ReviewsPage />
+            </RequireAuth>
+          } />
+          <Route class="MyLists" path="/my-lists" element={
+            <RequireAuth role="ROLE_USER">
+              <WishListsPage />
             </RequireAuth>
           } />
                 
