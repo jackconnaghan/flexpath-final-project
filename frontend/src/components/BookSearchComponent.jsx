@@ -34,15 +34,17 @@ export default function BookSearchComponent({ method }) {
 
     // //run when Submit is clicked
     // //handles fetch logic with useFetch hook
-    async function handleSubmit(e) {
-        e.preventDefault();
+    async function onSearch({title, author}) {
+        // e.preventDefault();
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
 
-        const baseURL = `/api/books/search?title=${titleInput}&author=${authorInput}`;
+        const params = new URLSearchParams();
+        (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
+        (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
+        fetchSearchData(`/api/books/search?${params}`, "GET");
 
-        console.log(`base: ${baseURL}`);
-        fetchSearchData(baseURL, method);
+        //console.log(`base: ${baseURL}`);
     }
     // //responds to change in filterType selector in the form
     // function setNewFilterType(e) {
@@ -112,8 +114,8 @@ This avoids a wasted first render with empty data, and there’s no effect that 
             <div className="row flex-wrap g-5 mb-3">
                 <div className="col-auto">
                     <div className="search-form">
-                        <SearchFormComponent titleInput={titleInput} authorInput={authorInput} handleSubmit={handleSubmit}
-                            setTitleInput={setTitleInput} setAuthorInput={setAuthorInput}
+                        <SearchFormComponent titleInput={titleInput} authorInput={authorInput}
+                            onSearch={onSearch} setTitleInput={setTitleInput} setAuthorInput={setAuthorInput}
                             isLoading={loading} />
                     </div>
                 </div>
@@ -121,7 +123,7 @@ This avoids a wasted first render with empty data, and there’s no effect that 
                 <img src={loading ? FasterLogo : Landed} className="gif-load" />
             </div>
             <ErrorBoundary>
-                <SearchTextResponseComponent response={response} loading={loading} error={error} status={statusCode}/>
+                <SearchTextResponseComponent response={response} loading={loading} error={error} status={statusCode} />
             </ErrorBoundary>
             <SearchTableComponent response={response} />
         </div>
