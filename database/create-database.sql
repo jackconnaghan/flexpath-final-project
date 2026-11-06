@@ -48,7 +48,7 @@ create table reviews (
     review_date DATE not null,
     foreign key (book_id) references books(id) on delete cascade,
     -- foreign key (user_id) references users(user_id) on delete cascade,
-    constraint uq_username_to_review unique (username, id)
+    constraint uq_username_to_review unique (username, book_id)
 );
 
 create table wishlists (

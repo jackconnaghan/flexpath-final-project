@@ -3,6 +3,7 @@ import ListsComponent from "../components/ListsComponent";
 import RequireAuth from "../components/RequireAuth";
 import useFetch from "../hooks/useFetch";
 import { useAuthStore, syncAuthFromKeycloak } from "../stores/authorizationStore";
+import useCach
 
 export default function WishListsPage() {
 
@@ -13,6 +14,10 @@ export default function WishListsPage() {
     const user = useAuthStore((s) => s.user);
 
     const { fetchSearchData, setResponse, response, loading, error, statusCode } = useFetch();
+
+    //gonna use cache on this one so the API request only gets called on the first 
+    //load of the page
+    const 
 
     return (
         <div className="extend-under-navbar search-just">

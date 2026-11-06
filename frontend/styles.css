@@ -338,6 +338,8 @@ button.hover-home:hover {
     }
 }
 
+
+
 BookSearchPage {
     justify-content: center;
 }
@@ -489,6 +491,12 @@ app-root {
     margin-right: 10px;
 }
 
+@media (max-width: 990px) {
+    .log-buttons {
+        display:none;
+    }
+}
+
 .log-buttons-holder {
     align-items: center;
     justify-content: center;
@@ -537,4 +545,41 @@ sexy-btn[type=button]:disabled {
 
 .search-page-inputs {
     padding-left: 50px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+}
+
+.mobile-toggle {
+  display: none; /* Hidden on large screens */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Mobile View: Screens 768px and smaller */
+@media (max-width: 768px) {
+  .mobile-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none; /* Hide horizontal links by default on mobile */
+    flex-direction: column;
+    position: absolute;
+    top: 60px; /* Adjust based on your navbar height */
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 1rem 0;
+  }
+
+  /* Active class added via JavaScript to show menu */
+  .nav-links.active {
+    display: flex;
+  }
 }

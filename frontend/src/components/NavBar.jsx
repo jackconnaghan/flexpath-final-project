@@ -2,7 +2,7 @@
 Pulled from FlexPath Midterm Project
 */
 
-import React from "react";
+import React, { useState } from "react";
 import { Link, Route, Routes, Router, NavLink } from "react-router-dom";
 import Home from "../pages/Home";
 import LittleBabyGif from "../../public/LittleBabyGif.gif";
@@ -13,6 +13,13 @@ import ShowAuth from "./ShowAuth";
 
 export default function NavBar() {
 
+    const [menu, toggleMenu] = useState(false);
+
+    function setMenuVisibility() {
+        toggleMenu(!menu);
+    }
+
+
     return (
         <div className="">
             {/* <h1>Hidden Search Page to Simulate Padding</h1> */}
@@ -20,19 +27,25 @@ export default function NavBar() {
                 style={{ alignItems: "center", padding: "16px 16px", justifyContent: "left" }}>
 
                 <Link to={"/"}><img src={Logo} className="little-gif-display thumbnail"></img></Link>
-                <NavLink to={"/"}>Home</NavLink>
-                <NavLink to={"/search"}>Search Books</NavLink>
-                <NavLink to={"/add"}>Add A Book</NavLink>
-                <NavLink to={'/reviews'}>Write A Review</NavLink>
-                <NavLink to={'/my-lists'}>My Lists</NavLink>
-                <NavLink to={'/mission'}>Mission Statement</NavLink>
+                <ul className={`nav-links ${menu ? 'active' : ''}`}>
+                    <NavLink class="nav-links" to={"/"}>Home</NavLink>
+                    <NavLink class="nav-links" to={"/search"}>Search Books</NavLink>
+                    <NavLink class="nav-links" to={"/add"}>Add A Book</NavLink>
+                    <NavLink class="nav-links" to={'/reviews'}>Write A Review</NavLink>
+                    <NavLink class="nav-links" to={'/my-lists'}>My Lists</NavLink>
+                    <NavLink class="nav-links" to={'/mission'}>Mission Statement</NavLink>
+                </ul>
+                <ShowAuth role="ROLE_USER" className="col-auto row log-buttons">
+                        <NavLink class="nav-links" to={'/my-account'}>My Account</NavLink>
+                    </ShowAuth>
 
 
-                <ShowAuth role="ROLE_USER" className="col-auto row">
-                    <NavLink to={'/my-account'}>My Account</NavLink>
-                </ShowAuth>
 
 
+
+                <button className="mobile-toggle" id="mobileToggle" onClick={() => setMenuVisibility()}>
+                    ☰
+                </button>
 
 
             </nav>

@@ -1,21 +1,27 @@
 package org.example.daos;
 
+import org.example.exceptions.NoTitleException;
 import org.example.models.Book;
 import org.example.models.WishList;
 import org.example.models.WishListBook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -32,13 +38,10 @@ public class WishListBookDao {
      * wishlistbooks will always point to a book
      * and a wishlist that already exist
      */
+    private static final int MAX_WISHLIST_BOOKS = 150;
 
     //private static final String DEFAULT_NAME = "untitled list";
     @Autowired
-
-    /**
-     * Create a new wishlist data access object.
-     */
     public WishListBookDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -46,16 +49,17 @@ public class WishListBookDao {
     public List<WishListBook> getWishListBooks() {
         return jdbcTemplate.query("SELECT * FROM wishlist_books;", this::mapToWishListBook);
     }
+
     ///
     //Making new thingies from scratch
     //because this one takes a lot of joins
     public List<Book> getWishListBooksByListId(String username, long wishlist_id) {
         try {
             return jdbcTemplate.query("SELECT books.* " +
-                    "FROM books " +
-                    "JOIN wishlist_books ON books.id = wishlist_books.book_id " +
-                    "JOIN wishlists ON wishlist_books.wishlist_id = wishlists.id " +
-                    "WHERE wishlist_books.wishlist_id = ? AND username = ?",
+                            "FROM books " +
+                            "JOIN wishlist_books ON books.id = wishlist_books.book_id " +
+                            "JOIN wishlists ON wishlist_books.wishlist_id = wishlists.id " +
+                            "WHERE wishlist_books.wishlist_id = ? AND username = ?",
                     this::mapToBook, wishlist_id, username);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -63,144 +67,76 @@ public class WishListBookDao {
         }
     }
 
+    public WishListBook getWishListBook(String username, long wishlist_id, long book_id) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM wishlist_books WHERE wishlist_id=? AND book_id=?;", this::mapToWishListBook, wishlist_id, book_id);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    //in other words, this is called "createWishListBook"
+    public WishListBook addBookToWishList(long book_id, String username, long wishlist_id) {
+        String sql = "INSERT INTO wishlist_books (wishlist_id, book_id) VALUES (?, ?);";
 
-
-    ///
-
-//    public WishList getMyWishListById(String username, Long wishListId) {
-//        //this.username = username;
-//        try {
-//            return jdbcTemplate.queryForObject("SELECT * FROM wishlists WHERE username=? AND id=?;", this::mapToWishList, username, wishListId);
-//        } catch (EmptyResultDataAccessException e) {
-//            e.printStackTrace();
-//            return null;
+        if (wishlist_id <= 0L || book_id <= 0L) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "WishListBooks must have a valid wishlist_id and book_id");
+        }
+//        if (alreadyInDatabase(book_id, wishlist_id)) {
+//            throw new DuplicateKeyException("WishListBooks with username " + username + " and wishlist id " + wishlist_id + " already exists");
 //        }
-//    }
-//
-//    /**
-//     * TEMPORARY
-//     * Until AuthZ and AuthN is implemented; then, use above
-//     * @return
-//     */
-//    public List<WishList> getMyWishLists() {
-//        return jdbcTemplate.query("SELECT * FROM wishlists ORDER ASC;", this::mapToWishList);
-//    }
-//
-//    public WishList getMyWishListById(Long wishListId) {
-//        //this.username = username;
-//        try {
-//            return jdbcTemplate.queryForObject("SELECT * FROM wishlists WHERE id=?;", this::mapToWishList, wishListId);
-//        } catch (EmptyResultDataAccessException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    public List<WishList> getWishListsByTitle(String list_title) {
-//        try {
-//            return jdbcTemplate.query("SELECT * FROM wishlists WHERE LOWER(list_title) LIKE ?;", this::mapToWishList, "%" + list_title + "%");
-//        } catch (EmptyResultDataAccessException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    public List<WishList> getWishListByUsername(String username) {
-//        try {
-//            return jdbcTemplate.query("SELECT * FROM wishlists WHERE LOWER(username) LIKE ?;", this::mapToWishList, "%" + username + "%");
-//        } catch (EmptyResultDataAccessException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    public WishList createWishList(WishList wishList, String username) {
-//        String sql = "INSERT INTO wishlists (username, list_title) VALUES (?, ?);";
-//
-////        if (book == null || isBlank(book.getTitle())) {
-////            throw new NoTitleException(HttpStatus.BAD_REQUEST, "A book needs at least a title.");
-////        }
-//
-////        if(alreadyInDatabase(book))
-////            throw new ResponseStatusException(HttpStatus.CONFLICT, "We already have this Book in our database.");
-//
-//        /*
-//        Check whether a book with this title + author combo already exists
-//         */
-//
-//        /*
-//        Grab list title from the request body
-//         */
-//        String list_title = isBlank(wishList.getList_title().trim()) ? DEFAULT_NAME : wishList.getList_title().trim();
-//
+        //No need for KeyHolder here, as there is no primary key and
+        //wishlistbooks are made with a unique book_id:wishlist_id pair
 //        KeyHolder keyHolder = new GeneratedKeyHolder();
-//        try {
-//            /*
-//            NEW METHOD:
-//            1. Use primitive jdbcTemplate.update to enable use of KeyHolder
-//            2. KeyHolder for capturing id of book added in this instance of
-//            createBook
-//             */
-//            jdbcTemplate.update(connection -> {
-//                //RETURN_GENERATED_KEYS brings back the ids of all objects created in this
-//                //update
-//                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-//                ps.setString(1, username);
-//                ps.setString(2, list_title);
-//                return ps;
-//            }, keyHolder);
-//
-//            Number newId = keyHolder.getKey();
-////            return (newId == null) ? null : getMyWishListById(username, newId.longValue());
-//            /**
-//             * TEMPORARY
-//             * Until AuthZ and AuthN
-//             * Then, use above
-//             */
-//            return (newId == null) ? null : getMyWishListById(newId.longValue());
-//            //2. Create ArrayList of all orders in db that have order.username(?)
-////            List<Book> books = (ArrayList<Book>) jdbcTemplate.query("SELECT * FROM books ORDER BY id;", this::mapToBook);
-//
-//
-////            //3. Return the order with the largest id (which should
-////            //point to the most recent order, barring edge cases
-////            return books.get(books.size() - 1);
-////        } catch (DuplicateKeyException e) {
-////            throw new ResponseStatusException(HttpStatus.CONFLICT, "That book already exists.");
-//
-//        } catch (DataAccessException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
+        //check how many books are already in a wishlist
+        //and prevent additions beyond 150 books
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM wishlist_books WHERE wishlist_id = ?;", Integer.class, wishlist_id);
+        if (count >= MAX_WISHLIST_BOOKS) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "A wishlist can hold at most " + MAX_WISHLIST_BOOKS + " books.");
+        }
+
+        try {
+            jdbcTemplate.update(
+                    "INSERT INTO wishlist_books (wishlist_id, book_id) VALUES (?, ?)",
+                    wishlist_id, book_id);
+        } catch (DuplicateKeyException e) {
+            // PRIMARY KEY (wishlist_id, book_id) rejected it.
+            // Must come before DataIntegrityViolationException, its parent class.
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "That book is already on this wishlist.");
+        } catch (DataIntegrityViolationException e) {
+            // A foreign key rejected it: the book (or wishlist) doesn't exist
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No book exists with id " + book_id + ".");
+        }
+
+        // We know the exact primary key of the row we just inserted, so read it back directly
+        return getWishListBook(username, wishlist_id, book_id);
+    }
+
+    //
 //    /**
 //     * Private method to check if entries are blank
 //     */
-//    private boolean isBlank(String s) {
-//        return s == null || s.trim().isEmpty() || s.isBlank();
-//    }
-////
-////    /**
-////     * Private method to check if a book
-////     * with a certain title+author combo
-////     * is already in the database
-////     * @param book
-////     * @return
-////     */
-////    private boolean alreadyInDatabase(Book book) {
-////        String sql = "SELECT * FROM books WHERE title=?";
-////
-////        ArrayList<Book> books = (ArrayList<Book>) jdbcTemplate.query(sql, this::mapToBook, book.getTitle());
-////
-////        for (Book book1 : books) {
-////            if (book1.getAuthor().trim().equalsIgnoreCase(book.getAuthor())) {
-////                return true;
-////            }
-////        }
-////        return false;
-////    }
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty() || s.isBlank();
+    }
+
+    /**
+     * Private method to check if a book
+     * with a certain title+author combo
+     * is already in the database
+     *
+     * @param book
+     * @return
+     */
+    private boolean alreadyInDatabase(Book book, long wishlist_id) {
+        //Simply check if the select query returns any WishListBooks that match the query
+        String sql = "SELECT * FROM wishlist_books WHERE book_id = ? AND wishlist_id = ?;";
+        ArrayList<WishListBook> books = (ArrayList<WishListBook>) jdbcTemplate.query(sql, this::mapToWishListBook, book.getId(), wishlist_id);
+
+        return books != null && books.size() > 0;
+    }
 //
 //    public WishList updateWishList(WishList wl, String username) {
 //

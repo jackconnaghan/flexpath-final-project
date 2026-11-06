@@ -14,7 +14,7 @@ public class ReviewSecurity {
         this.reviewDao = reviewDao;
     }
 
-    public boolean isOwner(Long reviewId, Authentication auth) {
+    public boolean isOwner(long reviewId, Authentication auth) {
         Review review = reviewDao.getReviewByReviewId(reviewId);
         return review != null && review.getUsername().equals(auth.getName());
     }

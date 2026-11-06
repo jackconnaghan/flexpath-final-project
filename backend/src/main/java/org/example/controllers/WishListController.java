@@ -47,7 +47,8 @@ public class WishListController {
      * @return = list of books matching that title
      *
      */
-    //@GetMapping(path = "/api/{username}/wishlists", params = "username")
+    @GetMapping(path = "/api/{username}/wishlists", params = "username")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<WishList> getWishListByUsername(@RequestParam String username) { return wishListDao.getWishListByUsername(username); }
 
 //    @GetMapping(path = "/search-name", params = "name")

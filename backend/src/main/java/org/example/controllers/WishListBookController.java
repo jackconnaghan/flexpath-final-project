@@ -29,9 +29,13 @@ public class WishListBookController {
     //this will act as a "getAllWishLists" method
     //@PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
     @GetMapping(path="/{wishlist_id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN') or wishListSecurity.isOwner(#username, authentication)")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN') or @wishListSecurity.isOwner(#wishlist_id, authentication)")
     public List<Book> getWishListBooksByListId(Authentication a, @PathVariable long wishlist_id) {return wishListBookDao.getWishListBooksByListId(a.getName(), wishlist_id); }
 
+
+    @PostMapping(path="{wishlist_id}/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @wishListSecurity.isOwner(#wishlist_id, authentication)")
+    public WishListBook addBookToWishList(@RequestBody long book_id, Authentication a, @PathVariable long wishlist_id) {return wishListBookDao.addBookToWishList(book_id, a.getName(), wishlist_id); }
     //Get book by an ID in the path
     //Same with getMyWishLists,
     //Until I implement the chosen authZ and authN method,
