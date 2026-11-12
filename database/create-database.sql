@@ -24,7 +24,7 @@ insert into roles (username, role) values ('user', 'USER');
 insert into users (username, password) values ('dude', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
 insert into roles (username, role) values ('dude', 'USER');
 
---stuff i've added
+-- stuff i've added
 create table books (
     id BIGINT AUTO_INCREMENT primary key,
     title varchar(255) not null,
@@ -72,6 +72,9 @@ VALUES ("Bury My Heart at Wounded Knee", "Dee Brown", "9780805086843", 1970, 512
 
 INSERT INTO books (title, author, pub_year, isbn_13)
 VALUES ('Let The Great World Spin', 'Colum McCann', 2009, "9780812973990");
+
+INSERT INTO books (title, author, pub_year, isbn_13)
+VALUES ('Everybody Poops', 'Somebody', 2009, "9780812973990");
 
 INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
 VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 10);
