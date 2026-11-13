@@ -1,5 +1,7 @@
 package org.example.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Model class for users.
  */
@@ -12,6 +14,7 @@ public class User {
     /**
      * The password of the user.
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     /**

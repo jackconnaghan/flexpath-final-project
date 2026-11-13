@@ -1,0 +1,25 @@
+package org.example.config;
+
+import org.example.daos.ReviewDao;
+import org.example.models.Review;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+@Component("reviewSecurity")
+public class ReviewSecurity {
+
+    private final ReviewDao reviewDao;
+
+    public ReviewSecurity(ReviewDao reviewDao) {
+        this.reviewDao = reviewDao;
+    }
+
+    public boolean isOwner(long reviewId, Authentication auth) {
+        Review review = reviewDao.getReviewByReviewId(reviewId);
+        System.out.println("Review ID: " + reviewId);
+        System.out.println("Review Author: " + review.getUsername());
+        System.out.println("Caller: [" + auth.getName() +"]");
+        return review != null && review.getUsername().equals(auth.getName());
+    }
+
+}
