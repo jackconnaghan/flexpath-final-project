@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
-import { loginUser } from '../logic/apiAuthFetch';
-import { getRoles } from '../logic/apiClient';
+import { loginUser } from '../logic/apiAuth';
+import { getRoles } from '../logic/api';
 //this is a fallback 
 //and is NEVER used inside the provider (where you intent to use it)
 const AuthContext = createContext(null);

@@ -1,6 +1,6 @@
 //bones are from api.js
 //
-import { apiClientFetch } from "./apiClient";
+import { apiClientFetch } from "./api";
 
 export async function loginUser(username, password) {
     //set up headers object

@@ -4,7 +4,7 @@
 // import { useWishListStore } from "../stores/useWishListStore";
 import { useAuth } from "../contexts/AuthContext";
 import { Navigate, useLocation } from "react-router-dom";
-
+import LoginFormComponent from "./LoginFormComponent";
 
 export default function RequireAuth({ children, role, customMessage }) {
 
@@ -14,9 +14,13 @@ export default function RequireAuth({ children, role, customMessage }) {
     const { isLoggedIn, roles } = useAuth();
     const location = useLocation();
 
-    if (isLoggedIn) {
-        // Remember where they were headed, so login can send them back there
-        return <Navigate to="/login" replace state={{ from: location }} />;
+    if (!isLoggedIn) {
+        return (
+            <div>
+                <p>{customMessage ?? "Please log in to view this page."}</p>
+                <LoginFormComponent />   {/* your login form component, once it exists */}
+            </div>
+        );
     }
     if (role && !roles.includes(role)) {
         return <p>{customMessage}</p>;
