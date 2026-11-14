@@ -31,356 +31,387 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 import java.util.*;
 
-//makes a session-based check for users to log in and access user-specific data
-/*
-This + AuthController (new) + UserDetailService (seed) check passwords and issue tokens to users.
-User's logged-in session is saved in a JSESSIONID cookie
- */
+//makes a token-based passwordEncoder that works with eu.fraho's SpringSecurity configs
 @Configuration
-@EnableWebSecurity //allows for filter chain definition
-@EnableMethodSecurity //allows for method-specific security checks like @PreAuthorize(hasRole)
+//@EnableWebSecurity //allows for filter chain definition
+//@EnableMethodSecurity //allows for method-specific security checks like @PreAuthorize(hasRole)
 public class SecurityConfig {
-    //ok so im starting over
 
-
-    @Bean
-    SecurityFilterChain springSecurityFilterChain(HttpSecurity http,
-                                                  SecurityContextRepository securityContextRepository)
-            throws Exception {
-        //tells Spring where to find the submitted token on each request. it resolves
-        //the token value from teh request as either a request header (like X-XSRF-TOKEN)
-        //or a request parameter (_csrf by default) and accepts the value as-is,
-        //without the masking that Spring applies by default.
-        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
-        csrfHandler.setCsrfRequestAttributeName(null);
-
-        http
-                //authorizes who can access what.
-                //Filters down, starting with GET calls to the /api/books/** methods
-                .authorizeHttpRequests(auth -> auth
-                        //first match wins
-                        .requestMatchers("/api/auth/login", "/api/auth/csrf").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        //allows anyone to create an account
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .anyRequest().authenticated())
-
-                // 1. set CSRF function up for custom config
-                .csrf(csrf -> csrf
-                                /* 2.csrfTokenRepository rewrites where Spring Security looks for the csrf token.
-                               The default repo is HttpSessionCsrfTokenRepository, which keeps the csrf token in the server-side connection.
-                               React would not be able to access something on the backend, so the token would be unavailable.
-                               csrfTokenRepository(x) changes the repo to x.
-                               CookieCsrfTokenRepository is pretty self-explanatory: The csrf token gets stored in the cookie
-                               sent to the frontend, which is called a XSRF-TOKEN. The XSRF-TOKEN gets placed in a header
-                               on the cookie called X-XSRF-TOKEN. .withHttpOnlyFalse() sets the cookie's httpOnly flag off.
-                               When the flag is ON, the cookie can't be accessed by the frontend, but when it's OFF,
-                               the cookie can be accessed with document.cookie. withHttpOnlyFalse only sets the XSRF TOKEN to off,
-                               it keeps the JSESSION cookie hidden from the frontend.
-                         */
-                                //CookieCsrfTokenRepository creates the random token, writes it to the response as the
-                                //Set-Cookie: XSRF-TOKEN=...
-                                //header, and reads it back from teh cookie on later requests to get the expected value.
-                                //withHttponlyFalse() leaves cookie readable by JS so it can be copied into
-                                // request headers. Session cookie remains HttpOnly
-                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                                /*
-                                sets the csrfTokenRequestAttributeHandler to handle the csrf token.
-                             I know that sounds cyclical but I promise it matters.
-                                .csrfTokenRequestHandler SETS which handler is going to handle csrfs in the .csrf chain,
-                                  and making csrfHandler makes sure that this is a new cookie on every login.
-                                  */
-                                //sets the new request handler created on each call of the bean
-                                .csrfTokenRequestHandler(csrfHandler)
-                        /*
-                        Explanation on the csrf chain from Claude:
-                        1. GET /api/auth/csrf
-   ← response:  Set-Cookie: XSRF-TOKEN=abc123          (the server puts it in a COOKIE)
-
-                        2. React reads document.cookie and finds XSRF-TOKEN=abc123
-
-                        3. POST /api/books
-   → request:   Cookie: JSESSIONID=...; XSRF-TOKEN=abc123   (the browser adds these automatically)
-                X-XSRF-TOKEN: abc123                         (React's code adds this itself)
-
-                        4. Spring compares the header with the cookie. They match, so the request goes through.
-
-                         */
-                        /*
-                        finally, .ignoringRequestMatchers bypasses csrf checks on a request that features an Authentication header.
-                        This allows Postman to send requests, as each Postman request will include an Authorization: Bearer token,
-                        which the browser will not do automatically on its own. So, if a request has an authorization header at all,
-                         */
-//                      .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null))  // Postman bearer tokens still skip it
-                )
-                //Create an HTTPSession only when needed (i.e. at login)
-                //default behavior
-                //makes the session STATEFUL, versus STATELESS which is only used for token APIs
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                //where the logged-in user is remembered between requests: In teh HTTPSession.
-                //AuthController saves to this same repository after a successful login.
-                .securityContext(context -> context
-                        .securityContextRepository(securityContextRepository))
-                //what happens when you're not logged in
-                //returns a 401 error, which will be handled by React
-                //instead of redirecting to a login page that an API client can't use
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                //POST /api/auth/logout invalidates the session and clears the security context
-                //returns 200 instead of redirecting
-                //(POST, so needs the csrf header too)
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
-                //turn off teh built-in html login page and browster pop-up login,
-                //as AuthController will handle those
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable());
-
-        return http.build();
-
-    }
-
-    //hashes and checks passwords. Spring uses it automatically at login,
-    //so you never call it yourself.
+    //there's been so many layers of silliness in here. Do NOT scroll down
+    //This new (11/13/2026) SecurityConfig works with the Security measures provided in
+    //eu.fraho.Jwt....
+    //So it only includes a password hasher, should that be required
+    //FROM CLAUDE **********
+//     * Almost all of the security setup now comes from the seed's eu.fraho security-jwt library,
+//       which Spring Boot loads automatically (auto-configuration). It provides:
+//            *
+//            *   - JwtSecurityConfig.filterChain:  the ONLY SecurityFilterChain. Stateless (no session),
+//            *                                     CSRF disabled, 401 when not logged in, and a
+// *                                     JwtAuthenticationTokenFilter that reads
+// *                                     "Authorization: Bearer <token>" on every request.
+// *                                     It also turns on @PreAuthorize (@EnableMethodSecurity).
+//            *   - LoginRestController:            POST {fraho.jwt.token.path} -> checks the password and
+// *                                     returns a signed JWT. (Path set in application.yaml.)
+//            *   - JwtTokenService:                creates and verifies tokens.
+//            *   - AuthenticationManager +
+//            *     DaoAuthenticationProvider:      built from OUR UserDetailsService + the PasswordEncoder below.
+//    *************
+    //So, we can't include any custom versions of the above because they will then clash with the seed project's
+    //security configuration.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    //Saves and loads the logged-in user's SecurityContext in the Http Session. Shared with AuthController
-    @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new HttpSessionSecurityContextRepository();
-    }
-
-    //the obj that actually checks a username and password.
-    //spring builds it auto from your UserDetailsService bean and the PasswordEncoder above
-    //this just makes it injectable into AuthController
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+    //If the above passwordEncoder was not included here, eu.fraho would implement its own.
+    //FROM CLAUDE **********
+    //The seed's UserDao injects this bean to hash passwords when creating users or changing them,
+    //and Spring uses it to check passwords at login.
+    //
+    //IMPORTANT: it must match the hashes already in init.sql.
+    //$2a$ / $2b$ / $2y$ ...  -> BCrypt (this bean, as written)
+    //$6$ ...                 -> SHA-512 crypt: return new eu.fraho.spring.securityJwt.base.password.CryptPasswordEncoder() instead
+    //**********
+    //The seed sql file has BCrypt passwords, so we are fine to include BCryptPasswordEncoder as it will handle them properly
 }
 //
-//    //10/29/2026 REMOVED BEAN TAG so this doens't get called
-//    //see the one we're gonna use for keycloak-js below
-//    //@Bean
-/// /    public SecurityFilterChain unusedSecurityFilterChain(HttpSecurity http, ClientRegistrationRepository crr) throws Exception {
-/// /        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
-/// /        csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response.
-/// /        //opts out of deferral by Spring and makes the token load on every request, so the token is rewritten on each response.
-/// /
-/// /        /*
-/// /        Logout Handler that handles logouts for all clients in the crr.
-/// /        Spring Security function that allows outside apps (React) to log a user out of a keycloak-cloaked account
-/// /         */
-/// /        OidcClientInitiatedLogoutSuccessHandler logoutHandler =
-/// /                new OidcClientInitiatedLogoutSuccessHandler(crr);
-/// /        logoutHandler.setPostLogoutRedirectUri("{baseURL}/");
-/// /        //the .requestMatchers(Http.GET) + permitAll() methods allows the call included in
-/// /        //parentheses to be accessed by anyone, even non-users; basically
-/// /        //window shopping the authZ server
-/// /        http.authorizeHttpRequests(authZ -> authZ
-/// /                        .requestMatchers(HttpMethod.GET, "/api/books/**")
-/// /                        .permitAll()
-/// /                        .anyRequest()
-/// /                        .authenticated())
-/// /                //getting in through keycloak via the browster
-/// /                .oauth2Login(Customizer.withDefaults())
-/// /                //does some bs to allow postman tokens. Remember, refer to
-/// /                //application.yaml for more info on where these particular objs are going
-/// /                .oauth2ResourceServer(oauth2 -> oauth2
-/// /                        .jwt(jwt ->
-/// /                                //see method lower down
-/// /                                jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-/// /                //this next part was a suggestion straight from Claude. I've read the docs on
-/// /                // cross-site request forgery, but
-/// /                //I have also included Claude's explanation verbatim, as I don't think I can describe it better.
-/// /                /* CLAUDE:
-/// /                // CSRF protects cookie-based requests. Requests carrying a bearer token
-/// /                    // can't be forged by another site (browsers never add that header on
-/// /                    // their own), so CSRF is skipped for them. That lets Postman POST/PUT/DELETE.
-/// /                 */ //END CLAUDE
-/// /                //worst comments ever
-/// /                //So, the below code applies a CSRF filter to the end of the filter stack.
-/// /                /*
-/// /                .csrf takes a lambda function with a csrf object as a param.
-/// /
-/// /                 */
-/// /                // 1. set CSRF function up for custom config
-/// /                .csrf(csrf -> csrf
-/// /                        /* 2.csrfTokenRepository rewrites where Spring Security looks for the csrf token.
-/// /                         The default repo is HttpSessionCsrfTokenRepository, which keeps the csrf token in the server-side connection.
-/// /                         React would not be able to access something on the backend, so the token would be unavailable.
-/// /                         csrfTokenRepository(x) changes the repo to x.
-/// /                         CookieCsrfTokenRepository is pretty self-explanatory: The csrf token gets stored in the cookie
-/// /                         sent to the frontend, which is called a XSRF-TOKEN. The XSRF-TOKEN gets placed in a header
-/// /                         on the cookie called X-XSRF-TOKEN. .withHttpOnlyFalse() sets the cookie's httpOnly flag off.
-/// /                         When the flag is ON, the cookie can't be accessed by the frontend, but when it's OFF,
-/// /                         the cookie can be accessed with document.cookie. withHttpOnlyFalse only sets the XSRF TOKEN to off,
-/// /                         it keeps the JSESSION cookie hidden from the frontend.
-/// /                         */
-/// /                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-/// /                        /*
-/// /                        sets the csrfTokenRequestAttributeHandler to handle the csrf token.
-/// /                        I know that sounds cyclical but I promise it matters.
-/// /                        .csrfTokenRequestHandler SETS which handler is going to handle csrfs in the .csrf chain,
-/// /                        and making csrfHandler makes sure that this is a new cookie on every login.
-/// /                         */
-/// /                        .csrfTokenRequestHandler(csrfHandler)
-/// /                        /*
-/// /                        finally, .ignoringRequestMatchers bypasses csrf checks on a request that features an Authentication header.
-/// /                        This allows Postman to send requests, as each Postman request will include an Authorization: Bearer token,
-/// /                        which the browser will not do automatically on its own. So, if a request has an authorization header at all,
-/// /                         */
-/// /                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null))  // Postman bearer tokens still skip it
-/// /                /*
-/// /                FINALLY finally, logout sets a logoutHandler to...handle logouts that derive from the http request.
-/// /                We gave the logoutHandler the ClientRegistrationRepository and set the redirect link to the baseURL of
-/// /                the frontend (localhost:5173). This allows React to log users out and send them right back to the
-/// /                frontend home page.
-/// /                 */
-/// /                .logout(logout -> logout.logoutSuccessHandler(logoutHandler));
-/// /        return http.build();
-/// /    }
-//
 //    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    SecurityFilterChain filterChain(HttpSecurity http,
+//                                                  SecurityContextRepository securityContextRepository)
+//            throws Exception {
+//        //tells Spring where to find the submitted token on each request. it resolves
+//        //the token value from teh request as either a request header (like X-XSRF-TOKEN)
+//        //or a request parameter (_csrf by default) and accepts the value as-is,
+//        //without the masking that Spring applies by default.
+//        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+//        csrfHandler.setCsrfRequestAttributeName(null);
+//
 //        http
+//                //authorizes who can access what.
+//                //Filters down, starting with GET calls to the /api/books/** methods
 //                .authorizeHttpRequests(auth -> auth
+//                        //first match wins
+//                        .requestMatchers("/api/auth/login", "/api/auth/csrf").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+//                        .requestMatchers("/error").permitAll()
+//                        //allows anyone to create an account
+//                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 //                        .anyRequest().authenticated())
 //
-//                // Verify bearer tokens from Keycloak, using the converter below
-//                .oauth2ResourceServer(oauth2 -> oauth2
-//                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+//                // 1. set CSRF function up for custom config
+//                .csrf(csrf -> csrf
+//                                /* 2.csrfTokenRepository rewrites where Spring Security looks for the csrf token.
+//                               The default repo is HttpSessionCsrfTokenRepository, which keeps the csrf token in the server-side connection.
+//                               React would not be able to access something on the backend, so the token would be unavailable.
+//                               csrfTokenRepository(x) changes the repo to x.
+//                               CookieCsrfTokenRepository is pretty self-explanatory: The csrf token gets stored in the cookie
+//                               sent to the frontend, which is called a XSRF-TOKEN. The XSRF-TOKEN gets placed in a header
+//                               on the cookie called X-XSRF-TOKEN. .withHttpOnlyFalse() sets the cookie's httpOnly flag off.
+//                               When the flag is ON, the cookie can't be accessed by the frontend, but when it's OFF,
+//                               the cookie can be accessed with document.cookie. withHttpOnlyFalse only sets the XSRF TOKEN to off,
+//                               it keeps the JSESSION cookie hidden from the frontend.
+//                         */
+//                                //CookieCsrfTokenRepository creates the random token, writes it to the response as the
+//                                //Set-Cookie: XSRF-TOKEN=...
+//                                //header, and reads it back from teh cookie on later requests to get the expected value.
+//                                //withHttponlyFalse() leaves cookie readable by JS so it can be copied into
+//                                // request headers. Session cookie remains HttpOnly
+//                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                                /*
+//                                sets the csrfTokenRequestAttributeHandler to handle the csrf token.
+//                             I know that sounds cyclical but I promise it matters.
+//                                .csrfTokenRequestHandler SETS which handler is going to handle csrfs in the .csrf chain,
+//                                  and making csrfHandler makes sure that this is a new cookie on every login.
+//                                  */
+//                                //sets the new request handler created on each call of the bean
+//                                .csrfTokenRequestHandler(csrfHandler)
+//                        /*
+//                        Explanation on the csrf chain from Claude:
+//                        1. GET /api/auth/csrf
+//   ← response:  Set-Cookie: XSRF-TOKEN=abc123          (the server puts it in a COOKIE)
 //
-//                // Never create or use a server-side session
-//                .sessionManagement(session -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                        2. React reads document.cookie and finds XSRF-TOKEN=abc123
 //
-//                // No cookies carry identity, so there's nothing for CSRF to protect
-//                .csrf(csrf -> csrf.disable());
+//                        3. POST /api/books
+//   → request:   Cookie: JSESSIONID=...; XSRF-TOKEN=abc123   (the browser adds these automatically)
+//                X-XSRF-TOKEN: abc123                         (React's code adds this itself)
+//
+//                        4. Spring compares the header with the cookie. They match, so the request goes through.
+//
+//                         */
+//                        /*
+//                        finally, .ignoringRequestMatchers bypasses csrf checks on a request that features an Authentication header.
+//                        This allows Postman to send requests, as each Postman request will include an Authorization: Bearer token,
+//                        which the browser will not do automatically on its own. So, if a request has an authorization header at all,
+//                         */
+/// /                      .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null))  // Postman bearer tokens still skip it
+//                )
+//                //Create an HTTPSession only when needed (i.e. at login)
+//                //default behavior
+//                //makes the session STATEFUL, versus STATELESS which is only used for token APIs
+//                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+//                //where the logged-in user is remembered between requests: In teh HTTPSession.
+//                //AuthController saves to this same repository after a successful login.
+//                .securityContext(context -> context
+//                        .securityContextRepository(securityContextRepository))
+//                //what happens when you're not logged in
+//                //returns a 401 error, which will be handled by React
+//                //instead of redirecting to a login page that an API client can't use
+//                .exceptionHandling(ex -> ex
+//                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+//                //POST /api/auth/logout invalidates the session and clears the security context
+//                //returns 200 instead of redirecting
+//                //(POST, so needs the csrf header too)
+//                .logout(logout -> logout
+//                        .logoutUrl("/api/auth/logout")
+//                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
+//                //turn off teh built-in html login page and browster pop-up login,
+//                //as AuthController will handle those
+//                .formLogin(form -> form.disable())
+//                .httpBasic(basic -> basic.disable());
 //
 //        return http.build();
+//
 //    }
 //
-//    /*
-//    Lots going on here. This was another concept introduced to me by Claude. I have included my notes
-//    on this subject here, for ease of reference.
-//    GrantedAuthoritiesMapper is an interface included in Spring Security
-//    "which can be injected into the authentication layer to convert the
-//    authorities loaded from storage into those which will be used by
-//    the Authentication object (https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/core/authority/mapping/GrantedAuthoritiesMapper.html)."
-//
-//    Working with Claude, I've tried to further understand the structure of the JWT and
-//    how its various parts interact. It's presented this data structure after seeing
-//    the structure that I THOUGHT the JWT was:
-//    JWT:
-//        Header:
-//        Payload: (full of claims)
-//            sub, exp,... etc.
-//            preferred_username: "user" and "admin"
-//            roles: ["USER",...] (which have no ROLE_ prefix)
-//        Signature (Keycloak private key, verified with public key)
-//    \/ \/ \/ Spring verifies the signature \/ \/ \/
-//    \/ \/ \/ The methods in this file change\/ \/ \/
-//    \/ \/ \/ the structure of the JWT \/ \/ \/
-//    Authentication:
-//        principal: (jwt or OidcUser, which hold the claims in the payload
-//        name: "user" probably
-//        authorities: [ROLE_USER,...] (we add the ROLE_ prefix)
-//
-//    GrantedAuthorities are retrieved from a UserDetails interface during authentication process.
-//    Just know that Keycloak is sending them back as part of the token.
-//
-//    The two beans below
-//     */
-//
-//    //REMOVED BEAN 10/30 because it's not needed unless using Spring as the token repo
-//    //@Bean
-//    public GrantedAuthoritiesMapper rolesMapper() {
-//        //receive original authorities and make a new set which now includes roles
-//        return authorities -> {
-//            //making new HashSet to edit instead of changing authorities directly
-//            //remember that a HashSet has unique entries, so it's good for keeping duplicate readings of authorities in check
-//            Set<GrantedAuthority> authoritiesMappedSet = new HashSet<>(authorities);
-//            //Loop through authorities and find the one that is an instance of OAuth2UserAuthority
-//            //and instance it to a new variable "oauth2UserAuth"
-//            for (GrantedAuthority grantedAuthority : authorities) {
-//                if (grantedAuthority instanceof OAuth2UserAuthority oauth2UserAuth) {
-//                    //map all attributes of this OAuth2UserAuthority to the HashSet created
-//                    //and pointed to by the variable authoritiesMappedSet
-//                    //see additional private methods for toAuthorities and rolesFrom
-//                    authoritiesMappedSet.addAll(toAuthorities(rolesFrom(oauth2UserAuth.getAttributes())));
-//                    //getAttributes return's a given user's claims as a Map object for further modification
-//                }
-//            }
-//            return authoritiesMappedSet;
-//        };
-//    }
-//
+//    //hashes and checks passwords. Spring uses it automatically at login,
+//    //so you never call it yourself.
 //    @Bean
-//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-//        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-//        //sets the principal name pointed towards the claim called "preferred_username"
-//        //we'll need the real username for authentication instead of the
-//        //default subject "sub" claim
-//        jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
-//        //replaces the default method of JwtGrantedAuthoritiesConverter to a custom configuration
-//        //jwt.getClaims() returns the jwt's contents as a Map of claims
-//        //rolesFrom(...) extracts
-//        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> toAuthorities(rolesFrom(jwt.getClaims())));
-//        return jwtAuthenticationConverter;
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
 //    }
 //
-//
-//    //THE BELOW METHODS ARE GERMAINE TO THE SPRING TOKEN HANDLER VERSION OF THIS PROJECT. DO NOT USE WITH
-//    //THE KEYCLOAK-JS VERSION
-//
-//    //private method that fetches roles from a given Map of claims
-//    private static Collection<String> rolesFrom(Map<String, Object> claims) {
-//        Object roles = claims.get("roles");
-//        //see if there's a top-level section for roles.
-//        //If there's not AND there's a claims.real_access claim on the second level,
-//        //make roles = the roles level of the realm_access claim
-//        if (roles == null && claims.get("realm_access") instanceof Map<?, ?> realmAccess) {
-//            roles = realmAccess.get("roles");
-//        }
-//        //Now, if roles is a collection, then return the list as follows:
-//        //stream it
-//        //map the objects within (as their String representations)
-//        //set that Map as a List, then return
-//        if (roles instanceof Collection<?> list) {
-//            return list.stream().map(String::valueOf).toList();
-//        }
-//        return List.of();
+//    //Saves and loads the logged-in user's SecurityContext in the Http Session. Shared with AuthController
+//    @Bean
+//    public SecurityContextRepository securityContextRepository() {
+//        return new HttpSessionSecurityContextRepository();
 //    }
 //
-/// /    private static Collection<GrantedAuthority> rolesFrom(Map <String, Object> claims) {
-/// /
-/// /    }
-//
-//    //prefixes those claims with "ROLE_"
-//    private static List<GrantedAuthority> toAuthorities(Collection<String> roles) {
-//        return roles.stream()
-//                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
-//                .toList();
+//    //the obj that actually checks a username and password.
+//    //spring builds it auto from your UserDetailsService bean and the PasswordEncoder above
+//    //this just makes it injectable into AuthController
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+//        return config.getAuthenticationManager();
 //    }
-//
-//    //10/23/26
-//    //admittedly, these extra methods fix a problem that could easily be fixed by
-//    //changing the names of the roles in Keycloak. So! I'm going to do that eventually.
-//    /*
-//    I'm glad I got to learn more about these aspects of the JWT and how to manage its contents.
-//    It's a subject I didn't quite understand from the Pluralsight modules
-//    and I enjoyed learning more about the concepts surrounding it.
-//    I feel like I "get" the JWT and understand how its data gets used.
-//    I might change the code later and change the Keycloak roles to a
-//    ROLE_ prefix, but for now I'll keep it this way.
-//     */
-//
-//
 //}
+////
+////    //10/29/2026 REMOVED BEAN TAG so this doens't get called
+////    //see the one we're gonna use for keycloak-js below
+////    //@Bean
+///// /    public SecurityFilterChain unusedSecurityFilterChain(HttpSecurity http, ClientRegistrationRepository crr) throws Exception {
+///// /        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+///// /        csrfHandler.setCsrfRequestAttributeName(null);   // set the CSRF cookie on every response.
+///// /        //opts out of deferral by Spring and makes the token load on every request, so the token is rewritten on each response.
+///// /
+///// /        /*
+///// /        Logout Handler that handles logouts for all clients in the crr.
+///// /        Spring Security function that allows outside apps (React) to log a user out of a keycloak-cloaked account
+///// /         */
+///// /        OidcClientInitiatedLogoutSuccessHandler logoutHandler =
+///// /                new OidcClientInitiatedLogoutSuccessHandler(crr);
+///// /        logoutHandler.setPostLogoutRedirectUri("{baseURL}/");
+///// /        //the .requestMatchers(Http.GET) + permitAll() methods allows the call included in
+///// /        //parentheses to be accessed by anyone, even non-users; basically
+///// /        //window shopping the authZ server
+///// /        http.authorizeHttpRequests(authZ -> authZ
+///// /                        .requestMatchers(HttpMethod.GET, "/api/books/**")
+///// /                        .permitAll()
+///// /                        .anyRequest()
+///// /                        .authenticated())
+///// /                //getting in through keycloak via the browster
+///// /                .oauth2Login(Customizer.withDefaults())
+///// /                //does some bs to allow postman tokens. Remember, refer to
+///// /                //application.yaml for more info on where these particular objs are going
+///// /                .oauth2ResourceServer(oauth2 -> oauth2
+///// /                        .jwt(jwt ->
+///// /                                //see method lower down
+///// /                                jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+///// /                //this next part was a suggestion straight from Claude. I've read the docs on
+///// /                // cross-site request forgery, but
+///// /                //I have also included Claude's explanation verbatim, as I don't think I can describe it better.
+///// /                /* CLAUDE:
+///// /                // CSRF protects cookie-based requests. Requests carrying a bearer token
+///// /                    // can't be forged by another site (browsers never add that header on
+///// /                    // their own), so CSRF is skipped for them. That lets Postman POST/PUT/DELETE.
+///// /                 */ //END CLAUDE
+///// /                //worst comments ever
+///// /                //So, the below code applies a CSRF filter to the end of the filter stack.
+///// /                /*
+///// /                .csrf takes a lambda function with a csrf object as a param.
+///// /
+///// /                 */
+///// /                // 1. set CSRF function up for custom config
+///// /                .csrf(csrf -> csrf
+///// /                        /* 2.csrfTokenRepository rewrites where Spring Security looks for the csrf token.
+///// /                         The default repo is HttpSessionCsrfTokenRepository, which keeps the csrf token in the server-side connection.
+///// /                         React would not be able to access something on the backend, so the token would be unavailable.
+///// /                         csrfTokenRepository(x) changes the repo to x.
+///// /                         CookieCsrfTokenRepository is pretty self-explanatory: The csrf token gets stored in the cookie
+///// /                         sent to the frontend, which is called a XSRF-TOKEN. The XSRF-TOKEN gets placed in a header
+///// /                         on the cookie called X-XSRF-TOKEN. .withHttpOnlyFalse() sets the cookie's httpOnly flag off.
+///// /                         When the flag is ON, the cookie can't be accessed by the frontend, but when it's OFF,
+///// /                         the cookie can be accessed with document.cookie. withHttpOnlyFalse only sets the XSRF TOKEN to off,
+///// /                         it keeps the JSESSION cookie hidden from the frontend.
+///// /                         */
+///// /                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+///// /                        /*
+///// /                        sets the csrfTokenRequestAttributeHandler to handle the csrf token.
+///// /                        I know that sounds cyclical but I promise it matters.
+///// /                        .csrfTokenRequestHandler SETS which handler is going to handle csrfs in the .csrf chain,
+///// /                        and making csrfHandler makes sure that this is a new cookie on every login.
+///// /                         */
+///// /                        .csrfTokenRequestHandler(csrfHandler)
+///// /                        /*
+///// /                        finally, .ignoringRequestMatchers bypasses csrf checks on a request that features an Authentication header.
+///// /                        This allows Postman to send requests, as each Postman request will include an Authorization: Bearer token,
+///// /                        which the browser will not do automatically on its own. So, if a request has an authorization header at all,
+///// /                         */
+///// /                        .ignoringRequestMatchers(request -> request.getHeader("Authorization") != null))  // Postman bearer tokens still skip it
+///// /                /*
+///// /                FINALLY finally, logout sets a logoutHandler to...handle logouts that derive from the http request.
+///// /                We gave the logoutHandler the ClientRegistrationRepository and set the redirect link to the baseURL of
+///// /                the frontend (localhost:5173). This allows React to log users out and send them right back to the
+///// /                frontend home page.
+///// /                 */
+///// /                .logout(logout -> logout.logoutSuccessHandler(logoutHandler));
+///// /        return http.build();
+///// /    }
+////
+////    @Bean
+////    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+////        http
+////                .authorizeHttpRequests(auth -> auth
+////                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+////                        .anyRequest().authenticated())
+////
+////                // Verify bearer tokens from Keycloak, using the converter below
+////                .oauth2ResourceServer(oauth2 -> oauth2
+////                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+////
+////                // Never create or use a server-side session
+////                .sessionManagement(session -> session
+////                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+////
+////                // No cookies carry identity, so there's nothing for CSRF to protect
+////                .csrf(csrf -> csrf.disable());
+////
+////        return http.build();
+////    }
+////
+////    /*
+////    Lots going on here. This was another concept introduced to me by Claude. I have included my notes
+////    on this subject here, for ease of reference.
+////    GrantedAuthoritiesMapper is an interface included in Spring Security
+////    "which can be injected into the authentication layer to convert the
+////    authorities loaded from storage into those which will be used by
+////    the Authentication object (https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/core/authority/mapping/GrantedAuthoritiesMapper.html)."
+////
+////    Working with Claude, I've tried to further understand the structure of the JWT and
+////    how its various parts interact. It's presented this data structure after seeing
+////    the structure that I THOUGHT the JWT was:
+////    JWT:
+////        Header:
+////        Payload: (full of claims)
+////            sub, exp,... etc.
+////            preferred_username: "user" and "admin"
+////            roles: ["USER",...] (which have no ROLE_ prefix)
+////        Signature (Keycloak private key, verified with public key)
+////    \/ \/ \/ Spring verifies the signature \/ \/ \/
+////    \/ \/ \/ The methods in this file change\/ \/ \/
+////    \/ \/ \/ the structure of the JWT \/ \/ \/
+////    Authentication:
+////        principal: (jwt or OidcUser, which hold the claims in the payload
+////        name: "user" probably
+////        authorities: [ROLE_USER,...] (we add the ROLE_ prefix)
+////
+////    GrantedAuthorities are retrieved from a UserDetails interface during authentication process.
+////    Just know that Keycloak is sending them back as part of the token.
+////
+////    The two beans below
+////     */
+////
+////    //REMOVED BEAN 10/30 because it's not needed unless using Spring as the token repo
+////    //@Bean
+////    public GrantedAuthoritiesMapper rolesMapper() {
+////        //receive original authorities and make a new set which now includes roles
+////        return authorities -> {
+////            //making new HashSet to edit instead of changing authorities directly
+////            //remember that a HashSet has unique entries, so it's good for keeping duplicate readings of authorities in check
+////            Set<GrantedAuthority> authoritiesMappedSet = new HashSet<>(authorities);
+////            //Loop through authorities and find the one that is an instance of OAuth2UserAuthority
+////            //and instance it to a new variable "oauth2UserAuth"
+////            for (GrantedAuthority grantedAuthority : authorities) {
+////                if (grantedAuthority instanceof OAuth2UserAuthority oauth2UserAuth) {
+////                    //map all attributes of this OAuth2UserAuthority to the HashSet created
+////                    //and pointed to by the variable authoritiesMappedSet
+////                    //see additional private methods for toAuthorities and rolesFrom
+////                    authoritiesMappedSet.addAll(toAuthorities(rolesFrom(oauth2UserAuth.getAttributes())));
+////                    //getAttributes return's a given user's claims as a Map object for further modification
+////                }
+////            }
+////            return authoritiesMappedSet;
+////        };
+////    }
+////
+////    @Bean
+////    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+////        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+////        //sets the principal name pointed towards the claim called "preferred_username"
+////        //we'll need the real username for authentication instead of the
+////        //default subject "sub" claim
+////        jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
+////        //replaces the default method of JwtGrantedAuthoritiesConverter to a custom configuration
+////        //jwt.getClaims() returns the jwt's contents as a Map of claims
+////        //rolesFrom(...) extracts
+////        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> toAuthorities(rolesFrom(jwt.getClaims())));
+////        return jwtAuthenticationConverter;
+////    }
+////
+////
+////    //THE BELOW METHODS ARE GERMAINE TO THE SPRING TOKEN HANDLER VERSION OF THIS PROJECT. DO NOT USE WITH
+////    //THE KEYCLOAK-JS VERSION
+////
+////    //private method that fetches roles from a given Map of claims
+////    private static Collection<String> rolesFrom(Map<String, Object> claims) {
+////        Object roles = claims.get("roles");
+////        //see if there's a top-level section for roles.
+////        //If there's not AND there's a claims.real_access claim on the second level,
+////        //make roles = the roles level of the realm_access claim
+////        if (roles == null && claims.get("realm_access") instanceof Map<?, ?> realmAccess) {
+////            roles = realmAccess.get("roles");
+////        }
+////        //Now, if roles is a collection, then return the list as follows:
+////        //stream it
+////        //map the objects within (as their String representations)
+////        //set that Map as a List, then return
+////        if (roles instanceof Collection<?> list) {
+////            return list.stream().map(String::valueOf).toList();
+////        }
+////        return List.of();
+////    }
+////
+///// /    private static Collection<GrantedAuthority> rolesFrom(Map <String, Object> claims) {
+///// /
+///// /    }
+////
+////    //prefixes those claims with "ROLE_"
+////    private static List<GrantedAuthority> toAuthorities(Collection<String> roles) {
+////        return roles.stream()
+////                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
+////                .toList();
+////    }
+////
+////    //10/23/26
+////    //admittedly, these extra methods fix a problem that could easily be fixed by
+////    //changing the names of the roles in Keycloak. So! I'm going to do that eventually.
+////    /*
+////    I'm glad I got to learn more about these aspects of the JWT and how to manage its contents.
+////    It's a subject I didn't quite understand from the Pluralsight modules
+////    and I enjoyed learning more about the concepts surrounding it.
+////    I feel like I "get" the JWT and understand how its data gets used.
+////    I might change the code later and change the Keycloak roles to a
+////    ROLE_ prefix, but for now I'll keep it this way.
+////     */
+////
+////
+////}

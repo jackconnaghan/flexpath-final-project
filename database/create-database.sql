@@ -1,7 +1,9 @@
 create database if not exists new_flexpath_final;
 use new_flexpath_final;
 
-drop table if exists users, roles, books, reviews, wishlists, wishlist_books;
+-- write these in ascending order of importance, based on foreign keys
+-- drop table if exists users, roles, books, reviews, wishlists, wishlist_books;
+drop table if exists wishlist_books, wishlists, reviews, roles, books, users;
 
 create table users (
     username varchar(255) primary key,

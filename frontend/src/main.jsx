@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import GlobalLayoutComponent from "./components/GlobalLayoutComponent.jsx";
-import { syncAuthFromKeycloak } from "./stores/authorizationStore.js";
+// import { syncAuthFromKeycloak } from "./stores/authorizationStore.js";
 
 
 createRoot(document.getElementById("root")).render(
