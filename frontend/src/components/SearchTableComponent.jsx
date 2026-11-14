@@ -7,11 +7,11 @@ import ErrorBoundary from "./ErrorBoundary";
 // import Box from "@mui/material/Box";
 // import Typography from "@mui/material/Typography";
 // import { useForm } from "@tanstack/react-form";
-import { useWishListStore } from "../stores/useWishListStore";
-import { useAuthStore } from "../stores/authorizationStore";
+// import { useWishListStore } from "../stores/useWishListStore";
+// import { useAuthStore } from "../stores/authorizationStore";
 import RequireAuth from "./RequireAuth";
 import AddBookToWishListModalComponent from "./AddBookToWishListModalComponent";
-import ShowAuth from "./ShowAuth";
+// import ShowAuth from "./ShowAuth";
 import RevealOnAuth from "./RevealOnAuth";
 
 export default function SearchTableComponent({ response }) {

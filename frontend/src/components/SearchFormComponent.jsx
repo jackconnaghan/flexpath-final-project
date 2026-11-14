@@ -11,19 +11,19 @@ import useFetch from "../hooks/useFetch";
 //     handleSubmit, handleDrop }) {
 export default function SearchFormComponent({ onSearch, loading }) {
 
-    const form = useForm({
-        defaultValues: {
-            title: "",
-            author: "",
-        },
-        onSubmit: async ({ value }) => {
-            onSearch(value);
-        },
-        // validators: {
-        //     onSubmit
-        // }
-    }
-    );
+    // const form = useForm({
+    //     defaultValues: {
+    //         title: "",
+    //         author: "",
+    //     },
+    //     onSubmit: async ({ value }) => {
+    //         onSearch(value);
+    //     },
+    //     // validators: {
+    //     //     onSubmit
+    //     // }
+    // }
+    // );
 
     return (
         <form
@@ -31,7 +31,7 @@ export default function SearchFormComponent({ onSearch, loading }) {
                 e.preventDefault();
                 form.handleSubmit({});
             }}>
-            <form.Field name="title">
+            <field name="title">
                 {(field) => (
                     <input className="form-control w-50"
                         type="text"
@@ -44,8 +44,8 @@ export default function SearchFormComponent({ onSearch, loading }) {
                             field.handleChange(e.target.value);
                         }} />
                 )}
-            </form.Field>
-            <form.Field name="author">
+            </field>
+            <field name="author">
                 {(field) => (
                     <input className="form-control w-50"
                         type="text"
@@ -55,7 +55,7 @@ export default function SearchFormComponent({ onSearch, loading }) {
                             field.handleChange(e.target.value);
                         }} />
                 )}
-            </form.Field>
+            </field>
             <button type="submit" disabled={loading}>{loading ? "Searching…" : "SEARCH"}</button>
         </form>
     )

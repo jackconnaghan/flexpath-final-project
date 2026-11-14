@@ -1,19 +1,19 @@
 //checked for external dependencies imports
-import { useAuthStore } from "../stores/authorizationStore";
+// import { useAuthStore } from "../stores/authorizationStore";
 // import keycloak from "../keycloak";
-import { useWishListStore } from "../stores/useWishListStore";
+// import { useWishListStore } from "../stores/useWishListStore";
+import { useAuth } from "../contexts/AuthContext";
+import { Navigate, useLocation } from "react-router-dom";
 
 //I'm pretty sure this just keeps shit hidden unless the user has an account
 export default function RevealOnAuth({ children, role }) {
-    const status = useAuthStore((s) => s.status);
-    const user = useAuthStore((s) => s.user);
+    // const status = useAuthStore((s) => s.status);
+    // const user = useAuthStore((s) => s.user);
+    const { isLoggedIn, roles } = useAuth();
+    const location = useLocation();
 
-    if (status === "loading") {
-        // return <p className="text-center my-5">Checking your login…</p>;
-        return null;
-    }
 
-    if (status === "anonymous") {
+    if (!isLoggedIn) {
         // const here = window.location.href;   // come back to this page afterward
         // return (
         //     <div className="text-center my-5">
@@ -31,7 +31,7 @@ export default function RevealOnAuth({ children, role }) {
         return null;
     }
 
-    if (role && !user.roles.includes(role)) {
+    if (isLoggedIn && role && !roles.includes(role)) {
         // return <p className="text-center my-5">You don't have permission to view this page.</p>;
         return null;
     }

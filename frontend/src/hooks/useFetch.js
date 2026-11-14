@@ -1,6 +1,7 @@
 import { useState } from "react";
 // import keycloak from "../keycloak";
 import { apiFetch } from "../logic/api";
+import { useAuth } from "../contexts/AuthContext";
 
 //for my next trick, I will create a custom hook
 //to take care of fetching data from the server
@@ -10,6 +11,7 @@ export default function useFetch() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [statusCode, setStatusCode] = useState(null);
+    const { token, logout } = useAuth();
 
     async function fetchDataCreateBook(baseURL, sendingBook, method) {
         //sets error to false in case the last submission attempt
@@ -41,9 +43,9 @@ export default function useFetch() {
             setStatusCode(response.status);
             return responseData;
         } catch (error) {
-            //even though error is a boolean when it's declared,
-            //setting it to a string works just fine. Who knows 
-            //why. I didn't build react
+            //catches a stale token onn 401 and logs user out to clear the sessionStorage
+            if (error.status === 401)
+                logout();
             setError(error.message);
             console.error(`Fetch error: ${error}`);
             setLoading(false);
@@ -67,7 +69,7 @@ export default function useFetch() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         try {
-            
+
             setResponse(await apiFetch(baseURL, { method }));
             console.log(`response length: ${response.length}`);
             const responseData = response;
@@ -76,9 +78,9 @@ export default function useFetch() {
             setStatusCode(response.status);
             return responseData;
         } catch (error) {
-            //even though error is a boolean when it's declared,
-            //setting it to a string works just fine. Who knows 
-            //why. I didn't build react
+            //catches a stale token onn 401 and logs user out to clear the sessionStorage
+            if (error.status === 401)
+                logout();
             setError(error.message);
             console.error(`Fetch error: ${error}`);
             setLoading(false);
@@ -109,6 +111,9 @@ export default function useFetch() {
             setStatusCode(response.status);
             return responseData;
         } catch (error) {
+            //catches a stale token onn 401 and logs user out to clear the sessionStorage
+            if (error.status === 401)
+                logout();
             setError(error.message);
             console.error(`Fetch error: ${error}`);
             setLoading(false);

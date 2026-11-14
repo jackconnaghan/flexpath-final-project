@@ -1,31 +1,46 @@
 import { createContext, useContext, useState } from 'react';
-import { apiAuthFetch } from '../logic/apiAuth';
-
-const AuthContext = createContext(window.sessionStorage.getItem("key"));
+import { loginUser } from '../logic/apiAuthFetch';
+import { getRoles } from '../logic/apiClient';
+//this is a fallback 
+//and is NEVER used inside the provider (where you intent to use it)
+const AuthContext = createContext(null);
 
 export function AuthContextProvider({ children }) {
-    const [token, setToken] = useState(null);
-    const { login } = apiAuthFetch();
+    const [token, setToken] = useState(() => sessionStorage.getItem("token"));
+    const [username, setUsername] = useState(() => sessionStorage.getItem("username"));
+    const roles = token ? getRoles(token) : [];
 
     //calls apiAuthLogin with the username and password
     //sets sessionStorage.key to the token
     //and sets auth to the token,
     //allowing pages to cross-reference the token's validity
     async function login(username, password) {
-        const token = await login(`/api/auth/login`, "POST", {username, password});
-        window.sessionStorage.setItem("key", token);
-        setToken(token);
-        return null;
+        // const data = await loginUser(`/api/auth/login`, { method: "POST", body: { username, password } });
+        // const token = data.accessToken.token; //backup for refreshes
+        const token = await loginUser(username, password);
+        // const roles = token.getRoles();
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("username", username);
+        setToken(token); //controls react renders
+        setUsername(username);
+
+        // return null;
     }
     //undoes sessionStorage key and
     //sets auth to null again, ending logged-in state context-wide
     function logout() {
-        window.sessionStorage.setItem("key", null);
+        sessionStorage.removeItem("token");           // removeItem, never setItem(..., null)
+        sessionStorage.removeItem("username");
         setToken(null);
+        setUsername(null);
     }
 
+    //the below uses a fun thing to set a bool:
+    //isLoggedIn: !!token
+    //will be true if token is not null
+    //and false if token is null
     return (
-        <AuthContext.Provider value={{ token, login, logout }}>
+        <AuthContext.Provider value={{ token, username, roles, isLoggedIn: !!token, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

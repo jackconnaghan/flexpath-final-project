@@ -9,7 +9,7 @@ import LittleBabyGif from "../../public/LittleBabyGif.gif";
 import Logo from "../../public/LogoNoBackground.png";
 import "../../styles.css"
 //import SearchComponent from "./SearchComponent";
-import ShowAuth from "./ShowAuth";
+// import ShowAuth from "./ShowAuth";
 
 export default function NavBar() {
 
@@ -48,9 +48,9 @@ export default function NavBar() {
                     <NavLink class="nav-links" to={'/my-lists'} onClick={setMenuVisibilityOnComponentChange}>My Lists</NavLink>
                     <NavLink class="nav-links" to={'/mission'} onClick={setMenuVisibilityOnComponentChange}>Mission Statement</NavLink>
                 </ul>
-                <ShowAuth role="ROLE_USER" className="col-auto row log-buttons">
+                {/* <ShowAuth role="ROLE_USER" className="col-auto row log-buttons"> */}
                     <NavLink class="nav-links" to={'/my-account'}>My Account</NavLink>
-                </ShowAuth>
+                {/* </ShowAuth> */}
 
 
 

@@ -1,10 +1,10 @@
 //checked for external dependencies imports
 import React, { useState, useEffect } from "react";
-import RequireAuth from "./RequireAuth";
+// import RequireAuth from "./RequireAuth";
 // import keycloak from "../keycloak";
-import { useAuthStore, syncAuthFromKeycloak } from "../stores/authorizationStore";
+// import { useAuthStore, syncAuthFromKeycloak } from "../stores/authorizationStore";
 import useFetch from "../hooks/useFetch";
-import { useWishListStore } from "../stores/useWishListStore";
+// import { useWishListStore } from "../stores/useWishListStore";
 import { NavLink } from "react-router-dom";
 import CreateNewWishListModal from "./CreateNewWishListModal";
 

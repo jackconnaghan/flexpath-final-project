@@ -6,7 +6,7 @@ import useFetch from "../hooks/useFetch";
 import TextResponseComponent from "./SearchTextResponseComponent";
 import FasterLogo from "../../public/FasterLoadingGif.gif";
 import ErrorBoundary from "./ErrorBoundary";
-
+import { useAuth } from "../contexts/AuthContext";
 
 //I plan to update this to a Tanstack Form later
 export default function AddBookComponent() {

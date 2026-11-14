@@ -1,8 +1,8 @@
 //checked for external dependencies imports
 import React, { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
-import { useAuthStore } from "../stores/authorizationStore";
-import { useWishListStore } from "../stores/useWishListStore";
+// import { useAuthStore } from "../stores/authorizationStore";
+// import { useWishListStore } from "../stores/useWishListStore";
 // import { useForm } from "@tanstack/react-form";
 import ErrorBoundary from "./ErrorBoundary";
 import TextResponseComponent from "./SearchTextResponseComponent";

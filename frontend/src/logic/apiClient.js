@@ -1,8 +1,10 @@
 //bones are from api.js
 //
-//this apiClient fetches the token from the AuthContext and determines who gets to use it
+//this apiClient fetches the token from the AuthContext 
+// and uses it to make some calls
+//  and determines who gets to use it
 
-export async function apiClientFetch(url, { token, method = "GET", body } = []) {
+export async function apiClientFetch(url, { token, method = "GET", body } = {}) {
     //set up headers object
     const headers = {};
 
@@ -39,4 +41,15 @@ export async function apiClientFetch(url, { token, method = "GET", body } = []) 
     }
 
     return response.status === 204 ? null : response.json();
+}
+
+export function getRoles(token) {
+    try {
+        const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        //atob(string) decodes a string that's been encoded with Base64 encoding,
+        //which is how JWT tokens are encoded
+        return JSON.parse(atob(payload)).authorities ?? [];
+    } catch {
+        return [];   // a malformed or corrupted token in storage → treat as no roles
+    }
 }
