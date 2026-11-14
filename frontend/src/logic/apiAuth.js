@@ -1,14 +1,22 @@
 //bones are from api.js
 //
-import { apiClientFetch } from "./api";
+import { apiFetch } from "./api";
 
 export async function loginUser(username, password) {
     //set up headers object
-    const data = await apiClientFetch("/api/auth/login", {
+    const data = await apiFetch("/api/auth/login", {
         method: "POST",
         body: { username, password },
     });
     return data.accessToken.token;
+}
+
+export async function signUpNewUser(username, password) {
+    const data = await apiFetch("/api/users", {
+        method: "POST",
+        body: { username, password },
+    });
+    return data;
 }
 
 

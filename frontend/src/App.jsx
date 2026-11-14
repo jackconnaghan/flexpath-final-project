@@ -23,6 +23,9 @@ import AddBookPage from "./pages/AddBookPage";
 import WishListsPage from "./pages/WishListsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import ListDetailPage from "./pages/ListDetailPage";
+import LoginFormComponent from "./components/LoginFormComponent";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
 
@@ -45,7 +48,7 @@ function App() {
           <Route class="Search" path="/search" element={<BookSearchPage />} />
           <Route class="Add Book" path="/add" element={
             <div className="extend-under-navbar">
-              <RequireAuth role="ROLE_USER" customMessage="Log in to create a book.">
+              <RequireAuth role="USER" customMessage="Log in to create a book.">
                 <AddBookPage />
               </RequireAuth>
             </div>
@@ -58,20 +61,30 @@ function App() {
           } /> */}
           <Route class="MyLists" path="/my-lists" element={
             <div className="extend-under-navbar">
-              <RequireAuth role="ROLE_USER" customMessage="Sign In or Sign Up to make and view lists.">
+              <RequireAuth role="USER" customMessage="Sign In or Sign Up to make and view lists.">
                 <WishListsPage />
               </RequireAuth>
             </div>
           } />
           <Route class="MyUniqueWishList" path="/my-lists/:listId" element={
             <div className="extend-under-navbar">
-              <RequireAuth role="ROLE_USER" customMessage="How'd you get here???">
+              <RequireAuth role="USER" customMessage="How'd you get here???">
                 <ListDetailPage />
               </RequireAuth>
             </div>
           }
           />
 
+          <Route class="LoginForm" path="/login" element={
+            <div className="extend-under-navbar">
+              <LoginPage />
+            </div>
+          } />
+          <Route class="SignUpForm" path="/sign-up" element={
+            <div className="extend-under-navbar">
+              <SignUpPage/>
+            </div>
+          } />
 
 
           <Route class="Our Mission" path="/mission" element={<MissionStatementPage />} />

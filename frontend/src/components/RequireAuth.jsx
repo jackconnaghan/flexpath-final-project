@@ -1,16 +1,15 @@
-//checked for external dependencies imports
-// import { useAuthStore } from "../stores/authorizationStore";
-// import keycloak from "../keycloak";
-// import { useWishListStore } from "../stores/useWishListStore";
 import { useAuth } from "../contexts/AuthContext";
-import { Navigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoginFormComponent from "./LoginFormComponent";
+import LoginPromptComponent from "./LoginPromptComponent";
+import { getRoles } from "../logic/apiUtils";
 
 export default function RequireAuth({ children, role, customMessage }) {
 
     // const { useAuth } = AuthContextProvider();
     // const login = useAuth.login();
     // const logout = useAuth.logout();
+    // const roles = getRoles(sessionStorage.getItem("token"))l
     const { isLoggedIn, roles } = useAuth();
     const location = useLocation();
 
@@ -18,7 +17,7 @@ export default function RequireAuth({ children, role, customMessage }) {
         return (
             <div>
                 <p>{customMessage ?? "Please log in to view this page."}</p>
-                <LoginFormComponent />   {/* your login form component, once it exists */}
+                <LoginPromptComponent location={location} setMenuVisible={setMenuVisible}/>
             </div>
         );
     }

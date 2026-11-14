@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
-import { loginUser } from '../logic/apiAuth';
-import { getRoles } from '../logic/api';
+import { loginUser, signUpNewUser } from '../logic/apiAuth';
+import { getRoles } from '../logic/apiUtils';
 //this is a fallback 
 //and is NEVER used inside the provider (where you intent to use it)
 const AuthContext = createContext(null);
@@ -10,11 +10,14 @@ export function AuthContextProvider({ children }) {
     const [username, setUsername] = useState(() => sessionStorage.getItem("username"));
     const roles = token ? getRoles(token) : [];
 
+    const [error, setError] = useState(false);
+
     //calls apiAuthLogin with the username and password
     //sets sessionStorage.key to the token
     //and sets auth to the token,
     //allowing pages to cross-reference the token's validity
     async function login(username, password) {
+        setError(false);
         // const data = await loginUser(`/api/auth/login`, { method: "POST", body: { username, password } });
         // const token = data.accessToken.token; //backup for refreshes
         const token = await loginUser(username, password);
@@ -33,6 +36,17 @@ export function AuthContextProvider({ children }) {
         sessionStorage.removeItem("username");
         setToken(null);
         setUsername(null);
+    }
+
+    async function signUp(username, password) {
+        const data = await signUpNewUser(username, password);
+        if (data.ok) {
+            const token = await loginUser(username, password);
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("username", username);
+            setToken(token); //controls react renders
+            setUsername(username);
+        }
     }
 
     //the below uses a fun thing to set a bool:

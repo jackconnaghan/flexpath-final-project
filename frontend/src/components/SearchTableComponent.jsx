@@ -72,9 +72,12 @@ export default function SearchTableComponent({ response }) {
 
     return (
         <div>
-            <RequireAuth role="ROLE_USER" customMessage="Log In or Create An Account to add books to a List.">
-                <KeepButtonHiddenAndHandleItsBS open={open} selectedRow={selectedRow} openModal={openModal} setOpen={setOpen} setSelectedRow={setSelectedRow} />
-            </RequireAuth>
+            <div className="justify-content">
+                <RequireAuth role="USER" customMessage="Log In or Create An Account to add books to a List.">
+                    <KeepButtonHiddenAndHandleItsBS open={open} selectedRow={selectedRow} openModal={openModal} setOpen={setOpen} setSelectedRow={setSelectedRow} />
+                </RequireAuth>
+            </div>
+
 
             <table className="table container-fluid px-0 table-striped w-100%">
                 <thead>
@@ -129,9 +132,9 @@ export default function SearchTableComponent({ response }) {
 //additional component to handle the buttons and modal when a user is logged in
 function KeepButtonHiddenAndHandleItsBS({ open, selectedRow, openModal, setSelectedRow, setOpen }) {
 
-    const username = useAuthStore((s) => s.user.username);
-    const lists = useWishListStore((s) => s.userLists[username]);
-    const { userLists } = useWishListStore();
+    // const username = useAuthStore((s) => s.user.username);
+    // const lists = useWishListStore((s) => s.userLists[username]);
+    // const { userLists } = useWishListStore();
 
 
 

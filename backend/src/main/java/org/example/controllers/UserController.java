@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/users")
-@PreAuthorize("hasAuthority('ADMIN')")
 public class UserController {
     /**
      * The user data access object.
@@ -31,6 +30,7 @@ public class UserController {
      * @return A list of all users.
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> getAll() {
         return userDao.getUsers();
     }
@@ -42,6 +42,7 @@ public class UserController {
      * @return The user with the given username.
      */
     @GetMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public User get(@PathVariable String username) {
         return userDao.getUserByUsername(username);
     }
@@ -67,6 +68,7 @@ public class UserController {
      * @return The updated user.
      */
     @PutMapping(path = "/{username}/password")
+    @PreAuthorize("hasAuthority('ADMIN') or #username == authentication.name")
     public User updatePassword(@RequestBody String password, @PathVariable String username) {
         User user = userDao.getUserByUsername(username);
         if (user == null) {
@@ -82,6 +84,7 @@ public class UserController {
      * @param username The username of the user to delete.
      */
     @DeleteMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('ADMIN') or #username == authentication.name")
     public int delete(@PathVariable String username) {
         return userDao.deleteUser(username);
     }
@@ -92,6 +95,7 @@ public class UserController {
      * @return A list of all roles for the user.
      */
     @GetMapping(path = "/{username}/roles")
+    @PreAuthorize("hasAuthority('ADMIN') or #username == authentication.name")
     public List<String> getRoles(@PathVariable String username) {
         return userDao.getRoles(username);
     }
@@ -104,6 +108,7 @@ public class UserController {
      * @return A list of all roles for the user.
      */
     @PostMapping(path = "/{username}/roles")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<String> addRole(@PathVariable String username, @RequestBody String role) {
         return userDao.addRole(username, role.toUpperCase());
     }
@@ -115,6 +120,7 @@ public class UserController {
      * @param role The role to delete.
      */
     @DeleteMapping(path = "/{username}/roles/{role}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public int deleteRole(@PathVariable String username, @PathVariable String role) {
         var affectedRows = userDao.deleteRole(username, role.toUpperCase());
         if (affectedRows == 0) {

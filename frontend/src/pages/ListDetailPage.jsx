@@ -25,17 +25,17 @@ function ListDetails() {
     const { listId } = useParams();
 
     //pull username
-    const username = useAuthStore((s) => s.user.username);
+    // const username = useAuthStore((s) => s.user.username);
 
-    //pull details of list
-    const list = useWishListStore((s) =>
-        //.find is javascript built-in,
-        //useful for stores
-        //find((l) ...) finds the first item in the array for which the test function is true
-        //l (not 1, one) is the list/item in the array
-        //loops through each item in the array until it finds one that passes the test
-        s.userLists[username]?.find((l) => String(l.id) === listId)
-    );
+    // //pull details of list
+    // const list = useWishListStore((s) =>
+    //     //.find is javascript built-in,
+    //     //useful for stores
+    //     //find((l) ...) finds the first item in the array for which the test function is true
+    //     //l (not 1, one) is the list/item in the array
+    //     //loops through each item in the array until it finds one that passes the test
+    //     s.userLists[username]?.find((l) => String(l.id) === listId)
+    // );
 
     const [booksInList, setBooksInList] = useState(null);
     const [localError, setLocalError] = useState(null);

@@ -5,7 +5,7 @@
 //  and determines who gets to use it
 // import { getRoles } from "./apiUtils";
 
-export async function apiClientFetch(url, { token, method = "GET", body } = {}) {
+export async function apiFetch(url, { token, method = "GET", body } = {}) {
     //set up headers object
     const headers = {};
 

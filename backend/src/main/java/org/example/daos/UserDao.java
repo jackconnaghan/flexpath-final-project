@@ -3,10 +3,12 @@ package org.example.daos;
 import org.example.exceptions.DaoException;
 import org.example.models.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -31,7 +33,7 @@ public class UserDao {
     /**
      * Creates a new user data access object.
      *
-     * @param dataSource The data source for the DAO.
+     * @param dataSource      The data source for the DAO.
      * @param passwordEncoder The password encoder for the DAO.
      */
     public UserDao(DataSource dataSource, PasswordEncoder passwordEncoder) {
@@ -64,18 +66,27 @@ public class UserDao {
 
     /**
      * Creates a new user.
+     *
      * @param user The user to create.
      * @return User The created user.
      */
+    /*
+    So THIS is fun: @Transactional makes a methods jdbcTemplate calls either ALL run, or NONE.
+    Will keep a user from getting created without also having a role set.
+     */
+    @Transactional
     public User createUser(User user) {
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         String sql = "INSERT INTO users (username, password) VALUES (?,?);";
+        String rolesSql = "INSERT INTO roles (username, role) VALUES (?,?);";
         try {
             jdbcTemplate.update(sql, user.getUsername(), hashedPassword);
-            return getUserByUsername(user.getUsername());
-        } catch (EmptyResultDataAccessException e) {
-            throw new DaoException("Failed to create user.");
+            jdbcTemplate.update(rolesSql, user.getUsername(), "USER");
+
+        } catch (DuplicateKeyException e) {
+            throw new DaoException("Username already exists.");
         }
+        return getUserByUsername(user.getUsername());
     }
 
     /**
@@ -100,9 +111,27 @@ public class UserDao {
      *
      * @param username The username of the user.
      */
+    @Transactional
     public int deleteUser(String username) {
         String sql = "DELETE FROM users WHERE username = ? ";
+
+        jdbcTemplate.update(
+                "DELETE FROM wishlist_books WHERE wishlist_id IN " +
+                        "(SELECT id FROM wishlists WHERE username = ?)",
+                username);
+        jdbcTemplate.update("DELETE FROM wishlists WHERE username = ?", username);
+        jdbcTemplate.update("DELETE FROM reviews WHERE username = ?", username);
+        jdbcTemplate.update("DELETE FROM roles WHERE username = ?", username);
+
         return jdbcTemplate.update(sql, username);
+
+        /*
+        Add a test for it. Your test database has users with reviews and wishlists,
+        so “delete a user who has reviews and a wishlist,
+        then check that their rows are gone from every table”
+        is a strong endpoint test. It’s also the best proof that
+        the transaction and the deletion order both work.
+         */
     }
 
     /**
@@ -119,7 +148,7 @@ public class UserDao {
      * Adds a role to a user.
      *
      * @param username The username of the user.
-     * @param role The role to add.
+     * @param role     The role to add.
      * @return List of String
      */
     public List<String> addRole(String username, String role) {
@@ -135,7 +164,7 @@ public class UserDao {
      * Deletes a role from a user.
      *
      * @param username The username of the user.
-     * @param role The role to delete.
+     * @param role     The role to delete.
      */
     public int deleteRole(String username, String role) {
         String sql = "DELETE FROM roles WHERE username = ? AND role = ?";
