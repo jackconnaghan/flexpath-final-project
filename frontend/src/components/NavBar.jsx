@@ -12,7 +12,7 @@ import "../../styles.css"
 // import ShowAuth from "./ShowAuth";
 import { useAuth } from "../contexts/AuthContext";
 import RequireAuth from "./RequireAuth";
-import LoginPromptComponent from "./LoginPromptComponent";
+import NavBarLoginPromptComponent from "./NavBarLoginPromptComponent";
 // import LoginPromptComponent from "./LoginPromptComponent";
 import { useLocation } from "react-router-dom";
 
@@ -23,9 +23,9 @@ export default function NavBar() {
 
     const location = useLocation();
 
-    // function setMenuVisibility() {
-    //     toggleMenu(!menu);
-    // }
+    function setMenuVisibility() {
+        toggleMenu(!menu);
+    }
 
     // function setMenuVisibilityOnComponentChange() {
     //     toggleMenu(false);
@@ -42,11 +42,11 @@ export default function NavBar() {
     return (
         <div className="">
             {/* <h1>Hidden Search Page to Simulate Padding</h1> */}
-            <nav className="navbar navbar-dark bg-sky-purple fixed-top flex-gap super-navbackground gap-3 log-buttons-holder"
+            <nav className="navbar fixed-top bg-sky-purple site-nav"
                 style={{ alignItems: "center", padding: "16px 16px" }}>
 
                 {/* <div style={{justifyContent:"left"}} */}
-                <Link to={"/"}><img src={Logo} className="little-gif-display thumbnail"></img></Link>
+                <Link to={"/"} className="nav-logo"><img src={Logo} className="little-gif-display"></img></Link>
 
                 <button className="mobile-toggle" id="mobileToggle" onClick={() => setMenuVisibility()}>
                     {menu ? "X" : "☰"}
@@ -60,10 +60,11 @@ export default function NavBar() {
                     <NavLink to={'/my-lists'}>My Lists</NavLink>
                     <NavLink to={'/mission'}>Mission Statement</NavLink>
 
-                    {isLoggedIn &&
+
+
+                    <NavBarLoginPromptComponent location={location}>
                         <NavLink to={`/my-account`}>My Account</NavLink>
-                    }
-                    <LoginPromptComponent />
+                    </NavBarLoginPromptComponent>
                 </ul>
                 {/* <ShowAuth role="ROLE_USER" className="col-auto row log-buttons"> */}
                 {/* <NavLink class="nav-links" to={'/my-account'}>My Account</NavLink> */}

@@ -484,11 +484,23 @@ app-root {
     background-color: #53248a;
 }
 
-.log-buttons {
-    max-height: 40px;
+/* .navbar-log-buttons {
+    max-height: 30px;
+    font-size: 14px;
     align-items: right;
     margin-left: auto;
     margin-right: 10px;
+    background-color: #81ba4c;
+} */
+
+/* .navbar-hello-text {
+    font-size: 14px;
+    color:#81ba4c
+} */
+
+.navbar-buttons-holder {
+    justify-content: right;
+    align-content: center;
 }
 
 /* @media (max-width: 990px) {
@@ -553,14 +565,14 @@ sexy-btn[type=button]:disabled {
     gap: 1.5rem;
 }
 
-.mobile-toggle {
+/* .mobile-toggle {
     display: none;
     /* Hidden on large screens */
-    background: none;
+    /* background: none;
     border: none;
     font-size: 1.5rem;
-    cursor: pointer;
-}
+    cursor: pointer; */
+
 
 /* Mobile View: Screens 768px and smaller */
 @media (max-width: 868px) {
@@ -568,7 +580,7 @@ sexy-btn[type=button]:disabled {
         display: block;
     }
 
-    .nav-links {
+    /* .nav-links {
         display: none;
         /* Hide horizontal links by default on mobile */
         flex-direction: column;
@@ -579,7 +591,7 @@ sexy-btn[type=button]:disabled {
         width: 100%;
         background-color: #333;
         padding: 1rem 0;
-    }
+    } */
 
     /* Active class added via JavaScript to show menu */
     .nav-links.active {
@@ -603,4 +615,100 @@ sexy-btn[type=button]:disabled {
         align-items: center;
         justify-items: center;
     }
+
+/* ---------- Navbar ---------- */
+.site-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;      /* everything on one vertical centerline */
+    gap: 1.5rem;
+    padding: 12px 16px;
+}
+
+.nav-logo {
+    display: flex;            /* removes the stray space under an inline image */
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    flex: 1;                  /* fill the rest of the bar */
+    margin: 0;                /* cancel Bootstrap's ul margin and padding */
+    padding: 0;
+}
+
+.nav-links li {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    white-space: nowrap;      /* no two-line labels */
+}
+
+.nav-links a.active {
+    color: #81ba4c;
+    text-shadow: 0 0 2px #00e9ff, 0 0 20px #0088ff;
+}
+
+.nav-right {
+    margin-left: auto;        /* the ONE auto margin: pushes the auth group right */
+}
+
+.nav-auth {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+}
+
+.navbar-hello-text {
+    margin: 0;
+    font-size: 14px;
+    color: #81ba4c;
+}
+
+.navbar-log-buttons {
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 4px 12px;
+    background-color: #81ba4c;
+    border: none;
+    border-radius: 6px;
+}
+
+.mobile-toggle {
+    display: none;
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+@media (max-width: 868px) {
+    .site-nav { flex-wrap: wrap; }
+    .mobile-toggle { display: block; }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;            /* directly under the navbar, whatever its height */
+        left: 0;
+        width: 100%;
+        flex: none;
+        flex-direction: column;
+        background-color: #333;
+        padding: 1rem 0;
+    }
+    .nav-links.active { display: flex; }
+
+    .nav-right { margin-left: 0; }
+    .nav-auth  { flex-direction: column; }
 }

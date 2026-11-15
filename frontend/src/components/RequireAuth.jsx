@@ -10,19 +10,29 @@ export default function RequireAuth({ children, role, customMessage }) {
     // const login = useAuth.login();
     // const logout = useAuth.logout();
     // const roles = getRoles(sessionStorage.getItem("token"))l
-    const { isLoggedIn, roles } = useAuth();
+    const { isLoggedIn, logout, username, roles } = useAuth();
+    const navigate = useNavigate();
     const location = useLocation();
+
+        //sends user back to home page after logout
+    function handleLogout() {
+        // setMenuVisible(false);
+        logout();
+        navigate("/");
+    }
 
     if (!isLoggedIn) {
         return (
-            <div>
-                <p>{customMessage ?? "Please log in to view this page."}</p>
-                <LoginPromptComponent location={location} setMenuVisible={setMenuVisible}/>
+            <div className="extend-under-navbar">
+                <p>{customMessage}</p>
+                <LoginPromptComponent location={location} />
             </div>
         );
     }
-    if (role && !roles.includes(role)) {
-        return <p>{customMessage}</p>;
-    }
+    
+    // if (role && !roles.includes(role)) {
+    //     return <p className>{customMessage}</p>;
+
+    // }
     return children;
 }
