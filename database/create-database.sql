@@ -87,6 +87,9 @@ VALUES (2, "user", "That was close!", CURDATE(), 6);
 INSERT INTO wishlists (username, list_title)
 VALUES ("user", 'my first wishlist!');
 
+INSERT INTO wishlists (username, list_title)
+VALUES ("admin", 'my first wishlist!');
+
 INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
 VALUES (1, 2, CURDATE());
 

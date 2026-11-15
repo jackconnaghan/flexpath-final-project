@@ -93,7 +93,7 @@ public class WishListDao {
         }
     }
 
-    public WishList createWishList(String wishlist_title, String username) {
+    public WishList createWishList(WishList wl, String username) {
         String sql = "INSERT INTO wishlists (username, list_title) VALUES (?, ?);";
 
 //        if (book == null || isBlank(book.getTitle())) {
@@ -125,7 +125,7 @@ public class WishListDao {
                 //update
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, username);
-                ps.setString(2, wishlist_title);
+                ps.setString(2, wl.getList_title());
                 return ps;
             }, keyHolder);
 

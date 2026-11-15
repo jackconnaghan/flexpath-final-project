@@ -46,7 +46,7 @@ function Home() {
                     <Link to="/add">
                         <button className="col home-buttons hover-home m-3">Add a Book</button>
                     </Link>
-                    <Link to="/wishlists">
+                    <Link to="/my-lists">
                         <button className="col home-buttons hover-home m-3">Wishlists</button>
                     </Link>
                     <Link to="/mission">

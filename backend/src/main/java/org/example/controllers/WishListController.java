@@ -28,7 +28,8 @@ public class WishListController {
     //this will act as a "getAllWishLists" method
     //@PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
     @GetMapping(path="/mine")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN') or wishListSecurity.isOwner(#username, authentication)")
+    //@PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
+    @PreAuthorize("isAuthenticated()")
     public List<WishList> getMyWishLists(Authentication a) {return wishListDao.getMyWishLists(a.getName()); }
 
     //Get book by an ID in the path
@@ -57,12 +58,12 @@ public class WishListController {
 //    }
 //commenting for now because I DONT WANT TO FUCK WITH IT RIGHT NOW1111
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/create/{wishlist_title}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public WishList createWishList(@PathVariable String wishlist_title, Authentication a) { return wishListDao.createWishList(wishlist_title, a.getName()); }
+    @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
+    public WishList createWishList(@RequestBody WishList wl, Authentication a) { return wishListDao.createWishList(wl, a.getName()); }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
+    @PreAuthorize("isAuthenticated()")
     public WishList updateWishList(@RequestBody WishList wl, Authentication a) { return wishListDao.updateWishList(wl, a.getName()); }
 
     @DeleteMapping("/{id}")
