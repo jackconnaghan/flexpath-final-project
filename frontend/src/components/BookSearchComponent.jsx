@@ -9,6 +9,8 @@ import FasterLogo from "../../public/FASTERCompressedLogo.gif";
 import NormalSpeedLogo from "../../public/NormalSpeedGif.gif";
 import NoBackgroundLogo from "../../public/NoBackgroundLogo.png"
 import Landed from "../../public/Landed.png";
+import { useSearchParams } from "react-router-dom";
+import { useBooks } from "../contexts/BooksContext";
 
 export default function BookSearchComponent({ method }) {
 
@@ -16,32 +18,54 @@ export default function BookSearchComponent({ method }) {
     const [titleInput, setTitleInput] = useState("");
     const [authorInput, setAuthorInput] = useState("");
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
     // pulling object from useFetch that gives us all vars in that hook
-    const { fetchSearchData, setResponse, response, loading, error, statusCode } = useFetch();
-
-    // //this pulls the exact variables from
-    // //CacheResults Context and allows them to
-    // //mutate within SearchComponent
-    //const { cache, setCachedResponse } = useCache(null);
-
-    // //declare filterType choices
-    // const filterTypeOptions =
-    //     ["unfiltered", "gender", "operatingSystem", "model", "behaviorclass"];
+    // const { fetchSearchData, setResponse, response, loading, error, statusCode } = useFetch();
+    const { results, loading, error, searchBooks } = useBooks();
 
     // //run when Submit is clicked
-    // //handles fetch logic with useFetch hook
+    // //handles fetch logic by
+    /*
+1. setting searchParams (local), which changes the URL
+2. useSearchParams will treat it as a state, re-rendering every comp THAT USES THE USESEARCHPARAM hook
+    -> kinda like a context
+3. useSearchParams update causes SearchFormComponent and BookSearchComponent to rerender
+4. When BookSearchComponent rerenders, it sets queryParams = toString(searchParams)
+    -> queryParams basically updates a "cache"
+5. useEffect runs when queryParams changes
+    -> if queryParams = null, nothing happens (no search made yet)
+    -> if queryParams = SOMETHING, searchBooks runs with the new queryParams
+6. Books in list are updated with the former search results
+ 
+I will not remember how this works in a week I am so tired
+    */
     async function onSearch({title, author}) {
         // e.preventDefault();
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
 
-        const params = new URLSearchParams();
-        (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
-        (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
-        fetchSearchData(`/api/books/search?${params}`, "GET");
+        // const params = new URLSearchParams();
+        // (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
+        // (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
+        setSearchParams({ title: title.trim(), author: author.trim() })
+
+        //the below fetch gets replaced with a useEffect that checks the URLSearchParams
+        //and automatically loads books that match those params
+        // fetchSearchData(`/api/books/search?${params}`, "GET");
 
         //console.log(`base: ${baseURL}`);
     }
+
+    //grabs the params out of the url and sets them in a string
+    const queryParams = searchParams.toString();
+
+    useEffect(() => {
+        //if no searchParams set yet, quit out
+        if (!queryParams) return;
+        //otherwise, call searchBooks on the queryParams
+        searchBooks(queryParams);
+    }, [queryParams]);
     // //responds to change in filterType selector in the form
     // function setNewFilterType(e) {
     //     setFilterTypeValue(e.target.value);
@@ -111,15 +135,16 @@ This avoids a wasted first render with empty data, and there’s no effect that 
                 <div className="col-auto">
                     <div className="search-form">
                         <SearchFormComponent onSearch={onSearch} loading={loading} />
+                        
                     </div>
+                    
                 </div>
 
-                <img src={loading ? FasterLogo : Landed} className="gif-load" />
             </div>
             <ErrorBoundary>
-                <SearchTextResponseComponent response={response} loading={loading} error={error} status={statusCode} />
+                <SearchTextResponseComponent response={results} loading={loading} error={error} />
             </ErrorBoundary>
-            <SearchTableComponent response={response} />
+            <SearchTableComponent response={results} />
         </div>
 
     );

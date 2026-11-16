@@ -41,7 +41,7 @@ function MyWishListsSetup() {
     // const loadLists = useWishListStore((s) => s.loadLists);
 
     const { username } = useAuth();
-    const { lists, loadLists, addList, removeList} = useWishLists();
+    const { lists, loadLists, addList, removeList } = useWishLists();
     //REMEMBER: DON'T CALL ANYTHING BUT apiFetch. It will handle it.
     //Put that hair in a bun and handle it
     const { error } = useFetch();

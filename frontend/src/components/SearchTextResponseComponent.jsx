@@ -10,25 +10,25 @@ export default function SearchTextResponseComponent({ response, loading, error, 
         <div className="my-3 mx-5">
             {(loading && !error) &&
                 <div className="text-centered" style={{ display: "flex" }}>
-                    <h2 className="display-5 align-middle">Loading...</h2>
+                    <h5 className="display-5 align-middle">Loading...</h5>
                 </div>}
             {(!loading && (response?.length > 0)) && (
                 <div>
-                    <h3 className="display-5">We found {response?.length} tomes that smell like that:</h3>
-                    <h3>Status Code: {status}</h3>
+                    <h5 className="display-5">We found {response?.length} tomes that smell like that:</h5>
+                    {/* <h3>Status Code: {status}</h3> */}
                 </div>
             )
 
             }
-            {(!loading && !error && response.length <= 0) &&
-                <h3 className="display-5">No filthy books to display...</h3>
+            {(!loading && !error && response?.length <= 0) &&
+                <h5 className="display-5">No filthy books to display...</h5>
             }
 
             {(error) &&
                 <div className="error-container">
-                    <h2 className="">An error occurred:</h2>
-                    <h2 className="error-text">{error}</h2>
-                    <h4>{error.message}</h4>
+                    <h5 className="text-warn">An error occurred:</h5>
+                    <h5 className="error-text">{error}</h5>
+                    <h5>{error.message}</h5>
                 </div>
             }
         </div>

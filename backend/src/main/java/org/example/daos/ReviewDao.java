@@ -41,6 +41,7 @@ public class ReviewDao {
     private static final int minStarRating = 0;
     private static final int maxStarRating = 10;
     private static final Date DEFAULT_REVIEW_DATE =  new Date(19000101);
+    private static final boolean DEFAULT_IS_PUBLIC = false;
 
     /**
      * Create a new book data access object.
@@ -56,6 +57,8 @@ public class ReviewDao {
     public List<Review> getAllReviews() {
         return jdbcTemplate.query("SELECT * FROM reviews;", this::mapToReview);
     }
+
+    public List<Review> getAllPublicReviews() { return jdbcTemplate.query("SELECT * FROM reviews WHERE is_public = true;", this::mapToReview); }
 
     public List<Review> getAllReviewsByUser(String username) {
         return jdbcTemplate.query("SELECT * FROM reviews WHERE username = ?", this::mapToReview, username);
@@ -211,7 +214,8 @@ public class ReviewDao {
                 rs.getLong("book_id"),
                 rs.getString("review_text"),
                 rs.getInt("star_rating"),
-                rs.getDate("review_date")
+                rs.getDate("review_date"),
+                rs.getBoolean("is_public")
         );
     }
 }

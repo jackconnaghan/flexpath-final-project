@@ -6,29 +6,24 @@ import FasterLogo from "../../public/FASTERCompressedLogo.gif";
 // import { useForm } from "@tanstack/react-form";
 import useFetch from "../hooks/useFetch";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useBooks } from "../contexts/BooksContext";
 
 // export default function FormComponent({ input, setInput,
 //     filterTypeValue, setNewFilterType, filterTypeOptions, 
 //     handleSubmit, handleDrop }) {
 export default function SearchFormComponent({ onSearch, loading }) {
 
-    const [titleInput, setTitleInput] = useState("");
-    const [authorInput, setAuthorInput] = useState("");
+    //grab search params
+    const [searchParams] = useSearchParams();
 
-    // const form = useForm({
-    //     defaultValues: {
-    //         title: "",
-    //         author: "",
-    //     },
-    //     onSubmit: async ({ value }) => {
-    //         onSearch(value);
-    //     },
-    //     // validators: {
-    //     //     onSubmit
-    //     // }
-    // }
-    // );
+    const [titleInput, setTitleInput] = useState(() => searchParams.get("title") ?? "");
+    const [authorInput, setAuthorInput] = useState(() => searchParams.get("author") ?? "");
+    // const [books, setBooks, searchBooks] = useBooks();
+
+    //onSearch comes from the BookSearchComponent and is provided via context
     function handleSubmit(title, author) {
+        // setBooks(null);
         onSearch({title, author});
     }
 

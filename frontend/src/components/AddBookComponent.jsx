@@ -8,6 +8,7 @@ import FasterLogo from "../../public/FasterLoadingGif.gif";
 import ErrorBoundary from "./ErrorBoundary";
 import { useAuth } from "../contexts/AuthContext";
 import { apiFetch } from "../logic/api";
+import { useBooks } from "../contexts/BooksContext";
 
 //I plan to update this to a Tanstack Form later
 export default function AddBookComponent() {
@@ -19,6 +20,7 @@ export default function AddBookComponent() {
 
     const [newBook, setNewBook] = useState(null);
     const { token } = useAuth();
+    const { addBook } = useBooks();
 
     const [titleInput, setTitleInput] = useState("");
     const [authorInput, setAuthorInput] = useState("");
@@ -26,7 +28,7 @@ export default function AddBookComponent() {
     const [pubYearInput, setPubYearInput] = useState();
     const [pagesInput, setPagesInput] = useState();
 
-    const method = "POST";
+    //const method = "POST";
 
     async function handleSubmit() {
         //grabbing keyword and filter and setting params
@@ -47,6 +49,8 @@ export default function AddBookComponent() {
             setLoading(true);
 
             setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
+            // const response = await addBook(sendingBook);
+            // setNewBook(response);
         } catch (err) {
             setError(err);
         } finally {

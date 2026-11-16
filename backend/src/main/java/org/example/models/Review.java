@@ -14,6 +14,8 @@ public class Review {
     private Integer star_rating;
     private Date review_date;
 
+    private boolean is_public;
+
     public Review() {}
 
 //    //Users don't need to add text to a review, but they must add a star rating
@@ -29,7 +31,7 @@ public class Review {
     //handle the logic of the object elsewhere. Such as in the ReviewDao(see createReview
     //for the review-filling code).
 
-    public Review(Long id, String username, Long book_id, String review_text, int star_rating, Date review_date) {
+    public Review(Long id, String username, Long book_id, String review_text, int star_rating, Date review_date, boolean is_public) {
         this.id = id;
         //this.user_id = user_id;
         this.username = username;
@@ -37,6 +39,7 @@ public class Review {
         this.review_text = review_text;
         this.star_rating = star_rating;
         this.review_date = review_date;
+        this.is_public = is_public;
     }
 
     public Long getId() {
@@ -55,6 +58,14 @@ public class Review {
 //        this.user_id = user_id;
 //    }
 
+    public boolean isIs_public() {
+        return is_public;
+    }
+
+    public void setIs_public(boolean is_public) {
+        this.is_public = is_public;
+    }
+    
     public Long getBook_id() {
         return book_id;
     }
