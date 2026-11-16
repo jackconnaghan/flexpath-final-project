@@ -171,7 +171,7 @@ function ListDetails() {
             {reviewUpdateModalOpen ?
                 <UpdateReviewModalComponent
                     //  handleReviewChange={handleReviewChange}
-                    setLocalError={setLocalError}
+                    // setLocalError={setLocalError}
                     book_id={selectedBookId}
                     review_id={selectedReviewId}
                     review_text={selectedReviewText}

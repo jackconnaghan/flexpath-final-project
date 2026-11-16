@@ -14,6 +14,7 @@ import AddBookToWishListModalComponent from "./AddBookToWishListModalComponent";
 // import ShowAuth from "./ShowAuth";
 import RevealOnAuth from "./RevealOnAuth";
 import { useWishLists } from "../contexts/WishListsContext";
+import { useReviews } from "../contexts/ReviewsContext";
 
 export default function SearchTableComponent({ response }) {
 
@@ -35,9 +36,12 @@ export default function SearchTableComponent({ response }) {
 
 
     const [open, setOpen] = useState(false);
+    const [reviewOpen, setReviewOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState();
+    const [selectedBookReviews, setSelectedBookReviews] = useState();
 
     const { lists, addBookToList } = useWishLists();
+    const { retrieveAllPublicReviewsForBook } = useReviews();
 
     function openModal(item) {
         setSelectedRow(item);
@@ -48,6 +52,15 @@ export default function SearchTableComponent({ response }) {
         setOpen(false);
     }
 
+    function openReviewModal(item) {
+        setSelectedRow(item);
+        setReviewOpen(true);
+    }
+    function closeReviewModal() {
+        setSelectedRow(null);
+        setReviewOpen(false);
+    }
+
     const dataAreas = [
         "Title",
         "Author",
@@ -56,7 +69,14 @@ export default function SearchTableComponent({ response }) {
         "Pages"
     ];
 
+    async function loadReviews() {
 
+
+    }
+
+    function handleReviewsOpen() {
+
+    }
 
 
 
@@ -89,6 +109,7 @@ export default function SearchTableComponent({ response }) {
                         <RevealOnAuth role="ROLE_USER">
                             <th></th>
                         </RevealOnAuth>
+                        <th></th>
                         {dataAreas.map((item, key) => (
                             <th scope="col" key={key}>{item}</th>
                         ))}
@@ -109,6 +130,12 @@ export default function SearchTableComponent({ response }) {
                                         </button>
                                     </td>
                                 </RevealOnAuth>
+                                <td>
+                                    <button type="link" className="col" onClick={(e) => {
+                                        e.preventDefault();
+                                        openReviewModal(item)
+                                    }
+                                    }>Read Reviews</button></td>
                                 <td>{item["title"]}</td>
                                 <td>{item["author"]}</td>
                                 <td>{item["pub_year"]}</td>

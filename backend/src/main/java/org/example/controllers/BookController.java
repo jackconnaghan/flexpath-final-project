@@ -1,7 +1,9 @@
 package org.example.controllers;
 
 import org.example.daos.BookDao;
+import org.example.daos.ReviewDao;
 import org.example.models.Book;
+import org.example.models.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,9 @@ public class BookController {
 
     @Autowired
     private BookDao bookDao;
+
+    @Autowired
+    private ReviewDao reviewDao;
 
     @GetMapping
     public List<Book> getAllBooks() {
@@ -58,6 +63,11 @@ public class BookController {
     public List<Book> getBooksWithKeywords(@RequestParam String title, @RequestParam String author) {
         return bookDao.getBooksWithKeywords(title, author);
     }
+
+//    @GetMapping(path = "/{id}/reviews")
+//    public List<Review> getReviewsByBookId(@PathVariable Long id) {
+//        reviewDao.getAllPublicReviews();
+//    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")

@@ -58,7 +58,7 @@ public class Review {
 //        this.user_id = user_id;
 //    }
 
-    public boolean isIs_public() {
+    public boolean getIs_public() {
         return is_public;
     }
 

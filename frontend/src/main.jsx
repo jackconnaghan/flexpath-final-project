@@ -7,6 +7,7 @@ import GlobalLayoutComponent from "./components/GlobalLayoutComponent.jsx";
 import { AuthContextProvider } from "./contexts/AuthContext.jsx";
 import { WishListsContextProvider } from "./contexts/WishListsContext.jsx";
 import { BooksContextProvider } from "./contexts/BooksContext.jsx";
+import { ReviewsContextProvider } from "./contexts/ReviewsContext.jsx";
 
 
 createRoot(document.getElementById("root")).render(
@@ -15,9 +16,11 @@ createRoot(document.getElementById("root")).render(
       <AuthContextProvider>
         <WishListsContextProvider>
           <BooksContextProvider>
-            <GlobalLayoutComponent>
-              <App />
-            </GlobalLayoutComponent>
+            <ReviewsContextProvider>
+              <GlobalLayoutComponent>
+                <App />
+              </GlobalLayoutComponent>
+            </ReviewsContextProvider>
           </BooksContextProvider>
         </WishListsContextProvider>
       </AuthContextProvider>

@@ -173,72 +173,57 @@ export function WishListsContextProvider({ children }) {
         }
     }
 
-    // async function removeBookFromList(wishlist_id, book_id) {
-    //     setError(null);
-    //     try {
-    //         const data = await apiFetch(`/api/wishlists/list/${wishlist_id}`,
-    //             {
-    //                 //token direct from the useAuth context provider, 
-    //                 //no need to pass it in as addList(token)
-    //                 token,
-    //                 method: "DELETE",
-    //                 //look here first for errors
-    //                 //some controller methods expect an object,
-    //                 //others expect a single variable
-    //                 body: book_id,
-    //             }
-    //         );
-
-    //         if (data !== 0) {
-    //             setLists(prevLists => (prevLists ?? [])
-    //                 .map((list) => (
-    //                     list.id === wishlist_id
-    //                         ? list.filter(book => book.id !== book_id)
-    //                         : list
-    //             )));
-    //         }
-
-    //         //?? [] prevents crash when lists is null/undefined (not yet loaded)
-    //         return data;
-    //     } catch (err) {
-    //         setError(err.message);
-    //         throw err;
-    //     }
-    // }
+    //this allows UpdateReviewModalComponent to change the WishListsPage
+    //and update the row that has its review created/updated/deleted
+    function setBookReview(bookId, review) {
+        setLists(prev => (prev ?? []).map(list =>
+            list.books
+                ? {
+                    ...list,
+                    books: list.books.map(book =>
+                        book.id === bookId
+                            ? { ...book, review_id: review?.review_id ?? null, review_text: review?.review_text ?? null }
+                            : book
+                    ),
+                }
+                : list      // books not loaded for this list: nothing to update, it'll fetch fresh later
+        ));
+    }
+    
     async function removeBookFromList(wishlist_id, book_id) {
 
         //just get in the habit of making the wishlistId a number
         //everything on WishListPage deals with wishlistId through the url
         //which is always a string
-    const id = Number(wishlist_id);
-    setError(null);
-    try {
-        const deleted = await apiFetch(`/api/wishlists/list/${id}`, {
-            token,
-            method: "DELETE",
-            body: book_id,
-        });
-        if (deleted !== 0) {
-            setLists(prev => (prev ?? [])
-            .map(list =>
-                list.id === id && list.books
-                //this is so fucking sexy
-                //if list.id === id and list.books exists,
-                //make list equal to exist list
-                //BUT make books equal to list.books minus the book with the chosen id
-                    ? { ...list, books: list.books.filter(book => book.id !== book_id) }
-                    : list
-            ));
+        const id = Number(wishlist_id);
+        setError(null);
+        try {
+            const deleted = await apiFetch(`/api/wishlists/list/${id}`, {
+                token,
+                method: "DELETE",
+                body: book_id,
+            });
+            if (deleted !== 0) {
+                setLists(prev => (prev ?? [])
+                    .map(list =>
+                        list.id === id && list.books
+                            //this is so fucking sexy
+                            //if list.id === id and list.books exists,
+                            //make list equal to exist list
+                            //BUT make books equal to list.books minus the book with the chosen id
+                            ? { ...list, books: list.books.filter(book => book.id !== book_id) }
+                            : list
+                    ));
+            }
+            return deleted;
+        } catch (err) {
+            setError(err.message);
+            throw err;
         }
-        return deleted;
-    } catch (err) {
-        setError(err.message);
-        throw err;
     }
-}
 
     return (
-        <WishListsContext.Provider value={{ lists, loadLists, addList, removeList, loadBooksInList, addBookToList, removeBookFromList }}>
+        <WishListsContext.Provider value={{ lists, loadLists, addList, removeList, loadBooksInList, addBookToList, removeBookFromList, setBookReview }}>
             {children}
         </WishListsContext.Provider>
     );

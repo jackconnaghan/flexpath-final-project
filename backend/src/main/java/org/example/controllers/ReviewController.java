@@ -25,8 +25,15 @@ public class ReviewController {
     @PreAuthorize("hasRole('ADMIN')")
     public List<Review> getAllReviews() { return reviewDao.getAllReviews(); }
 
-    @GetMapping(path = "/user/{username}")
-    public List<Review> getAllReviewsByUser(@PathVariable String username) { return reviewDao.getAllReviewsByUser(username); }
+//    @GetMapping(path = "/user/{username}")
+//    public List<Review> getAllReviewsByUser(@PathVariable String username) { return reviewDao.getAllReviewsByUser(username); }
+
+    @GetMapping("/book/{bookId}")
+    public List<Review> getPublicReviewsForBook(@PathVariable Long bookId) { return reviewDao.getPublicReviewsForBook(bookId); }
+
+    @GetMapping(path = "/mine")
+    @PreAuthorize("isAuthenticated()")
+    public List<Review> getMyReviews(Authentication auth) { return reviewDao.getMyReviews(auth.getName()); }
 
     @GetMapping(path = "/searchreviews")
     public List<Review> getAllReviewsByBook(@RequestBody String title) { return reviewDao.getAllReviewsByBook(title); }
@@ -37,7 +44,7 @@ public class ReviewController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public Review createReview(@RequestBody Review review, Authentication auth) {
         review.setUsername(auth.getName());
         return reviewDao.createReview(review);

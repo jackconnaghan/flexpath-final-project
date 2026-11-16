@@ -58,7 +58,9 @@ public class ReviewDao {
         return jdbcTemplate.query("SELECT * FROM reviews;", this::mapToReview);
     }
 
-    public List<Review> getAllPublicReviews() { return jdbcTemplate.query("SELECT * FROM reviews WHERE is_public = true;", this::mapToReview); }
+    public List<Review> getPublicReviewsForBook(Long book_id) { return jdbcTemplate.query("SELECT * FROM reviews WHERE book_id = ? AND is_public = true;", this::mapToReview, book_id); }
+
+    public List<Review> getMyReviews(String username) { return jdbcTemplate.query("SELECT * FROM reviews WHERE username = ?", this::mapToReview, username); }
 
     public List<Review> getAllReviewsByUser(String username) {
         return jdbcTemplate.query("SELECT * FROM reviews WHERE username = ?", this::mapToReview, username);
@@ -78,7 +80,7 @@ public class ReviewDao {
 
     public Review createReview(Review review) {
         //put star rating back in when you're ready to implement that
-        String sql = "INSERT INTO reviews (username, book_id, review_text, star_rating, review_date) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO reviews (username, book_id, review_text, star_rating, review_date, is_public) VALUES (?, ?, ?, ?, ?, ?);";
 
         if (review.getUsername() == null || isBlank(review.getUsername())) {
             throw new NoTitleException(HttpStatus.BAD_REQUEST, "A review needs a user. Are you logged in?");
@@ -99,6 +101,7 @@ public class ReviewDao {
         int star_rating = DEFAULT_STAR_RATING;
         //int star_rating = review.getStar_rating();
         Date review_date = reviewDateIsNull(review.getReview_date()) ? DEFAULT_REVIEW_DATE : review.getReview_date();
+        boolean is_public = review.getIs_public() ? review.getIs_public() : false;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
@@ -117,6 +120,7 @@ public class ReviewDao {
                 ps.setString(3, review_text);
                 ps.setInt(4, star_rating);
                 ps.setDate(5, review_date);
+                ps.setBoolean(6, is_public);
                 return ps;
             }, keyHolder);
 
