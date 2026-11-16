@@ -8,6 +8,7 @@ import { useState } from "react";
 // import { useWishListStore } from "../stores/useWishListStore";
 import { useWishLists } from "../contexts/WishListsContext";
 import { useAuth } from "../contexts/AuthContext";
+
 export default function WishListPage() {
     /*
 According to Claude, a common crash in login-ready pages is when 

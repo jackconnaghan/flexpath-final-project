@@ -47,11 +47,7 @@ function Home() {
                         <button className="col home-buttons hover-home m-3">Add a Book</button>
                     </Link>
                     <Link to="/my-lists">
-                        <button className="col home-buttons hover-home m-3">Wishlists</button>
-                    </Link>
-                    <Link to="/mission">
-                        <button className="col home-buttons hover-home m-3">About Us</button></Link>
-                    <button className="col home-buttons hover-home m-3">Donate</button>
+                        <button className="col home-buttons hover-home m-3">Wishlists</button></Link>
                 </div>
             </div>
             <div className="home-button-layout ">

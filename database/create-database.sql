@@ -46,6 +46,7 @@ create table reviews (
     review_text text,
     star_rating int not null,
     review_date DATE not null,
+    is_public boolean not null,
     foreign key (book_id) references books(id) on delete cascade,
     -- foreign key (user_id) references users(user_id) on delete cascade,
     constraint uq_username_to_review unique (username, book_id)
@@ -89,6 +90,9 @@ VALUES ("user", 'my first wishlist!');
 
 INSERT INTO wishlists (username, list_title)
 VALUES ("admin", 'my first wishlist!');
+
+INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
+VALUES (2, 1, CURDATE());
 
 INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
 VALUES (1, 2, CURDATE());

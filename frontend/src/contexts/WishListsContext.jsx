@@ -46,7 +46,7 @@ export function WishListsContextProvider({ children }) {
                     //no need to pass it in as addList(token)
                     token,
                     method: "POST",
-                    body: {list_title: wishlist_title},
+                    body: { list_title: wishlist_title },
                 }
             );
             //stole this from the former 
@@ -91,7 +91,7 @@ export function WishListsContextProvider({ children }) {
 
             "prev" represents the state of lists before the setList call is made
             */
-           //this will reform the lists state based on a filter of the previous list
+            //this will reform the lists state based on a filter of the previous list
             setLists(prev => (prev ?? []).filter(list => list.id !== wishlist_id));
             //?? [] prevents crash when lists is null/undefined (not yet loaded)
             return data;
@@ -101,12 +101,144 @@ export function WishListsContextProvider({ children }) {
         }
     }
 
-    //the below uses a fun thing to set a bool:
-    //isLoggedIn: !!token
-    //will be true if token is not null
-    //and false if token is null
+    async function loadBooksInList(wishlist_id, { force = false } = {}) {
+        //wishlist_id will arrive as a string, since ListDetailPage pulls it from the URL
+        //FUCK i got extreemly tripped up on that
+        const id = Number(wishlist_id);
+        /* 
+        This says:
+        create variable "existingList" which is equal to a list (if lists exists)
+        where the list.id is equal to the wishlist_id passed as a param
+        */
+        const existingList = lists?.find(list => list.id === id)
+        //ooks are already cached, dont call again
+        if (!token || (existingList?.books && !force)) return;
+        setError(null);
+        try {
+            const books = await apiFetch(`/api/wishlists/list/${wishlist_id}`, {
+                token,
+                method: "GET",
+            })
+            setLists(prev => (prev ?? [])
+                //use some property shorthand to name the field after the variable "books"
+                .map(list =>
+                    list.id === id ? { ...list, books } : list
+
+                ));
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        }
+    }
+
+    async function addBookToList(wishlist_id, book_id) {
+        const id = Number(wishlist_id);
+        setError(null);
+        try {
+            const data = await apiFetch(`/api/wishlists/list/${wishlist_id}/add`,
+                {
+                    token,
+                    method: "POST",
+                    body: book_id,
+                }
+            );
+            //sets list to a new state where 
+            /*
+            1. Map through lists, find list with matching id
+            2. If list has matching id AND list has a books param,
+            3. set the list obj equal to
+                ...list, (everything already in list),
+                PLUS, replace the books param with
+                everything already in list.books plus the new book obj
+
+                it's FUCKED up and I had to ask claude a lot of questions to iron it out but it works
+            */
+            // setLists(prev => (prev ?? [])
+            //     .map(list => list.id === id && list.books
+            //         //checks if data is good, then adds to list.books
+            //         //otherwise, list.books becomes undefined
+            //         ? (data ? { ...list, books: [...list.books, data] } : { ...list, books: undefined })
+            //         : list
+            //     ));
+            setLists(prev => (prev ?? [])
+                .map(list =>
+                    list.id === id
+                        ? { ...list, books: undefined }
+                        : list
+                ));
+            return data;
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        }
+    }
+
+    // async function removeBookFromList(wishlist_id, book_id) {
+    //     setError(null);
+    //     try {
+    //         const data = await apiFetch(`/api/wishlists/list/${wishlist_id}`,
+    //             {
+    //                 //token direct from the useAuth context provider, 
+    //                 //no need to pass it in as addList(token)
+    //                 token,
+    //                 method: "DELETE",
+    //                 //look here first for errors
+    //                 //some controller methods expect an object,
+    //                 //others expect a single variable
+    //                 body: book_id,
+    //             }
+    //         );
+
+    //         if (data !== 0) {
+    //             setLists(prevLists => (prevLists ?? [])
+    //                 .map((list) => (
+    //                     list.id === wishlist_id
+    //                         ? list.filter(book => book.id !== book_id)
+    //                         : list
+    //             )));
+    //         }
+
+    //         //?? [] prevents crash when lists is null/undefined (not yet loaded)
+    //         return data;
+    //     } catch (err) {
+    //         setError(err.message);
+    //         throw err;
+    //     }
+    // }
+    async function removeBookFromList(wishlist_id, book_id) {
+
+        //just get in the habit of making the wishlistId a number
+        //everything on WishListPage deals with wishlistId through the url
+        //which is always a string
+    const id = Number(wishlist_id);
+    setError(null);
+    try {
+        const deleted = await apiFetch(`/api/wishlists/list/${id}`, {
+            token,
+            method: "DELETE",
+            body: book_id,
+        });
+        if (deleted !== 0) {
+            setLists(prev => (prev ?? [])
+            .map(list =>
+                list.id === id && list.books
+                //this is so fucking sexy
+                //if list.id === id and list.books exists,
+                //make list equal to exist list
+                //BUT make books equal to list.books minus the book with the chosen id
+                    ? { ...list, books: list.books.filter(book => book.id !== book_id) }
+                    : list
+            ));
+        }
+        return deleted;
+    } catch (err) {
+        setError(err.message);
+        throw err;
+    }
+}
+
     return (
-        <WishListsContext.Provider value={{ lists, loadLists, addList, removeList }}>
+        <WishListsContext.Provider value={{ lists, loadLists, addList, removeList, loadBooksInList, addBookToList, removeBookFromList }}>
             {children}
         </WishListsContext.Provider>
     );

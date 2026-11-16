@@ -7,12 +7,18 @@ import TextResponseComponent from "./SearchTextResponseComponent";
 import FasterLogo from "../../public/FasterLoadingGif.gif";
 import ErrorBoundary from "./ErrorBoundary";
 import { useAuth } from "../contexts/AuthContext";
+import { apiFetch } from "../logic/api";
 
 //I plan to update this to a Tanstack Form later
 export default function AddBookComponent() {
 
-    const { fetchData: fetchDataCreateBook, setResponse, response, loading, error, statusCode } = useFetch();
+    // const { fetchData: fetchDataCreateBook, setResponse, response, loading, error, statusCode } = useFetch();
+    //const [response, setResponse] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const [newBook, setNewBook] = useState(null);
+    const { token } = useAuth();
 
     const [titleInput, setTitleInput] = useState("");
     const [authorInput, setAuthorInput] = useState("");
@@ -22,23 +28,30 @@ export default function AddBookComponent() {
 
     const method = "POST";
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        // const xsrf = getCookie("XSRF-TOKEN");
+    async function handleSubmit() {
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
         const sendingBook = {
             title: titleInput,
             author: authorInput,
-            pub_year: pubYearInput,
-            isbn_13: isbnInput,
-            pages: pagesInput
+            pub_year: Number(pubYearInput),
+            isbn_13: Number(isbnInput),
+            pages: Number(pagesInput)
         }
 
         const baseURL = `/api/books/create`;
 
         console.log(`base: ${baseURL}`);
-        setNewBook(fetchDataCreateBook(baseURL, sendingBook, method));
+        try {
+            setError(null);
+            setLoading(true);
+
+            setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
         //setInput("");
     }
 
@@ -52,11 +65,15 @@ export default function AddBookComponent() {
     }
 
     return (
-        <div className="top row align-add-book-items ">
+        <div className="top row flex align-add-book-items ">
 
+            
+            {error && <p className="text-warn">{error}</p>}
             <div className="col search-page-inputs container">
+                <h3 className="text-left">Enter a book in the inputs below.</h3>
                 <form className="col" onSubmit={(e) => {
-                    handleSubmit(e);
+                    e.preventDefault();
+                    handleSubmit();
 
                 }}>
                     <div className="row">
@@ -85,7 +102,7 @@ export default function AddBookComponent() {
                     </input>
                     <br></br>
                     <p><strong>Publication Year</strong></p>
-                    <input className="form-control w-50 custom-input" type="text" placeholder="year published..."
+                    <input className="form-control w-50 custom-input" type="number" placeholder="year published..."
                         value={pubYearInput}
                         onChange={(e) => {
                             setPubYearInput(e.target.value)
@@ -93,7 +110,7 @@ export default function AddBookComponent() {
                     </input>
                     <br></br>
                     <p><strong>ISBN-13</strong></p>
-                    <input className="form-control w-50 custom-input" type="text" placeholder="isbn..."
+                    <input className="form-control w-50 custom-input" type="number" placeholder="isbn..."
                         value={isbnInput}
                         onChange={(e) => {
                             setIsbnInput(e.target.value)
@@ -101,7 +118,7 @@ export default function AddBookComponent() {
                     </input>
                     <br></br>
                     <p><strong>Number of Pages</strong></p>
-                    <input className="form-control w-50 custom-input" type="text" placeholder="pages..."
+                    <input className="form-control w-50 custom-input" type="number" placeholder="pages..."
                         value={pagesInput}
                         onChange={(e) => {
                             setPagesInput(e.target.value)
@@ -113,29 +130,29 @@ export default function AddBookComponent() {
                 </form>
 
             </div>
-            <ErrorBoundary error={error}>
+            {/* <ErrorBoundary error={error}>
                 <TextResponseComponent response={response} loading={loading} error={error} status={statusCode} />
-            </ErrorBoundary>
+            </ErrorBoundary> */}
 
             <div className="col">
                 {loading && <h3>Adding yo book cuh...</h3>}
-                {!loading && statusCode && statusCode !== 201 && (
+                {!loading && error && (
                     <div>
-                        <h3>Error with status code {statusCode}: {determineStatusCodeError(statusCode)}</h3>
+                        <h3>Error with status code {error}: {error}</h3>
                         {/* <h3>{error}</h3> */}
                     </div>
 
                 )}
-                {!loading && !error && response?.id && (
+                {!loading && !error && newBook?.id && (
                     <div className="text-left align-center">
                         <h3>Good to go!</h3>
                         <table>
                             <tbody>
-                                <tr><th>Title:</th><td>{response.title}</td></tr>
-                                <tr><th>Author:</th><td>{response.author}</td></tr>
-                                <tr><th>Year Published:</th><td>{response.pub_year}</td></tr>
-                                <tr><th>ISBN-13:</th><td>{response.isbn13}</td></tr>
-                                <tr><th>Pages:</th><td>{response.pages}</td></tr>
+                                <tr><th>Title:</th><td>{newBook.title}</td></tr>
+                                <tr><th>Author:</th><td>{newBook.author}</td></tr>
+                                <tr><th>Year Published:</th><td>{newBook.pub_year}</td></tr>
+                                <tr><th>ISBN-13:</th><td>{newBook.isbn13}</td></tr>
+                                <tr><th>Pages:</th><td>{newBook.pages}</td></tr>
                             </tbody>
                         </table>
 
@@ -143,7 +160,6 @@ export default function AddBookComponent() {
                     </div>
                 )}
             </div>
-            {!loading && !response && <h3 className="text-center">Enter a book in the inputs above</h3>}
 
         </div>
 

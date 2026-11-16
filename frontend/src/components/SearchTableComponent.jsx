@@ -13,6 +13,7 @@ import RequireAuth from "./RequireAuth";
 import AddBookToWishListModalComponent from "./AddBookToWishListModalComponent";
 // import ShowAuth from "./ShowAuth";
 import RevealOnAuth from "./RevealOnAuth";
+import { useWishLists } from "../contexts/WishListsContext";
 
 export default function SearchTableComponent({ response }) {
 
@@ -32,16 +33,19 @@ export default function SearchTableComponent({ response }) {
     //     setSelectedRow(item);
     // }
 
-    // function closeModal() {
-    //     setOpen(false);
-    // }
+
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState();
+
+    const { lists, addBookToList } = useWishLists();
 
     function openModal(item) {
         setSelectedRow(item);
         setOpen(true);
-
+    }
+    function closeModal() {
+        setSelectedRow(null);
+        setOpen(false);
     }
 
     const dataAreas = [
@@ -74,7 +78,7 @@ export default function SearchTableComponent({ response }) {
         <div>
             <div className="justify-content">
                 <RequireAuth role="USER" customMessage="Log In or Create An Account to add books to a List.">
-                    <KeepButtonHiddenAndHandleItsBS open={open} selectedRow={selectedRow} openModal={openModal} setOpen={setOpen} setSelectedRow={setSelectedRow} />
+                    <KeepButtonHiddenAndHandleItsBS open={open} selectedRow={selectedRow} openModal={openModal} closeModal={closeModal} setSelectedRow={setSelectedRow} />
                 </RequireAuth>
             </div>
 
@@ -95,7 +99,7 @@ export default function SearchTableComponent({ response }) {
                         response.map(item => (
                             //pass the iterator at the top level
                             <tr className="col" key={item["id"]}>
-                                <RevealOnAuth role="ROLE_USER">
+                                <RevealOnAuth role="USER">
                                     <td>
                                         <button type="link" className="col" onClick={(e) => {
                                             e.preventDefault();
@@ -130,36 +134,19 @@ export default function SearchTableComponent({ response }) {
 }
 
 //additional component to handle the buttons and modal when a user is logged in
-function KeepButtonHiddenAndHandleItsBS({ open, selectedRow, openModal, setSelectedRow, setOpen }) {
+function KeepButtonHiddenAndHandleItsBS({ selectedRow, openModal, setSelectedRow, closeModal }) {
 
     // const username = useAuthStore((s) => s.user.username);
     // const lists = useWishListStore((s) => s.userLists[username]);
     // const { userLists } = useWishListStore();
 
 
-
-    const modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
-
-    function closeModal() {
-        setOpen(false);
-    }
-
-
     return (
         <>
-            {open ?
-                <AddBookToWishListModalComponent setSelectedRow={setSelectedRow} selectedRow={selectedRow} modalStyle={modalStyle}
-                    openModal={openModal} closeModal={closeModal} open={open} />
+            {open && selectedRow
+                ?
+                <AddBookToWishListModalComponent setSelectedRow={setSelectedRow} selectedRow={selectedRow}
+                    openModal={openModal} closeModal={closeModal} />
                 : null}
         </>
     );

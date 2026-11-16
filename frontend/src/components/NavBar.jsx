@@ -58,7 +58,7 @@ export default function NavBar() {
                     <NavLink to={"/add"}>Add A Book</NavLink>
                     {/* <NavLink class="nav-links" to={'/reviews'} onClick={setMenuVisibilityOnComponentChange}>Write A Review</NavLink> */}
                     <NavLink to={'/my-lists'}>My Lists</NavLink>
-                    <NavLink to={'/mission'}>Mission Statement</NavLink>
+                    {/* <NavLink to={'/mission'}>Mission Statement</NavLink> */}
 
 
 

@@ -8,12 +8,10 @@ import ErrorBoundary from "./ErrorBoundary";
 import TextResponseComponent from "./SearchTextResponseComponent";
 import { useWishLists } from "../contexts/WishListsContext";
 import { useAuth } from "../contexts/AuthContext";
-import { createPortal } from "react-dom";
 
 export default function CreateNewWishListModal({ setModalOpen }) {
 
     const { lists, loadLists, addList, removeList } = useWishLists();
-    const { username, token } = useAuth();
     // const { fetchData, response, loading, error, statusCode } = useFetch();
 
     const [newListName, setNewListName] = useState("");

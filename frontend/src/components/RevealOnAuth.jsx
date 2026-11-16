@@ -31,10 +31,10 @@ export default function RevealOnAuth({ children, role }) {
         return null;
     }
 
-    if (isLoggedIn && role && !roles.includes(role)) {
-        // return <p className="text-center my-5">You don't have permission to view this page.</p>;
-        return null;
-    }
+    // if (isLoggedIn && role && !roles.includes(role)) {
+    //     // return <p className="text-center my-5">You don't have permission to view this page.</p>;
+    //     return null;
+    // }
 
     return children;
 }
