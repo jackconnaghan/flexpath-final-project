@@ -12,10 +12,11 @@ import { useBooks } from "../contexts/BooksContext";
 // export default function FormComponent({ input, setInput,
 //     filterTypeValue, setNewFilterType, filterTypeOptions, 
 //     handleSubmit, handleDrop }) {
-export default function SearchFormComponent({ onSearch, loading }) {
+export default function SearchFormComponent({ loading }) {
 
     //grab search params
     const [searchParams] = useSearchParams();
+    const { onSearch } = useBooks();
 
     const [titleInput, setTitleInput] = useState(() => searchParams.get("title") ?? "");
     const [authorInput, setAuthorInput] = useState(() => searchParams.get("author") ?? "");

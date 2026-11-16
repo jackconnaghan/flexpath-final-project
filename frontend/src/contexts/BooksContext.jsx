@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { apiFetch } from '../logic/api';
+import { useSearchParams } from 'react-router-dom';
 
 //this is a fallback 
 //and is NEVER used inside the provider (where you intent to use it)
@@ -16,6 +17,8 @@ export function BooksContextProvider({ children }) {
     //context state for refilling search params
     const [lastQuery, setLastQuery] = useState(null);
     const [results, setResults] = useState(null);
+
+    const [searchParams, setSearchParams] = useSearchParams();
 
 
     const [error, setError] = useState(false);
@@ -56,18 +59,36 @@ export function BooksContextProvider({ children }) {
             setError(err);
         }
     }
-//currently breaks the add book page
+
+    async function onSearch({ title, author }) {
+        //grabbing keyword and filter and setting params before sending off to useFetch
+
+        // const params = new URLSearchParams();
+        // (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
+        // (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
+        setSearchParams({ title: title.trim(), author: author.trim() })
+        //this sets off a cascade of updates
+
+        //the below fetch gets replaced with a useEffect that checks the URLSearchParams
+        //and automatically loads books that match those params
+        // fetchSearchData(`/api/books/search?${params}`, "GET");
+
+        //console.log(`base: ${baseURL}`);
+    }
+
+    //currently breaks the add book page
     async function addBook(book) {
         setError(null);
         setLoading(true);
         try {
             const response = await apiFetch(`/api/books/create`, {
-                token, 
+                token,
                 method: "POST",
                 body: book
             });
             setLastQuery(null);
             setResults(null);
+            return response;
         } catch (err) {
             setError(err);
         } finally {
@@ -292,7 +313,7 @@ export function BooksContextProvider({ children }) {
     }
 
     return (
-        <BooksContext.Provider value={{ results, loading, error, searchBooks, addBook }}>
+        <BooksContext.Provider value={{ results, loading, error, searchBooks, addBook, onSearch }}>
             {children}
         </BooksContext.Provider>
     );

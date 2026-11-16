@@ -13,7 +13,7 @@ import TextResponseComponent from "./SearchTextResponseComponent";
 
 export default function UpdateReviewModalComponent({ setLocalError, book_id, openModal, closeModal, review_id, review_text, create, update, remove }) {
 
-    const { userLists } = useWishListStore();
+    // const { userLists } = useWishListStore();
     //const [error, setError] = useState(null);
 
     //grab username and then establish array of lists based on username

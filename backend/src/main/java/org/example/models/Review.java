@@ -65,7 +65,7 @@ public class Review {
     public void setIs_public(boolean is_public) {
         this.is_public = is_public;
     }
-    
+
     public Long getBook_id() {
         return book_id;
     }

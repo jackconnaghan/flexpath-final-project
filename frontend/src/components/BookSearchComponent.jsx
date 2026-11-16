@@ -22,7 +22,7 @@ export default function BookSearchComponent({ method }) {
 
     // pulling object from useFetch that gives us all vars in that hook
     // const { fetchSearchData, setResponse, response, loading, error, statusCode } = useFetch();
-    const { results, loading, error, searchBooks } = useBooks();
+    const { results, loading, error, searchBooks, onSearch } = useBooks();
 
     // //run when Submit is clicked
     // //handles fetch logic by
@@ -40,22 +40,21 @@ export default function BookSearchComponent({ method }) {
  
 I will not remember how this works in a week I am so tired
     */
-    async function onSearch({title, author}) {
-        // e.preventDefault();
-        //grabbing keyword and filter and setting params
-        //before sending off to useFetch
+    // async function onSearch({title, author}) {
+    //     //grabbing keyword and filter and setting params before sending off to useFetch
 
-        // const params = new URLSearchParams();
-        // (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
-        // (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
-        setSearchParams({ title: title.trim(), author: author.trim() })
+    //     // const params = new URLSearchParams();
+    //     // (title.trim()) ? params.set("title", title.trim()) : params.set("title", "");
+    //     // (author.trim()) ? params.set("author", author.trim()) : params.set("author", "");
+    //     setSearchParams({ title: title.trim(), author: author.trim() })
+    //     //this sets off a cascade of updates
 
-        //the below fetch gets replaced with a useEffect that checks the URLSearchParams
-        //and automatically loads books that match those params
-        // fetchSearchData(`/api/books/search?${params}`, "GET");
+    //     //the below fetch gets replaced with a useEffect that checks the URLSearchParams
+    //     //and automatically loads books that match those params
+    //     // fetchSearchData(`/api/books/search?${params}`, "GET");
 
-        //console.log(`base: ${baseURL}`);
-    }
+    //     //console.log(`base: ${baseURL}`);
+    // }
 
     //grabs the params out of the url and sets them in a string
     const queryParams = searchParams.toString();

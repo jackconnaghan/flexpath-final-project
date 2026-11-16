@@ -48,9 +48,10 @@ export default function AddBookComponent() {
             setError(null);
             setLoading(true);
 
-            setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
-            // const response = await addBook(sendingBook);
-            // setNewBook(response);
+            // setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
+            const response = await addBook(sendingBook);
+            setNewBook(response);
+            console.log({newBook});
         } catch (err) {
             setError(err);
         } finally {
