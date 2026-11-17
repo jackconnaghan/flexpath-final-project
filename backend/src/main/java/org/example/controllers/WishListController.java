@@ -67,9 +67,9 @@ public class WishListController {
     public WishList updateWishList(@RequestBody WishList wl, Authentication a) { return wishListDao.updateWishList(wl, a.getName()); }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#id, authentication)")
     public int deleteWishListById(@PathVariable Long id, Authentication a) {
-        return wishListDao.deleteBookById(id);
+        return wishListDao.deleteWishListById(id);
     }
 
 }

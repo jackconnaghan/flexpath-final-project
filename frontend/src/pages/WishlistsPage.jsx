@@ -92,10 +92,10 @@ Stuff that makes the list's books show up
     }
 
 return (
-    <>
+    <div className="search-just">
 
-        <h1 className="m-5 align-center">Here be your lists...</h1>
-        <ListsComponent/>
-    </>
+        {/* <h1 className="m-5 align-center">Here be your lists...</h1> */}
+        <ListsComponent className="col-auto extend-under-navbar" />
+    </div>
 )
 }

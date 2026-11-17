@@ -20,7 +20,7 @@ export default function MyAccountPage() {
     const [selectedBookId, setSelectedBookId] = useState(0);
     const [selectedReviewId, setSelectedReviewId] = useState(0);
     const [selectedReviewText, setSelectedReviewText] = useState("");
-    const [selectedReviewPublic, setSelectedReivewPublic] = useState(false);
+    const [selectedReviewPublic, setSelectedReviewPublic] = useState(false);
 
     //now that everything is imported and states are set...
     //extract the list locally from the context's lists obj
@@ -29,10 +29,11 @@ export default function MyAccountPage() {
     // const books = list?.books;
     //thank me later
 
-    function openReviewUpdateModal(book_id, review_id, review_text) {
+    function openReviewUpdateModal(book_id, review_id, review_text, is_public) {
         setSelectedBookId(book_id)
         setSelectedReviewId(review_id);
         setSelectedReviewText(review_text);
+        setSelectedReviewPublic(is_public)
         setReviewUpdateModalOpen(true);
     }
 
@@ -94,7 +95,7 @@ export default function MyAccountPage() {
     //need to place constraints to check if book is empty.
     //{booksInList?.length < 0}
     return (
-        <div className="extend-under-navbar">
+        <div className="extend-under-navbar m-5">
         <h1>MY ACCOUNT!!!</h1>
             {personalReviews === null
                 ? (<p>Loading books...</p>

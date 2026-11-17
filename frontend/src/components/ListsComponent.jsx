@@ -1,15 +1,10 @@
 //checked for external dependencies imports
 import React, { useState, useEffect } from "react";
-// import RequireAuth from "./RequireAuth";
-// import keycloak from "../keycloak";
-// import { useAuthStore, syncAuthFromKeycloak } from "../stores/authorizationStore";
 import useFetch from "../hooks/useFetch";
-// import { useWishListStore } from "../stores/useWishListStore";
 import { NavLink } from "react-router-dom";
 import CreateNewWishListModal from "./CreateNewWishListModal";
 import { useWishLists } from "../contexts/WishListsContext";
 import { useAuth } from "../contexts/AuthContext";
-
 
 export default function ListsComponent({ children }) {
     // const status = useAuthStore((s) => s.status);
@@ -34,9 +29,9 @@ export default function ListsComponent({ children }) {
     }, [lists])
 
     return (
-        <>
+        <div className="m-5">
             <h4>Hello, {username}</h4>
-            <h4>Here are your lists...</h4>
+            <h1>Here be your lists...arr...</h1>
             <button type="button" onClick={() =>
                 setModalOpen(true)
             }>Create a New List</button>
@@ -49,39 +44,37 @@ export default function ListsComponent({ children }) {
             ) : lists?.length === 0 ? (
                 <>
                     <h3>You don't have any lists. Create one with the button below.</h3>
-                    <button>Make a List</button>
                 </>
             ) : (
                 <table className="table w-auto table-striped">
                     <thead>
                     </thead>
                     <tbody>
-                        {/* Stole this from the SearchTableComponent */}
-
                         {lists.map(list => (
                             //pass the iterator at the top level
-                            <tr className="col" key={list.list_title}>
+                            <tr className="col" key={list.id}>
+                                <td>
+                                    <button type="button" onClick={() => (
+                                        removeList(list.id)
+                                    )}>Delete List</button>
+                                </td>
                                 <td>
                                     <NavLink to={`/my-lists/${list.id}/`}>
                                         {list.list_title}
                                     </NavLink></td>
-                                {/* <td>{item["is_public"]}</td> */}
-                                {/* <td>
-                                        <button type="link" className="col" onClick={(e) => { }}>
-                                            View List
-                                        </button>
-                                    </td> */}
-
                             </tr>
 
 
                         ))}
                     </tbody>
-                </table>
-            ))}
+                </table >
+            ))
+            }
 
-            {modalOpen &&
-                <CreateNewWishListModal setModalOpen={setModalOpen} />}
-        </>
+            {
+                modalOpen &&
+                <CreateNewWishListModal setModalOpen={setModalOpen} />
+            }
+        </div>
     )
 }

@@ -9,6 +9,9 @@ import ErrorBoundary from "./ErrorBoundary";
 import { useAuth } from "../contexts/AuthContext";
 import { apiFetch } from "../logic/api";
 import { useBooks } from "../contexts/BooksContext";
+import Book from "../../public/Book.png";
+import UpdateReviewModalComponent from "../components/UpdateReviewModalComponent";
+
 
 //I plan to update this to a Tanstack Form later
 export default function AddBookComponent() {
@@ -32,6 +35,25 @@ export default function AddBookComponent() {
 
     //const method = "POST";
 
+    //stuff to handle review updates
+    // const [selectedRow, setSelectedRow] = useState();
+
+    const [reviewOpen, setReviewOpen] = useState(false);
+    const [reviewButton, setReviewButton] = useState(true);
+    // const navigate = useNavigate();
+
+    function openReviewModal(item) {
+        // setSelectedRow(item);
+        setReviewOpen(true);
+    }
+    function closeReviewModal() {
+        // setSelectedRow(null);
+        setReviewOpen(false);
+        //navigate to the my account page
+        setReviewButton(false);
+
+    }
+
     async function handleSubmit() {
         //grabbing keyword and filter and setting params
         //before sending off to useFetch
@@ -52,7 +74,10 @@ export default function AddBookComponent() {
 
             // setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
             const response = await addBook(sendingBook);
+            console.log(`prev newBook: ${{ newBook }}`)
             setNewBook(response);
+            // setNewBook(await addBook(sendingBook));
+            console.log(`response: ${ response } `);
             console.log({ newBook });
         } catch (err) {
             setError(err.status === 409
@@ -64,15 +89,6 @@ export default function AddBookComponent() {
         }
         //setInput("");
     }
-
-    // function determineStatusCodeError(status) {
-
-    //     switch (status) {
-    //         case 201: return "Good to go!";
-    //         case 409: return "Book already exists in the database, schlorpgling."
-    //         default: return "Not good!";
-    //     }
-    // }
 
     return (
         <div className="top row flex">
@@ -149,8 +165,9 @@ export default function AddBookComponent() {
                 {error && <h1>&lt;-- OOPS!!!</h1>}
                 {!loading && !error && newBook?.id && (
                     <div>
+                        {/* <pre>{JSON.stringify(newBook)}</pre> */}
                         <h3>Good to go!</h3>
-                        <table>
+                        <table className="table w-25">
                             <tbody>
                                 <tr><th>Title:</th><td>{newBook.title}</td></tr>
                                 <tr><th>Author:</th><td>{newBook.author}</td></tr>
@@ -160,13 +177,30 @@ export default function AddBookComponent() {
                             </tbody>
                         </table>
 
-                        <button type="button">Write a review</button>
+                        {reviewButton &&
+                            <button type="button" onClick={() => {
+                                openReviewModal({
+
+                                })
+                            }
+                            }>Write a review</button>
+                        }
                     </div>
                 )}
 
 
-
+                <img src={Book} className="gif-load col-1 b-5" />
+                {reviewOpen ?
+                    <UpdateReviewModalComponent
+                        //  handleReviewChange={handleReviewChange}
+                        // setLocalError={setLocalError}
+                        book_id={newBook.id}
+                        openModal={openReviewModal}
+                        closeModal={closeReviewModal} /> : null
+                }
             </div>
+
+
         </div>
 
 

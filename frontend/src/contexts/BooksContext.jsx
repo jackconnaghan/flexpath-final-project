@@ -86,6 +86,8 @@ export function BooksContextProvider({ children }) {
                 method: "POST",
                 body: book
             });
+            //clears search query so user can search again and find their new book
+            //and not get confused as to why their new book doesn't appear in the old search results
             setLastQuery(null);
             setResults(null);
             return response;

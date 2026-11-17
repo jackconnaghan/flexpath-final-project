@@ -110,7 +110,7 @@ export default function BookReviewsModal({ selectedRow, closeModal }) {
     // if (!selectedRow) return null;
 
     //finally, set only this book's reviews from publicReviews
-    const reviews = publicReviews[selectedRow.id] ;
+    const reviews = publicReviews[selectedRow.id];
 
     return (
         <div onClick={() => closeModal()}>
@@ -139,7 +139,10 @@ export default function BookReviewsModal({ selectedRow, closeModal }) {
                         ) : (
                             reviews.map(review => (
                                 <tr key={review.id}>
-                                    <td>{review.username}</td>
+                                    <td>{review.username == username
+                                        ? <p className="text-warn">Your Review</p>
+                                        : <p>review.username</p>
+                                    }</td>
                                     <td>{review.review_text}</td>
                                     <td>{review.star_rating}</td>
                                 </tr>

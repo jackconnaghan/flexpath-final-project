@@ -191,7 +191,7 @@ public class WishListDao {
                 //update
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, wl.getUsername());
-                ps.setString(2, wl.getUsername());
+                ps.setString(2, wl.getList_title());
                 return ps;
             }, keyHolder);
             return jdbcTemplate.queryForObject("SELECT * FROM wishlists WHERE id=?", this::mapToWishList, wl.getId());
@@ -202,7 +202,7 @@ public class WishListDao {
 
     }
 
-    public int deleteBookById(Long id) {
+    public int deleteWishListById(Long id) {
         try {
             return jdbcTemplate.update("DELETE FROM wishlists WHERE id=?", id);
         } catch (DataAccessException e) {

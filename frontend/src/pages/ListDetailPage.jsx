@@ -40,7 +40,7 @@ function ListDetails() {
     const [selectedBookId, setSelectedBookId] = useState(0);
     const [selectedReviewId, setSelectedReviewId] = useState(0);
     const [selectedReviewText, setSelectedReviewText] = useState("");
-    const [selectedReviewPublic, setSelectedReivewPublic] = useState(false);
+    const [selectedReviewPublic, setSelectedReviewPublic] = useState(false);
 
     //now that everything is imported and states are set...
     //extract the list locally from the context's lists obj
@@ -49,10 +49,11 @@ function ListDetails() {
     const books = list?.books;
     //thank me later
 
-    function openReviewUpdateModal(book_id, review_id, review_text) {
+    function openReviewUpdateModal(book_id, review_id, review_text, is_public) {
         setSelectedBookId(book_id)
         setSelectedReviewId(review_id);
         setSelectedReviewText(review_text);
+        setSelectedReviewPublic(is_public)
         setReviewUpdateModalOpen(true);
     }
 

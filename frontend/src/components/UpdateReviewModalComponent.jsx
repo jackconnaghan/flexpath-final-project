@@ -30,44 +30,17 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
     // const [oldReviewText, setOldReviewText] = useState("");
     //only need one, otherwise gets confusing and doesn't work and is CRINGE
     const [text, setText] = useState("");
-    const [isPublic, setIsPublic] = useState(false);
+    const [isPublic, setIsPublic] = useState(is_public ?? false);
 
     const { updateReviewText, createReview, deleteReview } = useReviews();
     const { setBookReview } = useWishLists();
 
     const ref = useRef();
 
-    //const [review, setReview] = useState(null);
-
-    // const editReviewForm = useForm({
-    //     defaultValues: {
-    //         bookId: book_id,
-    //         reviewId: review_id,
-    //         newReviewText: review_text ?? "",
-    //         oldReviewText: review_text,
-    //         starRating: 1,
-    //     },
-    //     //"value" is an object that contains all the defaultValues above (changes from default if a change occurs)
-    //     //just remember that defaultValues = values, and value is one of the values
-    //     onSubmit: async ({ value }) => {
-    //         setLocalError(null);
-    //         try {
-    //             if (review_id) {
-    //                 await update(book_id, review_id, value.reviewText.trim());
-    //             } else {
-    //                 await create(book_id, value.reviewText.trim());
-    //             }
-    //             closeModal();                      // only reached if the request succeeded
-    //         } catch (err) {
-    //             setLocalError(err.message);             // apiFetch throws, so this catches real failures
-    //         }
-    //     }
-    // });
-
     useEffect(() => {
         ref.current?.showModal();
         setText(review_text);
-        setIsPublic(is_public);
+        // setIsPublic(is_public);
     }, []);
 
     async function handleSubmit() {
@@ -101,34 +74,17 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
         }
     }
 
-    // function determineStatusCodeError(status) {
-
-    //     console.log("status:", status, typeof status);
-    //     switch (status) {
-    //         case 201: return "Good to go!";
-    //         case 409: return "Book already exists in that list, gorplading."
-    //         default: return "Not good!";
-    //     }
-    // }
-
-
-
-    //ensures we don't show something that doesn't exist
-    // if (!selectedRow) return null;
-
     return (
 
         <dialog ref={ref}
             onClose={closeModal}>
-            <p>Update Review...</p>
+            <p>{review_id ? "Update Review..." : "Write a New Review..."}</p>
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
                     handleSubmit();
 
                 }}>
-
-
                 <label>
                     <textarea
                         rows={5}
@@ -145,18 +101,10 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                     <p className="col-auto">Is Public</p>
                     <input className="col-1" type="checkbox"
                         checked={isPublic}
-                        onChange={() => {
-                            setIsPublic(!isPublic);
+                        onChange={(e) => {
+                            setIsPublic(e.target.checked);
                         }}></input>
                 </label>
-
-                {/* 
-                    This has to be outside of the tanstackForm, otherwise it will read as a function of the Field tag.
-                    Put it in its own Subscribe tag.
-                    The Subscribe tag just watches the value of a particular state
-                    and updates accordingly,
-                    sorta like writing (bool ? ... : ...) but within the Tanstack Forms stack 
-                    */}
                 <div className="row">
                     <button className="col" type="submit">{review_id ? "UPDATE" : "CREATE"}</button>
 
@@ -164,14 +112,11 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                 </div>
             </form>
 
-
             <ErrorBoundary error={error}>
                 <div>
                     {error && <p className="text-warn">{error}</p>}
                 </div>
             </ErrorBoundary>
-
-
         </dialog>
     );
 }
