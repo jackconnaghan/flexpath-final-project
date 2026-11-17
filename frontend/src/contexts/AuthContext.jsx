@@ -39,14 +39,32 @@ export function AuthContextProvider({ children }) {
     }
 
     async function signUp(username, password) {
-        const data = await signUpNewUser(username, password);
-        if (data.ok) {
+        setError(null);
+        // setLoading(true);
+        try {
+            const data = await signUpNewUser(username, password);
+            //on success, log new user in 
             const token = await loginUser(username, password);
             sessionStorage.setItem("token", token);
             sessionStorage.setItem("username", username);
             setToken(token); //controls react renders
             setUsername(username);
+            return data;
+        } catch (err) {
+            setError(err.status === 409 
+                ? "a user with that username already exists...awkward"
+                : err.message
+            );
+            throw err;
         }
+        // const data = await signUpNewUser(username, password);
+        // if (data.ok) {
+        //     const token = await loginUser(username, password);
+        //     sessionStorage.setItem("token", token);
+        //     sessionStorage.setItem("username", username);
+        //     setToken(token); //controls react renders
+        //     setUsername(username);
+        // }
     }
 
     //the below uses a fun thing to set a bool:
@@ -54,7 +72,7 @@ export function AuthContextProvider({ children }) {
     //will be true if token is not null
     //and false if token is null
     return (
-        <AuthContext.Provider value={{ token, username, roles, isLoggedIn: !!token, login, logout }}>
+        <AuthContext.Provider value={{ token, username, roles, isLoggedIn: !!token, login, logout, signUp }}>
             {children}
         </AuthContext.Provider>
     );

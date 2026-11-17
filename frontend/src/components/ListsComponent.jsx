@@ -52,8 +52,9 @@ export default function ListsComponent({ children }) {
                     <button>Make a List</button>
                 </>
             ) : (
-                <table className="table w-auto">
-                    <thead></thead>
+                <table className="table w-auto table-striped">
+                    <thead>
+                    </thead>
                     <tbody>
                         {/* Stole this from the SearchTableComponent */}
 

@@ -26,6 +26,9 @@ insert into roles (username, role) values ('user', 'USER');
 insert into users (username, password) values ('dude', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
 insert into roles (username, role) values ('dude', 'USER');
 
+insert into users (username, password) values ('jack', '$2a$10$tBTfzHzjmQVKza3VSa5lsOX6/iL93xPVLlLXYg2FhT6a.jb1o6VDq');
+insert into roles (username, role) values ('jack', 'USER');
+
 -- stuff i've added
 create table books (
     id BIGINT AUTO_INCREMENT primary key,
@@ -83,10 +86,13 @@ INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, i
 VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 11, FALSE);
 
 INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
-VALUES (2, "admin", "What was this book again!", CURDATE(), 1, TRUE);
+VALUES (2, "admin", "Performative featslop", CURDATE(), 1, TRUE);
 
 INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
 VALUES (2, "user", "That was close!", CURDATE(), 1, TRUE);
+
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (3, "jack", "I don't remember it going down like that.", CURDATE(), 6, TRUE);
 
 INSERT INTO wishlists (username, list_title)
 VALUES ("user", 'my first wishlist!');

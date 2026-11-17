@@ -11,7 +11,10 @@ import { useWishLists } from "../contexts/WishListsContext";
 
 export default function AddBookToWishListModalComponent({ setSelectedRow, selectedRow, openModal, closeModal }) {
 
+    //one reference for each modal
     const ref = useRef();
+    // const reviewRef = useRef();
+
     const [error, setError] = useState(null);
     const [selectedList, setSelectedList] = useState("");
 
@@ -40,18 +43,19 @@ export default function AddBookToWishListModalComponent({ setSelectedRow, select
     // }, [selectedRow]);
     useEffect(() => {
         ref.current?.showModal();
+        // reviewRef.current?.showModal();
         if (lists === null) loadLists();
     }, []);
 
-    function determineStatusCodeError(status) {
+    // function determineStatusCodeError(status) {
 
-        console.log("status:", status, typeof status);
-        switch (status) {
-            case 201: return "Good to go!";
-            case 409: return "Book already exists in that list, gorplading."
-            default: return "Not good!";
-        }
-    }
+    //     console.log("status:", status, typeof status);
+    //     switch (status) {
+    //         case 201: return "Good to go!";
+    //         case 409: return "Book already exists in that list, gorplading."
+    //         default: return "Not good!";
+    //     }
+    // }
 
     //ensures we don't show something that doesn't exist
     if (!selectedRow) return null;

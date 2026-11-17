@@ -5,10 +5,12 @@ import org.example.models.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -83,8 +85,13 @@ public class UserDao {
             jdbcTemplate.update(sql, user.getUsername(), hashedPassword);
             jdbcTemplate.update(rolesSql, user.getUsername(), "USER");
 
+            //imported ResponseStatusException to handle username conflict
         } catch (DuplicateKeyException e) {
-            throw new DaoException("Username already exists.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists.");
+        }
+        catch (DataAccessException e) {
+            e.printStackTrace();
+            return null;
         }
         return getUserByUsername(user.getUsername());
     }

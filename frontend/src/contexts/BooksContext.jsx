@@ -91,11 +91,12 @@ export function BooksContextProvider({ children }) {
             return response;
         } catch (err) {
             setError(err);
+            throw err;
         } finally {
             setLoading(false);
         }
     }
-    
+
     return (
         <BooksContext.Provider value={{ results, loading, error, searchBooks, addBook, onSearch }}>
             {children}

@@ -141,10 +141,13 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                         placeholder="Write your review here...">
                     </textarea>
                 </label>
-                <label>
-                    <button type="button" onClick={() => {
-                        setIsPublic(!isPublic);
-                    }}>{isPublic === true ? "Set Private" : "Set Public" }</button>
+                <label className="row">
+                    <p className="col-auto">Is Public</p>
+                    <input className="col-1" type="checkbox"
+                        checked={isPublic}
+                        onChange={() => {
+                            setIsPublic(!isPublic);
+                        }}></input>
                 </label>
 
                 {/* 
@@ -154,10 +157,11 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                     and updates accordingly,
                     sorta like writing (bool ? ... : ...) but within the Tanstack Forms stack 
                     */}
-                <button type="submit">{review_id ? "UPDATE" : "CREATE"}</button>
+                <div className="row">
+                    <button className="col" type="submit">{review_id ? "UPDATE" : "CREATE"}</button>
 
-                {review_id && <button type="button" onClick={handleDelete}>DELETE</button>}
-
+                    {review_id && <button className="col" type="button" onClick={handleDelete}>DELETE</button>}
+                </div>
             </form>
 
 

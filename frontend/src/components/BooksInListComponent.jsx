@@ -32,16 +32,3 @@ export default function BooksInListComponent({ user, list }) {
             </table>
         </>);
 }
-
-{/* <td>
-                                    <button type="link" className="col" onClick={(e) => {
-                                        handleSendToReview(e, item);
-                                    }}>Write a Review</button>
-                                </td> */}
-{/* <td>
-                                <button type="link" className="col" onClick={(e) => {
-                                    handleAddToWishlist(e, item);
-                                }}>
-                                    Add to List
-                                </button>
-                            </td> */}

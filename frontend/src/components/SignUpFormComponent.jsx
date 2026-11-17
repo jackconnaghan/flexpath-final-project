@@ -11,6 +11,7 @@ import { useState } from "react";
 // import { loginUser } from "../logic/apiAuthFetch";
 import { useAuth } from "../contexts/AuthContext";
 import ErrorBoundary from "./ErrorBoundary";
+import { useNavigate } from "react-router-dom";
 
 // export default function FormComponent({ input, setInput,
 //     filterTypeValue, setNewFilterType, filterTypeOptions, 
@@ -25,16 +26,21 @@ export default function SignUpFormComponent({ onSearch }) {
     const [loading, setLoading] = useState(false);
     const { login, logout, signUp } = useAuth();
 
+    //sends user back to home page after making an account
+    const navigate  = useNavigate();
+
     async function handleSubmit(username, password) {
         setError(false);
         setLoading(true);
         try {
             await signUp(username, password);
+            navigate("/");
         } catch (err) {
-            setError(err.status === 401
-                ? "Hmmmm...we don't have that username and password combo...schlorp"
+            setError(err.status === 409
+                ? "We LITERALLY already have a user with that name..."
                 : "Couldn't reach the server. Try again in a moment, porflimp.");
             setPasswordInput("");
+            throw err;
         } finally {
             setLoading(false);
         }
@@ -60,7 +66,7 @@ export default function SignUpFormComponent({ onSearch }) {
                 </label>
                 <label name="author">
                     <input className="form-control w-50"
-                        type="text"
+                        type="password"
                         placeholder="password"
                         value={passwordInput}
                         required
@@ -73,7 +79,7 @@ export default function SignUpFormComponent({ onSearch }) {
                 <button type="submit" disabled={!usernameInput && !passwordInput}>SIGN UP</button>
             </form>
             <ErrorBoundary error={error}>
-                <p>{error}</p>
+                <p className="mt-3 text-warn">{error}</p>
             </ErrorBoundary>
         </>
     )

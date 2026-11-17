@@ -13,7 +13,9 @@ import { useBooks } from "../contexts/BooksContext";
 //I plan to update this to a Tanstack Form later
 export default function AddBookComponent() {
 
-    // const { fetchData: fetchDataCreateBook, setResponse, response, loading, error, statusCode } = useFetch();
+    //pulling error locally like this means nothing
+    //because calling it creates a new instance of the "error" object
+    // const { error } = useFetch();
     //const [response, setResponse] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -24,9 +26,9 @@ export default function AddBookComponent() {
 
     const [titleInput, setTitleInput] = useState("");
     const [authorInput, setAuthorInput] = useState("");
-    const [isbnInput, setIsbnInput] = useState();
-    const [pubYearInput, setPubYearInput] = useState();
-    const [pagesInput, setPagesInput] = useState();
+    const [isbnInput, setIsbnInput] = useState("");
+    const [pubYearInput, setPubYearInput] = useState("");
+    const [pagesInput, setPagesInput] = useState("");
 
     //const method = "POST";
 
@@ -51,30 +53,33 @@ export default function AddBookComponent() {
             // setNewBook(await apiFetch(baseURL, { token, method: "POST", body: sendingBook }));
             const response = await addBook(sendingBook);
             setNewBook(response);
-            console.log({newBook});
+            console.log({ newBook });
         } catch (err) {
-            setError(err);
+            setError(err.status === 409
+                ? "We already have that book, schlorpling..."
+                : err.message
+            );
         } finally {
             setLoading(false);
         }
         //setInput("");
     }
 
-    function determineStatusCodeError(status) {
+    // function determineStatusCodeError(status) {
 
-        switch (status) {
-            case 201: return "Good to go!";
-            case 409: return "Book already exists in the database, schlorpgling."
-            default: return "Not good!";
-        }
-    }
+    //     switch (status) {
+    //         case 201: return "Good to go!";
+    //         case 409: return "Book already exists in the database, schlorpgling."
+    //         default: return "Not good!";
+    //     }
+    // }
 
     return (
-        <div className="top row flex align-add-book-items ">
+        <div className="top row flex">
 
-            
-            {error && <p className="text-warn">{error}</p>}
-            <div className="col search-page-inputs container">
+
+            {error && <p className="text-warn search-page-inputs">{error}</p>}
+            <div className="col search-page-inputs">
                 <h3 className="text-left">Enter a book in the inputs below.</h3>
                 <form className="col" onSubmit={(e) => {
                     e.preventDefault();
@@ -139,17 +144,11 @@ export default function AddBookComponent() {
                 <TextResponseComponent response={response} loading={loading} error={error} status={statusCode} />
             </ErrorBoundary> */}
 
-            <div className="col">
-                {loading && <h3>Adding yo book cuh...</h3>}
-                {!loading && error && (
-                    <div>
-                        <h3>Error with status code {error}: {error}</h3>
-                        {/* <h3>{error}</h3> */}
-                    </div>
-
-                )}
+            <div className="col-md-6">
+                {loading && <h3 className="">Adding yo book cuh...</h3>}
+                {error && <h1>&lt;-- OOPS!!!</h1>}
                 {!loading && !error && newBook?.id && (
-                    <div className="text-left align-center">
+                    <div>
                         <h3>Good to go!</h3>
                         <table>
                             <tbody>
@@ -164,10 +163,11 @@ export default function AddBookComponent() {
                         <button type="button">Write a review</button>
                     </div>
                 )}
+
+
+
             </div>
-
         </div>
-
 
 
     )

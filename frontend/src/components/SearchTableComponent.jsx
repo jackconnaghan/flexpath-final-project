@@ -163,7 +163,7 @@ export default function SearchTableComponent({ response }) {
 }
 
 //additional component to handle the buttons and modal when a user is logged in
-function KeepButtonHiddenAndHandleItsBS({ selectedRow, openModal, setSelectedRow, closeModal }) {
+function KeepButtonHiddenAndHandleItsBS({ selectedRow, open, openModal, setSelectedRow, closeModal }) {
 
     // const username = useAuthStore((s) => s.user.username);
     // const lists = useWishListStore((s) => s.userLists[username]);
@@ -172,7 +172,7 @@ function KeepButtonHiddenAndHandleItsBS({ selectedRow, openModal, setSelectedRow
 
     return (
         <>
-            {open === true && selectedRow
+            {open && selectedRow
                 ?
                 <AddBookToWishListModalComponent setSelectedRow={setSelectedRow} selectedRow={selectedRow}
                     openModal={openModal} closeModal={closeModal} />
