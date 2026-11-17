@@ -1,6 +1,8 @@
 package org.example.controllers;
 
+import org.example.daos.BookWithReviewDao;
 import org.example.daos.ReviewDao;
+import org.example.models.BookWithReview;
 import org.example.models.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,12 @@ public class ReviewController {
     @Autowired
     private ReviewDao reviewDao;
 
+    @Autowired
+    private BookWithReviewDao bookWithReviewDao;
+
+//works with updateReviewRequest in ReviewContext
+    public record UpdateReviewRequest(String review_text, Boolean is_public) {}
+
     @GetMapping(path = "/allreviews")
     @PreAuthorize("hasRole('ADMIN')")
     public List<Review> getAllReviews() { return reviewDao.getAllReviews(); }
@@ -31,9 +39,12 @@ public class ReviewController {
     @GetMapping("/book/{bookId}")
     public List<Review> getPublicReviewsForBook(@PathVariable Long bookId) { return reviewDao.getPublicReviewsForBook(bookId); }
 
+    //when a user gets their own reviews, they show up on the My Account page,
+    //where the WishLists are not.
+    //the SQL query returns a list of BOOKS that
     @GetMapping(path = "/mine")
     @PreAuthorize("isAuthenticated()")
-    public List<Review> getMyReviews(Authentication auth) { return reviewDao.getMyReviews(auth.getName()); }
+    public List<BookWithReview> getMyBooksWithReview(Authentication auth) { return bookWithReviewDao.getMyBooksWithReviews(auth.getName()); }
 
     @GetMapping(path = "/searchreviews")
     public List<Review> getAllReviewsByBook(@RequestBody String title) { return reviewDao.getAllReviewsByBook(title); }
@@ -50,12 +61,10 @@ public class ReviewController {
         return reviewDao.createReview(review);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update/{review_id}")
-    @PreAuthorize("hasRole('ADMIN') or @reviewSecurity.isOwner(#review_id, authentication)")
-    public Review updateReviewById(@RequestBody String review_text, @PathVariable Long review_id, Authentication auth) {
-
-        return reviewDao.updateReviewById(review_text, review_id);
+    @PreAuthorize("hasAuthority('ADMIN') or @reviewSecurity.isOwner(#review_id, authentication)")
+    public Review updateReviewById(@RequestBody UpdateReviewRequest request, @PathVariable Long review_id) {
+        return reviewDao.updateReviewById(review_id, request.review_text(), request.is_public());
     }
 
     @DeleteMapping("/delete/{id}")

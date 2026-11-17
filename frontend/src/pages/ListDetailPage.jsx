@@ -40,6 +40,7 @@ function ListDetails() {
     const [selectedBookId, setSelectedBookId] = useState(0);
     const [selectedReviewId, setSelectedReviewId] = useState(0);
     const [selectedReviewText, setSelectedReviewText] = useState("");
+    const [selectedReviewPublic, setSelectedReivewPublic] = useState(false);
 
     //now that everything is imported and states are set...
     //extract the list locally from the context's lists obj
@@ -78,9 +79,9 @@ function ListDetails() {
         return answer;
     }
 
-    async function updateReview(book_id, review_id, new_review_text) {
+    async function updateReview(book_id, review_id, new_review_text, is_public) {
         const answer = await apiFetch(`/api/reviews/update/${review_id}`,
-            { method: "PUT", body: { review_text: new_review_text } });
+            { method: "PUT", body: { review_text: new_review_text, is_public: is_public } });
         // setBooksInList((previousList) =>
         //     previousList.map((p) =>
         //         p.id === book_id ? { ...p, review_text: new_review_text } : p
@@ -88,11 +89,11 @@ function ListDetails() {
         return answer;
     }
 
-    async function createReview(book_id, review_text) {
+    async function createReview(book_id, review_text, is_public) {
         const answer = await apiFetch(`/api/reviews/create`, {
             method: "POST",
             //use star_rating because backend expects one SOMEwhere
-            body: { book_id: book_id, review_text: review_text, star_rating: 1 },
+            body: { book_id: book_id, review_text: review_text, star_rating: 1, is_public: is_public },
         });
         // setBooksInList((previousList) =>
         //     previousList.map((p) =>
@@ -175,6 +176,7 @@ function ListDetails() {
                     book_id={selectedBookId}
                     review_id={selectedReviewId}
                     review_text={selectedReviewText}
+                    is_public={selectedReviewPublic}
                     openModal={openReviewUpdateModal}
                     closeModal={closeReviewModal}
                     create={createReview}

@@ -15,7 +15,7 @@ import { apiFetch } from "../logic/api";
 import { useReviews } from "../contexts/ReviewsContext";
 import { useWishLists } from "../contexts/WishListsContext";
 
-export default function UpdateReviewModalComponent({ selectedRow, book_id, openModal, closeModal, review_id, review_text, create, update, remove }) {
+export default function UpdateReviewModalComponent({ selectedRow, book_id, openModal, closeModal, review_id, review_text, create, update, remove, is_public }) {
 
     // const { userLists } = useWishListStore();
     const [error, setError] = useState(null);
@@ -30,6 +30,7 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
     // const [oldReviewText, setOldReviewText] = useState("");
     //only need one, otherwise gets confusing and doesn't work and is CRINGE
     const [text, setText] = useState("");
+    const [isPublic, setIsPublic] = useState(false);
 
     const { updateReviewText, createReview, deleteReview } = useReviews();
     const { setBookReview } = useWishLists();
@@ -66,6 +67,7 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
     useEffect(() => {
         ref.current?.showModal();
         setText(review_text);
+        setIsPublic(is_public);
     }, []);
 
     async function handleSubmit() {
@@ -73,11 +75,11 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
         setLoading(false);
         try {
             if (review_id) {
-                await updateReviewText(review_id, text);
-                setBookReview(book_id, { review_id, review_text: text });
+                await updateReviewText(review_id, text, isPublic);
+                setBookReview(book_id, { review_id, review_text: text, isPublic });
             } else {
-                const created = await createReview(book_id, text);
-                setBookReview(book_id, { review_id: created.id, review_text: created.review_text });
+                const created = await createReview(book_id, text, is_public);
+                setBookReview(book_id, { review_id: created.id, review_text: created.review_text, is_public: created.is_public });
             }
             closeModal();
         } catch (err) {
@@ -139,7 +141,11 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                         placeholder="Write your review here...">
                     </textarea>
                 </label>
-
+                <label>
+                    <button type="button" onClick={() => {
+                        setIsPublic(!isPublic);
+                    }}>{isPublic === true ? "Set Private" : "Set Public" }</button>
+                </label>
 
                 {/* 
                     This has to be outside of the tanstackForm, otherwise it will read as a function of the Field tag.

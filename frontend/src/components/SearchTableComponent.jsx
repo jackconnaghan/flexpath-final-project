@@ -15,6 +15,7 @@ import AddBookToWishListModalComponent from "./AddBookToWishListModalComponent";
 import RevealOnAuth from "./RevealOnAuth";
 import { useWishLists } from "../contexts/WishListsContext";
 import { useReviews } from "../contexts/ReviewsContext";
+import BookReviewsModal from "./BookReviewsModal";
 
 export default function SearchTableComponent({ response }) {
 
@@ -156,6 +157,7 @@ export default function SearchTableComponent({ response }) {
                     )}
                 </tbody>
             </table>
+            {reviewOpen && selectedRow && <BookReviewsModal selectedRow={selectedRow} closeModal={closeReviewModal}/>}
         </div>
     );
 }
@@ -170,7 +172,7 @@ function KeepButtonHiddenAndHandleItsBS({ selectedRow, openModal, setSelectedRow
 
     return (
         <>
-            {open && selectedRow
+            {open === true && selectedRow
                 ?
                 <AddBookToWishListModalComponent setSelectedRow={setSelectedRow} selectedRow={selectedRow}
                     openModal={openModal} closeModal={closeModal} />

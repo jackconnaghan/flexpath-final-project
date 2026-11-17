@@ -154,7 +154,7 @@ public class ReviewDao {
 
     private boolean reviewDateIsNull(Date review_date) {return review_date == null;}
 
-    public Review updateReviewById(String review_text, Long review_id) {
+    public Review updateReviewById(long review_id, String review_text, boolean is_public) {
         //username and book don't change, and I don't want to enter a book's entire info dump
         //on every update if i'm jiust updating one thing. so COMPARE
         Review reviewToUpdate = getReviewByReviewId(review_id);
@@ -192,9 +192,10 @@ public class ReviewDao {
 //        }
 
         try {
-            jdbcTemplate.update("UPDATE reviews SET review_text=? WHERE id=?",
-                    review_text,
-                    review_id);
+            //mmmmm COALESCE!!!!!!!!
+            jdbcTemplate.update(
+                    "UPDATE reviews SET review_text = ?, is_public = COALESCE(?, is_public) WHERE id = ?",
+                    review_text, is_public, review_id);
             return jdbcTemplate.queryForObject("SELECT * FROM reviews WHERE id=?", this::mapToReview, review_id);
         } catch (DataAccessException e) {
             e.printStackTrace();

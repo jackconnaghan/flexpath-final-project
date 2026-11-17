@@ -568,7 +568,7 @@ sexy-btn[type=button]:disabled {
 /* .mobile-toggle {
     display: none;
     /* Hidden on large screens */
-    /* background: none;
+/* background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer; */
@@ -579,19 +579,6 @@ sexy-btn[type=button]:disabled {
     .mobile-toggle {
         display: block;
     }
-
-    /* .nav-links {
-        display: none;
-        /* Hide horizontal links by default on mobile */
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        /* Adjust based on your navbar height */
-        left: 0;
-        width: 100%;
-        background-color: #333;
-        padding: 1rem 0;
-    } */
 
     /* Active class added via JavaScript to show menu */
     .nav-links.active {
@@ -615,18 +602,21 @@ sexy-btn[type=button]:disabled {
         align-items: center;
         justify-items: center;
     }
+}
 
 /* ---------- Navbar ---------- */
 .site-nav {
     display: flex;
     flex-wrap: nowrap;
-    align-items: center;      /* everything on one vertical centerline */
+    align-items: center;
+    /* everything on one vertical centerline */
     gap: 1.5rem;
     padding: 12px 16px;
 }
 
 .nav-logo {
-    display: flex;            /* removes the stray space under an inline image */
+    display: flex;
+    /* removes the stray space under an inline image */
     align-items: center;
 }
 
@@ -635,8 +625,10 @@ sexy-btn[type=button]:disabled {
     align-items: center;
     gap: 1.5rem;
     list-style: none;
-    flex: 1;                  /* fill the rest of the bar */
-    margin: 0;                /* cancel Bootstrap's ul margin and padding */
+    flex: 1;
+    /* fill the rest of the bar */
+    margin: 0;
+    /* cancel Bootstrap's ul margin and padding */
     padding: 0;
 }
 
@@ -648,7 +640,8 @@ sexy-btn[type=button]:disabled {
 .nav-links a {
     color: white;
     text-decoration: none;
-    white-space: nowrap;      /* no two-line labels */
+    white-space: nowrap;
+    /* no two-line labels */
 }
 
 .nav-links a.active {
@@ -657,7 +650,8 @@ sexy-btn[type=button]:disabled {
 }
 
 .nav-right {
-    margin-left: auto;        /* the ONE auto margin: pushes the auth group right */
+    margin-left: auto;
+    /* the ONE auto margin: pushes the auth group right */
 }
 
 .nav-auth {
@@ -693,13 +687,19 @@ sexy-btn[type=button]:disabled {
 }
 
 @media (max-width: 868px) {
-    .site-nav { flex-wrap: wrap; }
-    .mobile-toggle { display: block; }
+    .site-nav {
+        flex-wrap: wrap;
+    }
+
+    .mobile-toggle {
+        display: block;
+    }
 
     .nav-links {
         display: none;
         position: absolute;
-        top: 100%;            /* directly under the navbar, whatever its height */
+        top: 100%;
+        /* directly under the navbar, whatever its height */
         left: 0;
         width: 100%;
         flex: none;
@@ -707,8 +707,20 @@ sexy-btn[type=button]:disabled {
         background-color: #333;
         padding: 1rem 0;
     }
-    .nav-links.active { display: flex; }
 
-    .nav-right { margin-left: 0; }
-    .nav-auth  { flex-direction: column; }
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-right {
+        margin-left: 0;
+    }
+
+    .nav-auth {
+        flex-direction: column;
+    }
+}
+
+table {
+    width: 100vw;
 }

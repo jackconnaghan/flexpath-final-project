@@ -53,7 +53,7 @@ export default function LoginFormComponent({ location }) {
                     handleSubmit(usernameInput, passwordInput);
                 }}>
                 <label name="title">
-                    <input className="form-control w-50"
+                    <input autoFocus className="form-control w-50"
                         type="text"
                         placeholder="username"
                         value={usernameInput}

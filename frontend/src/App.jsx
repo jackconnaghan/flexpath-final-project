@@ -26,6 +26,7 @@ import ListDetailPage from "./pages/ListDetailPage";
 import LoginFormComponent from "./components/LoginFormComponent";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import MyAccountPage from "./pages/MyAccountPage";
 
 function App() {
 
@@ -83,6 +84,14 @@ function App() {
           <Route class="SignUpForm" path="/sign-up" element={
             <div className="extend-under-navbar">
               <SignUpPage/>
+            </div>
+          } />
+
+          <Route class="MyAccount" path="/my-account" element={
+            <div className="extend-under-navbar">
+              <RequireAuth role="USER" customMessage="Make an account NOW!!!!">
+                <MyAccountPage />
+              </RequireAuth>
             </div>
           } />
 

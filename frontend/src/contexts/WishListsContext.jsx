@@ -182,14 +182,17 @@ export function WishListsContextProvider({ children }) {
                     ...list,
                     books: list.books.map(book =>
                         book.id === bookId
-                            ? { ...book, review_id: review?.review_id ?? null, review_text: review?.review_text ?? null }
+                            ? { ...book, 
+                                review_id: review?.review_id ?? null, 
+                                review_text: review?.review_text ?? null, 
+                                is_public: review?.is_public ?? false}
                             : book
                     ),
                 }
                 : list      // books not loaded for this list: nothing to update, it'll fetch fresh later
         ));
     }
-    
+
     async function removeBookFromList(wishlist_id, book_id) {
 
         //just get in the habit of making the wishlistId a number

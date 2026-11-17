@@ -44,9 +44,9 @@ create table reviews (
     username varchar(255) not null,
     book_id BIGINT not null,
     review_text text,
-    star_rating int not null,
+    star_rating int,
     review_date DATE not null,
-    is_public boolean not null,
+    is_public boolean not null default TRUE,
     foreign key (book_id) references books(id) on delete cascade,
     -- foreign key (user_id) references users(user_id) on delete cascade,
     constraint uq_username_to_review unique (username, book_id)
@@ -56,7 +56,7 @@ create table wishlists (
 	id BIGINT AUTO_INCREMENT primary key,
     username varchar(255) not null,
 	list_title varchar(255) not null,
-    is_public boolean not null default FALSE,
+    is_public boolean not null default TRUE,
     -- foreign key (user_id) references users(user_id) on delete cascade,
     UNIQUE (username, list_title)
 );
@@ -79,11 +79,14 @@ VALUES ('Let The Great World Spin', 'Colum McCann', 2009, "9780812973990");
 INSERT INTO books (title, author, pub_year, isbn_13)
 VALUES ('Everybody Poops', 'Somebody', 2009, "9780812973990");
 
-INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
-VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 10);
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 11, FALSE);
 
-INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
-VALUES (2, "user", "That was close!", CURDATE(), 6);
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (2, "admin", "What was this book again!", CURDATE(), 1, TRUE);
+
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (2, "user", "That was close!", CURDATE(), 1, TRUE);
 
 INSERT INTO wishlists (username, list_title)
 VALUES ("user", 'my first wishlist!');

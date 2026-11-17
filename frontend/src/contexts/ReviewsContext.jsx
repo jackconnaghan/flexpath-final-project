@@ -57,11 +57,40 @@ export function ReviewsContextProvider({ children }) {
             setPublicReviews(prev => ({ ...prev, [book_id]: reviews }));
             //...then CACHE (store in state) the query so it can be referenced later
             // setLastQuery(book_id);
-            return publicReviews[book_id];;
+            return publicReviews[book_id];
         } catch (err) {
             setError(err);
+        } finally { setLoading(false); }
+    }
+
+    async function loadAllPersonalReviews({ force = false } = {}) {
+        if (!token || (personalReviews !== null && !force)) return;
+        setError(null);
+        setLoading(true);
+        try {
+            const reviews = await apiFetch("/api/reviews/mine", { token });
+            setPersonalReviews(reviews);
+            return reviews;
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setLoading(false);
         }
     }
+
+    function retrieveAllPersonalReviews() {
+        return personalReviews;
+    }
+
+    // async function addBooksToReviews(personalReviews) {
+    //     if (!personalReviews) return;
+    //     setError(null);
+    //     setLoading(false);
+    //     try {
+    //         const reviewsWithBookTitles = await apiFetch
+    //     }
+    // }
 
     function retrieveAllPublicReviewsForBook(book_id) {
         return publicReviews[book_id];
@@ -70,29 +99,36 @@ export function ReviewsContextProvider({ children }) {
     //used in UpdateReviewModalComponent
     //doesn't set context state, just keeps this logic local to other
     //review context variables and functions
-    async function updateReviewText(review_id, new_review_text) {
+    async function updateReviewText(review_id, new_review_text, is_public) {
         setError(null);
         setLoading(false);
         try {
             const response = await apiFetch(`/api/reviews/update/${review_id}`, {
                 token,
                 method: "PUT",
-                body: new_review_text,
+                body: { review_text: new_review_text, is_public: is_public }
             });
+            setPersonalReviews(prev => prev?.map(review =>
+                review.review_id === review_id
+                    ? { ...review, review_text: new_review_text, is_public: is_public }
+                    : review
+            ) ?? prev);
             return response;
         } catch (err) {
             setError(err);
         }
     }
 
-    async function createReview(book_id, new_review_text) {
+
+
+    async function createReview(book_id, new_review_text, is_public) {
         setError(null);
         setLoading(false);
         try {
             const response = await apiFetch(`/api/reviews/create`, {
                 token,
                 method: "POST",
-                body: { book_id: book_id, review_text: new_review_text },
+                body: { book_id: book_id, review_text: new_review_text, is_public: is_public },
             });
             return response;
         } catch (err) {
@@ -100,7 +136,7 @@ export function ReviewsContextProvider({ children }) {
         }
     }
 
-        async function deleteReview(review_id) {
+    async function deleteReview(review_id) {
         setError(null);
         setLoading(false);
         try {
@@ -117,20 +153,20 @@ export function ReviewsContextProvider({ children }) {
 
 
 
-    async function filterToUserReviews() {
-        setError(null);
-        setLoading(false);
-        try {
-            const response = await apiFetch(`/api/reviews/mine`, { token: token });
+    // async function filterToUserReviews() {
+    //     setError(null);
+    //     setLoading(false);
+    //     try {
+    //         const response = await apiFetch(`/api/reviews/mine`, { token: token });
 
-        } catch (err) {
-            setError(err);
-        }
+    //     } catch (err) {
+    //         setError(err);
+    //     }
 
-    }
+    // }
 
     return (
-        <ReviewsContext.Provider value={{ results, loading, error, publicReviews, loadAllPublicReviewsForBook, retrieveAllPublicReviewsForBook, updateReviewText, createReview, deleteReview }}>
+        <ReviewsContext.Provider value={{ results, loading, error, publicReviews, loadAllPublicReviewsForBook, retrieveAllPublicReviewsForBook, updateReviewText, createReview, deleteReview, loadAllPersonalReviews, retrieveAllPersonalReviews, personalReviews }}>
             {children}
         </ReviewsContext.Provider>
     );
