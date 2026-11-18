@@ -88,18 +88,22 @@ export default function AddBookToWishListModalComponent({ setSelectedRow, select
                         })}
                     </select>
                 </label>
-                <button type="submit">Add to Selected List</button>
-
-            </form>
-            <button type="button" onClick={() => closeModal()}>Cancel</button>
-
-
-            <ErrorBoundary error={error}>
+                <div className="row">
+                    <button className="col-auto m-2" disabled={!selectedList} type="submit">Add to Selected List</button>
+                    <button className="col-auto m-2" type="button" onClick={() => closeModal()}>Cancel</button>
+                </div>
+                <ErrorBoundary className="col" error={error}>
                 <div>
                     {error && <p className="text-warn">{error}</p>}
                     {!error && okay && <p>Good to go!</p>}
                 </div>
             </ErrorBoundary>
+
+            </form>
+
+
+
+            
 
         </dialog>
     );

@@ -9,6 +9,7 @@ import { NavLink, Link } from "react-router-dom";
 import UpdateReviewModalComponent from "../components/UpdateReviewModalComponent";
 import { useWishLists } from "../contexts/WishListsContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ListDetailPage() {
     return (
@@ -26,6 +27,8 @@ function ListDetails() {
     //containing every param, not just the listId
     //(which gets parsed as a String, even though its a digit)
     const { listId } = useParams();
+
+    const navigate = useNavigate();
 
     const { username } = useAuth();
     const { removeList, lists, loadLists, loadBooksInList, removeBookFromList,
@@ -125,7 +128,9 @@ function ListDetails() {
             {books === undefined
                 ? (<p>Loading books...</p>
                 ) : books.length === 0
-                    ? (<h3 className="text-warn">No books to show...</h3>
+                    ? (<>
+                        <h3 className="text-warn">No books to show...</h3>
+                        <button type="button" onClick={() => navigate("/search?")}>Search for Books!</button></>
                     ) : (
 
                         <ErrorBoundary error={localError}>
@@ -139,6 +144,7 @@ function ListDetails() {
                                                 <th>Title</th>
                                                 <th>Author</th>
                                                 <th>Your Review</th>
+                                                <th>Review Visibility</th>
                                                 <th></th>
                                             </tr>
 
@@ -157,6 +163,7 @@ function ListDetails() {
                                                     <td>{book.title}</td>
                                                     <td>{book.author}</td>
                                                     <td>{book.review_text}</td>
+                                                    <td>{book.is_public}</td>
                                                     <td>
                                                         {book.review_id ?
                                                             <button type="button" onClick={() => openReviewUpdateModal(book.id, book.review_id, book.review_text)}>Edit Review</button>

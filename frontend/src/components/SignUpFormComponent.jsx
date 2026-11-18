@@ -48,15 +48,15 @@ export default function SignUpFormComponent({ onSearch }) {
     }
 
     return (
-        <>
-            <h3>Create a new account...</h3>
+        <div className="row">
             <form
+            className="col"
                 onSubmit={(e) => {
                     e.preventDefault();
                     handleSubmit(usernameInput, passwordInput);
                 }}>
-                <label name="title">
-                    <input className="form-control w-50"
+                <label name="username">
+                    <input className="form-control w-25"
                         type="text"
                         placeholder="username"
                         value={usernameInput}
@@ -64,8 +64,8 @@ export default function SignUpFormComponent({ onSearch }) {
                             setUsernameInput(e.target.value);
                         }} />
                 </label>
-                <label name="author">
-                    <input className="form-control w-50"
+                <label name="password">
+                    <input className="form-control w-25"
                         type="password"
                         placeholder="password"
                         value={passwordInput}
@@ -81,6 +81,6 @@ export default function SignUpFormComponent({ onSearch }) {
             <ErrorBoundary error={error}>
                 <p className="mt-3 text-warn">{error}</p>
             </ErrorBoundary>
-        </>
+        </div>
     )
 }

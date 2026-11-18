@@ -46,14 +46,14 @@ export default function LoginFormComponent({ location }) {
     }
 
     return (
-        <div>
-            <form
+        <div className="row">
+            <form className="col"
                 onSubmit={(e) => {
                     e.preventDefault();
                     handleSubmit(usernameInput, passwordInput);
                 }}>
-                <label name="title">
-                    <input autoFocus className="form-control w-50"
+                <label name="username">
+                    <input autoFocus className="form-control w-25"
                         type="text"
                         placeholder="username"
                         value={usernameInput}
@@ -61,8 +61,8 @@ export default function LoginFormComponent({ location }) {
                             setUsernameInput(e.target.value);
                         }} />
                 </label>
-                <label name="author">
-                    <input className="form-control w-50"
+                <label name="password">
+                    <input className="form-control w-25"
                         type="password"
                         placeholder="password"
                         value={passwordInput}

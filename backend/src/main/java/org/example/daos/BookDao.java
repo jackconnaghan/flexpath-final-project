@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
+import java.rmi.NoSuchObjectException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,6 +55,8 @@ public class BookDao {
     public Book getBookById(Long bookId) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM books WHERE id=? ORDER BY title ASC;", this::mapToBook, bookId);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, e.getMessage());
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return null;
@@ -184,18 +187,18 @@ public class BookDao {
     public Book updateBook(Book book) {
         try {
             //OrderItem tempOrderItem = jdbcTemplate.queryForObject("SELECT * FROM order_items WHERE id = ?", this::mapToOrderItem, orderItem.getId());
-            List<Book> booksWithTitle = getBookByTitle(book.getTitle());
+            Book booksWithTitle = getBookById(book.getId());
             Long id = 0L;
-            if (booksWithTitle.size() == 1) {
-                id = booksWithTitle.get(0).getId();
-            } else {
-                throw new TooManyResultsException("There are more books with the same title. Try editing a different book," +
-                        "or update a book by id with /api/books/");
-            }
+//            if (booksWithTitle.size() == 1) {
+//                id = booksWithTitle.get(0).getId();
+//            } else {
+//                throw new TooManyResultsException("There are more books with the same title. Try editing a different book," +
+//                        "or update a book by id with /api/books/");
+//            }
 
             try {
 
-                jdbcTemplate.update("UPDATE books SET title=?, author=?, pub_year=?, isbn_13=?, pages=? WHERE id=?",
+                jdbcTemplate.update("UPDATE books SET title = COALESCE(?, title), author = COALESCE(?, author) , pub_year = COALESCE(?, pub_year), isbn_13 = COALESCE(?, isbn_13), pages = COALESCE(?, pages) WHERE id=?",
                         book.getTitle(),
                         book.getAuthor(),
                         book.getPub_year(),

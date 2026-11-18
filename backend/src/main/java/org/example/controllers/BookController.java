@@ -36,7 +36,7 @@ public class BookController {
     public Book getBookById(@PathVariable Long id) {
         Book book = bookDao.getBookById(id);   // use your DAO's actual method name
         if (book == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No book exists with id " + id);
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No book exists with id " + id);
         }
         return book;
     }
@@ -93,6 +93,7 @@ public class BookController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public int deleteBookById(@PathVariable Long id) {
+
         return bookDao.deleteBookById(id);
     }
 

@@ -78,7 +78,11 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
 
         <dialog ref={ref}
             onClose={closeModal}>
-            <p>{review_id ? "Update Review..." : "Write a New Review..."}</p>
+            <div className="row align-items-center">
+                <p className="col">{review_id ? "Update Review..." : "Write a New Review..."}</p>
+                <button className="col-3" type="button" onClick={() => closeModal()}>Close</button>
+            </div>
+
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -97,6 +101,7 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                         placeholder="Write your review here...">
                     </textarea>
                 </label>
+                
                 <label className="row">
                     <p className="col-auto">Is Public</p>
                     <input className="col-1" type="checkbox"
@@ -106,9 +111,9 @@ export default function UpdateReviewModalComponent({ selectedRow, book_id, openM
                         }}></input>
                 </label>
                 <div className="row">
-                    <button className="col" type="submit">{review_id ? "UPDATE" : "CREATE"}</button>
+                    <button className="col-3" type="submit">{review_id ? "UPDATE" : "CREATE"}</button>
 
-                    {review_id && <button className="col" type="button" onClick={handleDelete}>DELETE</button>}
+                    {review_id && <button className="col-3" type="button" onClick={handleDelete}>DELETE</button>}
                 </div>
             </form>
 

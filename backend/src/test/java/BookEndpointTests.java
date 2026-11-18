@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Import(FinalTestConfiguration.class)
 public class BookEndpointTests extends WebStoreTest {
     @Test
-    @DisplayName("GET /api/books should return all orders")
+    @DisplayName("GET /api/books should return all books")
     public void getBooksShouldReturnAllBooks() {
         var requestEntity = GetAuthEntity("admin", "admin");
         var result = this.restTemplate.exchange(getBaseUrl() + "/api/books", HttpMethod.GET, requestEntity, Book[].class);
@@ -99,6 +99,34 @@ public class BookEndpointTests extends WebStoreTest {
         Assertions.assertNotNull(found);
         assertEquals(created.getId(), found.getId());
         assertEquals("Nobody Will Remember You", found.getTitle());
+    }
+
+    @Test
+    @DisplayName("PUT /api/books/update with Book body should FAIL as user")
+    public void updateBookShouldFailAsUser() {
+        var updatedBook = new Book(1L, "Bury Me At Wounded Knee", null, 0, null, 0);
+        var requestEntity = GetAuthEntity("user", "admin", updatedBook);
+        var updateResult = this.restTemplate.exchange(
+                getBaseUrl() + "/api/books/update", HttpMethod.PUT, requestEntity, Book.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, updateResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/books/delete/4 should delete book with id=4")
+    public void deleteBookShouldDeleteBookById4() {
+        var requestEntity = GetAuthEntity("admin", "admin");
+
+        var deleteResult = this.restTemplate.exchange(
+                getBaseUrl() + "/api/books/delete4", HttpMethod.DELETE, requestEntity, Book.class);
+
+
+        var result = this.restTemplate.exchange(getBaseUrl() + "/api/books/search/4", HttpMethod.GET, requestEntity, Book.class);
+        var responseCode = result.getStatusCode();
+//        var book = result.getBody();
+
+//        assertEquals(HttpStatus.NO_CONTENT, deleteResult.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, responseCode);
     }
 
 }

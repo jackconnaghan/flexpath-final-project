@@ -723,4 +723,17 @@ sexy-btn[type=button]:disabled {
 
 table {
     width: 100vw;
+    min-width: 400px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Adds consistent spacing between elements */
+  max-width: 500px; /* Optional: prevents inputs from stretching too wide */
+}
+
+button {
+    background-color:#81ba4c;
+    max-width:200px;
 }

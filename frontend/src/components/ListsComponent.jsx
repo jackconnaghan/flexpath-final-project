@@ -32,7 +32,8 @@ export default function ListsComponent({ children }) {
         <div className="m-5">
             <h4>Hello, {username}</h4>
             <h1>Here be your lists...arr...</h1>
-            <button type="button" onClick={() =>
+            <button type="button" 
+            className="mb-2" onClick={() =>
                 setModalOpen(true)
             }>Create a New List</button>
             <br></br>
