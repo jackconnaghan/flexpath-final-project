@@ -78,20 +78,20 @@ public class BookController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Book updateBook(@RequestBody Book book) {
         return bookDao.updateBook(book);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update-id")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Book updateBookById(@RequestBody Book book, @RequestParam Long id) {
         return bookDao.updateBookById(book, id);
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public int deleteBookById(@PathVariable Long id) {
 
         return bookDao.deleteBookById(id);

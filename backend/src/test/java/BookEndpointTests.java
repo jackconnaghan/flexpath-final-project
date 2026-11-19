@@ -109,7 +109,8 @@ public class BookEndpointTests extends WebStoreTest {
         var updateResult = this.restTemplate.exchange(
                 getBaseUrl() + "/api/books/update", HttpMethod.PUT, requestEntity, Book.class);
 
-        assertEquals(HttpStatus.UNAUTHORIZED, updateResult.getStatusCode());
+        //"FORBIDDEN": login worked, but you cannot execute the requested action given your roles
+        assertEquals(HttpStatus.FORBIDDEN, updateResult.getStatusCode());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class BookEndpointTests extends WebStoreTest {
         var requestEntity = GetAuthEntity("admin", "admin");
 
         var deleteResult = this.restTemplate.exchange(
-                getBaseUrl() + "/api/books/delete4", HttpMethod.DELETE, requestEntity, Book.class);
+                getBaseUrl() + "/api/books/delete/4", HttpMethod.DELETE, requestEntity, Book.class);
 
 
         var result = this.restTemplate.exchange(getBaseUrl() + "/api/books/search/4", HttpMethod.GET, requestEntity, Book.class);

@@ -28,7 +28,6 @@ public class WishListController {
     //this will act as a "getAllWishLists" method
     //@PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
     @GetMapping(path="/mine")
-    //@PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#username, authentication)")
     @PreAuthorize("isAuthenticated()")
     public List<WishList> getMyWishLists(Authentication a) {return wishListDao.getMyWishLists(a.getName()); }
 
@@ -37,6 +36,7 @@ public class WishListController {
     //Until I implement the chosen authZ and authN method,
     //this will act as a "getAllWishListsById" method
     @GetMapping(path = "/mine/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or @wishListSecurity.isOwner(#id, authentication)")
     public WishList getMyWishListsById(Authentication a, @PathVariable Long id) { return wishListDao.getMyWishListById(a.getName(), id); }
     //public WishList getMyWishListsById(@PathVariable Long id) { return wishListDao.getMyWishListById(id); }
 
@@ -48,15 +48,10 @@ public class WishListController {
      * @return = list of books matching that title
      *
      */
-    @GetMapping(path = "/api/{username}/wishlists", params = "username")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<WishList> getWishListByUsername(@RequestParam String username) { return wishListDao.getWishListByUsername(username); }
+    @GetMapping("/user/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<WishList> getWishListByUsername(@PathVariable String username) { return wishListDao.getWishListByUsername(username); }
 
-//    @GetMapping(path = "/search-name", params = "name")
-//    public List<WishList> getWishListByAuthor(@RequestParam String name) {
-//        return wishListDao.getWishListsBy(name);
-//    }
-//commenting for now because I DONT WANT TO FUCK WITH IT RIGHT NOW1111
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
@@ -67,7 +62,7 @@ public class WishListController {
     public WishList updateWishList(@RequestBody WishList wl, Authentication a) { return wishListDao.updateWishList(wl, a.getName()); }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @wishListSecurity.isOwner(#id, authentication)")
+    @PreAuthorize("hasAuthority('ADMIN') or @wishListSecurity.isOwner(#id, authentication)")
     public int deleteWishListById(@PathVariable Long id, Authentication a) {
         return wishListDao.deleteWishListById(id);
     }

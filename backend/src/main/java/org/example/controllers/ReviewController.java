@@ -30,12 +30,11 @@ public class ReviewController {
     public record UpdateReviewRequest(String review_text, Boolean is_public) {}
 
     @GetMapping(path = "/allreviews")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Review> getAllReviews() { return reviewDao.getAllReviews(); }
 
 //    @GetMapping(path = "/user/{username}")
 //    public List<Review> getAllReviewsByUser(@PathVariable String username) { return reviewDao.getAllReviewsByUser(username); }
-
     @GetMapping("/book/{bookId}")
     public List<Review> getPublicReviewsForBook(@PathVariable Long bookId) { return reviewDao.getPublicReviewsForBook(bookId); }
 
@@ -68,7 +67,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @reviewSecurity.isOwner(#id, authentication)")
+    @PreAuthorize("hasAuthority('ADMIN') or @reviewSecurity.isOwner(#id, authentication)")
     public int deleteReviewById(@PathVariable Long id, Authentication auth) {
         return reviewDao.deleteReviewById(id);
     }

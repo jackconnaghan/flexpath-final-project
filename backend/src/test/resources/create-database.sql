@@ -56,6 +56,7 @@ create table reviews
     review_text text,
     star_rating int          not null,
     review_date DATE         not null,
+    is_public   boolean      not null default FALSE,
     foreign key (book_id) references books (id) on delete cascade,
     -- foreign key (user_id) references users(user_id) on delete cascade,
     constraint uq_username_to_review unique (username, book_id)
@@ -90,14 +91,17 @@ VALUES ('Let The Great World Spin', 'Colum McCann', 2009, "9780812973990");
 INSERT INTO books (title, author, pub_year, isbn_13)
 VALUES ('Everybody Poops', 'Somebody', 2009, "9780812973990");
 
-INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
-VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 10);
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (1, "admin", "Bury My Heart at Wounded Knee wound me up!", CURDATE(), 10, false);
 
-INSERT INTO reviews (book_id, username, review_text, review_date, star_rating)
-VALUES (2, "user", "That was close!", CURDATE(), 6);
+INSERT INTO reviews (book_id, username, review_text, review_date, star_rating, is_public)
+VALUES (2, "user", "That was close!", CURDATE(), 6, true);
 
 INSERT INTO wishlists (username, list_title)
 VALUES ("user", 'my first wishlist!');
+
+INSERT INTO wishlists (username, list_title)
+VALUES ("user", 'my second wishlist!');
 
 INSERT INTO wishlist_books (wishlist_id, book_id, time_added)
 VALUES (1, 2, CURDATE());
