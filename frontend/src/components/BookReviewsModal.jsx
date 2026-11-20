@@ -141,7 +141,7 @@ export default function BookReviewsModal({ selectedRow, closeModal }) {
                                 <tr key={review.id}>
                                     <td>{review.username == username
                                         ? <p className="text-warn">Your Review</p>
-                                        : <p>review.username</p>
+                                        : <p>{review.username}</p>
                                     }</td>
                                     <td>{review.review_text}</td>
                                     <td>{review.star_rating}</td>
